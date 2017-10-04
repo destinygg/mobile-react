@@ -1,4 +1,35 @@
-import ChatWindow from '../lib/assets/chat/js/window.js'
+import React, { Component } from 'react';
+import Chat from '../lib/assets/chat/js/chat.js';
+import ChatWindow from '../lib/assets/chat/js/window.js';
+
+class MobileChatEntry extends Component {
+    /*
+        { "id", "username", "mentioned" }
+    */
+    constructor(props) {
+        super(props);
+    }
+    render() {
+        let componentStyle = [styles.chatMessage];
+        
+        for (var i = 0; i < this.props.classes; i++
+    }
+}
+
+class MobileChatView extends Component {
+    constructor(props) {
+        super(props);
+        var me = fetch('/api/chat/me', { method: "GET" });
+        var history = fetch('/api/chat/history', { method: "GET" });
+
+        Promise.all([me, history]).then(values => {
+
+        })
+        this.state = {
+
+        }
+    }
+}
 
 class MobileWindow extends ChatWindow {
     constructor(name, type='', label=''){
@@ -18,6 +49,7 @@ class MobileWindow extends ChatWindow {
                         `<div class="chat-scroll-notify">More messages below</div>`+
                      `</div>`)
         this.lines = this.ui.find('.chat-lines')
+        this.mobileView =
     }
 
     destroy(){
@@ -31,7 +63,6 @@ class MobileWindow extends ChatWindow {
         this.maxlines = chat.settings.get('maxlines')
         this.scrollplugin = new ChatScrollPlugin(chat, this.ui)
         this.tag = chat.taggednicks.get(normalized) || tagcolors[Math.floor(Math.random()*tagcolors.length)]
-        chat.output.append(this.ui)
         chat.addWindow(normalized, this)
         return this
     }
@@ -53,24 +84,6 @@ class MobileWindow extends ChatWindow {
         remove.remove();
     }
 
-    locked(){
-        return this.locks > 0;
-    }
-
-    lock(){
-        this.locks++;
-        if(this.locks === 1) {
-            this.waspinned = this.scrollplugin.isPinned();
-        }
-    }
-
-    unlock(){
-        this.locks--;
-        if(this.locks === 0) {
-            this.scrollplugin.updateAndPin(this.waspinned);
-        }
-    }
-
     // Rid excess chat lines if the chat is pinned
     // Get the scroll position before adding the new line / removing old lines
     cleanup(){
@@ -83,9 +96,43 @@ class MobileWindow extends ChatWindow {
             }
         }
     }
+}
 
-    updateAndPin(pin=true){
-        this.scrollplugin.updateAndPin(pin);
+/* Subclass reimplementing all methods using jQuery. */
+class MobileChat extends Chat {
+    constructor() {
+        super();
+    }
+    
+    withGui() {
+
     }
 
+    withWhispers() {
+
+    }
+
+    saveSettings() {
+
+    }
+
+    onPRIVMSG() {
+
+    }
+
+    cmdSTALK() {
+
+    }
+
+    cmdMENTIONS() {
+
+    }
+
+    cmdBANINFO() {
+
+    }
+
+    createConversation() {
+        
+    }
 }
