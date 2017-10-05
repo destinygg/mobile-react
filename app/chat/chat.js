@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Chat from '../lib/assets/chat/js/chat.js';
 import ChatWindow from '../lib/assets/chat/js/window.js';
+import style from './styles.js';
 
 class MobileChatEntry extends Component {
     /*
@@ -16,18 +17,28 @@ class MobileChatEntry extends Component {
     }
 }
 
-class MobileChatView extends Component {
+export default class MobileChatView extends Component {
     constructor(props) {
         super(props);
         var me = fetch('/api/chat/me', { method: "GET" });
         var history = fetch('/api/chat/history', { method: "GET" });
 
         Promise.all([me, history]).then(values => {
-
+            //create Chat instance here
         })
-        this.state = {
 
+        this.state = {
+            "messages": [],
         }
+    }
+
+    render() {
+        return (
+            <FlatList
+              data={this.state.messages}
+              renderItem={({item}) => <MobileChatEntry {...item}/>}
+            />
+        )
     }
 }
 
