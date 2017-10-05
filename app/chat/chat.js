@@ -5,7 +5,7 @@ import style from './styles.js';
 
 class MobileChatEntry extends Component {
     /*
-        { "id", "username", "mentioned" }
+        { "id", "username", "classes" }
     */
     constructor(props) {
         super(props);
@@ -13,7 +13,10 @@ class MobileChatEntry extends Component {
     render() {
         let componentStyle = [styles.chatMessage];
         
-        for (var i = 0; i < this.props.classes; i++
+        for (var i = 0; i < this.props.classes; i++) {
+            componentStyle.push(this.props.classes[i]);
+        }
+        // build entry
     }
 }
 
@@ -36,6 +39,7 @@ export default class MobileChatView extends Component {
         return (
             <FlatList
               data={this.state.messages}
+              style={this.props.styles}
               renderItem={({item}) => <MobileChatEntry {...item}/>}
             />
         )
