@@ -10,7 +10,7 @@ export default class MobileChatView extends Component {
         this.state = {
             "messages": [],
         }
-        this.chat.withGui(this);
+        this.chat.bindView(this);
     }
 
     render() {
@@ -81,6 +81,7 @@ class MobileWindow extends ChatWindow {
         this.lines.append(message.ui)
         this.linecount++
         this.cleanup()
+        // trigger bound view re-render
     }
 
     getlines(sel){

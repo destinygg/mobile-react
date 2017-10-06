@@ -1,20 +1,42 @@
 import React, { Component } from 'react';
 import { TabNavigator } from 'react-navigation';
 
-class AccountTab extends Component {
+class ProfileStack extends Component {
+    render() {
 
+    }
+}
+
+class AccountTab extends Component {
+    render() {
+        return (
+
+        )
+    }
 }
 
 class SubscriptionTab extends Component {
+    render() {
+        return (
 
+        )
+    }
 }
 
 class AddressTab extends Component {
+    render() {
+        return (
 
+        )
+    }
 }
 
 class SocialTab extends Component {
+    render() {
+        return (
 
+        )
+    }
 }
 
 const ProfileView = TabNavigator({
