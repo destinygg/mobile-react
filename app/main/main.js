@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Chat from '../chat/chat.js';
+import ChatView from '../chat/chat.js';
 import styles from './styles.js';
 
 class TwitchView extends Component {
@@ -26,26 +26,17 @@ class TwitchView extends Component {
 }
 
 export class MainView extends Component {
-    constructor() {
-        super();
-        // { "chatOnly": bool }
-        this.state = {chatOnly: false};
+    constructor(props) {
+        super(props);
+        this.chat = props.screenProps.chat;
     }
 
     render() {
-        if (chatOnly) {
-            return (
-                <View style={styles.MainView}>
-                    <Chat/>
-                </View>
-            );
-        } else {
-            return (
-                <View style={styles.MainView}>
-                    <TwitchView/>
-                    <Chat/>
-                </View>
-            );
-        }
+        return (
+            <View style={styles.MainView}>
+                <TwitchView/>
+                <ChatView screenProps={{ chat: this.chat }}/>
+            </View>
+        );
     }
 }

@@ -1,16 +1,28 @@
 import { StackNavigator } from 'react-navigation';
 import AuthView from './auth/auth.js'
 import MainView from './main/main.js';
+import ChatView from './chat/chat.js';
 import ProfileView from './profile/profile.js';
+import MessageView from './messages/messages.js';
 
 const MainNav = DrawerNavigator({
     MainView: { screen: MainView },
-    ChatView: { screen: MainView },      // figure out how to pass chat state into MainView
+    ChatView: { screen: ChatView },
+    MessageView: { screen: MessageView },
     ProfileView: { screen: ProfileView }
+}, {
+    initialRouteName: "MainView"
 });
+
+// may have to add an intermediate view between InitNav and MainNav
+// to pass screenProps correctly
 
 const InitNav = StackNavigator({
     InitView: { screen: InitView },
     AuthView: { screen: AuthView },
     MainNav: { screen: MainNav }
+}, {
+    initialRouteName: "InitView"
 });
+
+export default InitNav;

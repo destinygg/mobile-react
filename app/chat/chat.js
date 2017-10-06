@@ -3,6 +3,27 @@ import Chat from '../lib/assets/chat/js/chat.js';
 import ChatWindow from '../lib/assets/chat/js/window.js';
 import style from './styles.js';
 
+export default class MobileChatView extends Component {
+    constructor(props) {
+        super(props);
+        this.chat = props.screenProps.chat;
+        this.state = {
+            "messages": [],
+        }
+        this.chat.withGui(this);
+    }
+
+    render() {
+        return (
+            <FlatList
+                data={this.state.messages}
+                style={this.props.styles}
+                renderItem={({ item }) => <MobileChatEntry {...item} />}
+            />
+        )
+    }
+}
+
 class MobileChatEntry extends Component {
     /*
         { "id", "username", "classes" }
@@ -17,32 +38,6 @@ class MobileChatEntry extends Component {
             componentStyle.push(this.props.classes[i]);
         }
         // build entry
-    }
-}
-
-export default class MobileChatView extends Component {
-    constructor(props) {
-        super(props);
-        var me = fetch('/api/chat/me', { method: "GET" });
-        var history = fetch('/api/chat/history', { method: "GET" });
-
-        Promise.all([me, history]).then(values => {
-            //create Chat instance here
-        })
-
-        this.state = {
-            "messages": [],
-        }
-    }
-
-    render() {
-        return (
-            <FlatList
-              data={this.state.messages}
-              style={this.props.styles}
-              renderItem={({item}) => <MobileChatEntry {...item}/>}
-            />
-        )
     }
 }
 
@@ -64,7 +59,6 @@ class MobileWindow extends ChatWindow {
                         `<div class="chat-scroll-notify">More messages below</div>`+
                      `</div>`)
         this.lines = this.ui.find('.chat-lines')
-        this.mobileView =
     }
 
     destroy(){
