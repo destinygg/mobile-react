@@ -1,4 +1,4 @@
-import { StackNavigator } from 'react-navigation';
+import { StackNavigator, DrawerNavigator } from 'react-navigation';
 import AuthView from './auth/auth.js'
 import MainView from './main/main.js';
 import ChatView from './chat/chat.js';
@@ -9,7 +9,7 @@ const MainNav = DrawerNavigator({
     MainView: { screen: MainView },
     ChatView: { screen: ChatView },
     MessageView: { screen: MessageView },
-    ProfileView: { screen: ProfileView }
+    ProfileView: { screen: ProfileNav }
 }, {
     initialRouteName: "MainView"
 });

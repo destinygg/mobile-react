@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { View } from 'react-native';
 import ChatView from '../chat/chat.js';
 import styles from './styles.js';
 

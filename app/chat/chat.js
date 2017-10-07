@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { FlatList } from 'react-native';
 import Chat from '../lib/assets/chat/js/chat.js';
 import ChatWindow from '../lib/assets/chat/js/window.js';
 import style from './styles.js';
