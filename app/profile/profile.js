@@ -2,6 +2,11 @@ import React, { Component } from 'react';
 import { TabNavigator } from 'react-navigation';
 import { ProfileListItem } from '../components.js';
 
+const countries = require("../../lib/assets/countries.json");
+const countryOptions = countries.map((item) => {
+    return ({ itemName: item['name'], itemValue: item['alpha-2'] })
+});
+
 let PROFILEDATA;
 
 class ProfileList extends Component {
@@ -11,7 +16,7 @@ class ProfileList extends Component {
     _renderItem(item) {
         return (
             <ProfileListItem
-                itemText={item.itemText}
+                itemvalue={item.itemValue}
                 onPress={() => _onPressItem(item.itemTarget)}
             />
         )
@@ -35,32 +40,42 @@ class AccountView extends Component {
         super();
         this.formItems = [
             { 
-                itemPlaceholder: PROFILEDATA.username || "Username", 
+                itemValue: PROFILEDATA.username,
+                itemPlaceholder: "Username", 
                 itemName: "username",
                 itemType: "text"
             },
             {
-                itemPlaceholder: PROFILEDATA.email || "Email",
+                itemValue: PROFILEDATA.email,
+                itemPlaceholder: "Email",
                 itemName: "email",
                 itemType: "text"
             },
             {
-                itemPlaceholder: PROFILEDATA.country || "Nationality",
+                itemValue: PROFILEDATA.country,
+                itemPlaceholder: "Nationality",
                 itemName: "country",
-                itemType: "select"
+                itemType: "select",
+                selectOptions: countryOptions
             },
             {
-                itemPlaceholder: PROFILEDATA.allowGifting || "Accept Gifts",
+                itemValue: PROFILEDATA.allowGifting,
+                itemPlaceholder: "Accept Gifts",
                 itemName: "allowGifting",
-                itemType: "select"
+                itemType: "select",
+                selectOptions: [
+                    { itemName: "Yes, I accept gifts", itemValue: "1" },
+                    { itemName: "No, I do not accept gifts", itemValue: "0" }
+                ]
             },
         ].map((item) => 
             <FormItem 
                 type={item.itemType} 
-                name={item.itemName} 
+                name={item.itemName}
+                value={item.itemValue} 
                 placeholder={item.itemPlaceholder}
             />
-        )
+        );
     }
     render() {
         return (
@@ -80,25 +95,121 @@ class SubscriptionView extends Component {
 }
 
 class AddressView extends Component {
+    constructor() {
+        this.formItems = [
+            {
+                itemValue: PROFILEDATA.fullName,
+                itemPlaceholder: "Full Name",
+                itemName: "fullName",
+                itemType: "text"
+            },
+            {
+                itemValue: PROFILEDATA.line1,
+                itemPlaceholder: "Address Line 1",
+                itemName: "line1",
+                itemType: "text"
+            },
+            {
+                itemValue: PROFILEDATA.line2,
+                itemPlaceholder: "Address Line 2",
+                itemName: "line2",
+                itemType: "text"
+            },
+            {
+                itemValue: PROFILEDATA.city,
+                itemPlaceholder: "City",
+                itemName: "city",
+                itemType: "text"
+            },
+            {
+                itemValue: PROFILEDATA.region,
+                itemPlaceholder: "Region",
+                itemName: "region",
+                itemType: "text"
+            },
+            {
+                itemValue: PROFILEDATA.zip,
+                itemPlaceholder: "Postal Code",
+                itemName: "zip",
+                itemType: "text"
+            },
+            {
+                itemValue: PROFILEDATA.country,
+                itemPlaceholder: "Country",
+                itemName: "country",
+                itemType: "select",
+                selectOptions: countryOptions
+            }
+        ].map((item) =>
+            <FormItem
+                type={item.itemType}
+                name={item.itemName}
+                value={item.itemValue}
+                placeholder={item.itemPlaceholder}
+            />
+        );
+    }
     render() {
         return (
-
+            <ProfileForm>
+                {this.formItems}
+            </ProfileForm>
         )
     }
 }
 
 class DiscordView extends Component {
+    constructor() {
+        super();
+        this.formItems = [
+            {
+                itemValue: PROFILEDATA.discordname,
+                itemPlaceholder: "Discord name and ID (e.g., Destiny#123)",
+                itemName: "discordname",
+                itemType: "text"
+            }
+        ].map((item) =>
+            <FormItem
+                type={item.itemType}
+                name={item.itemName}
+                value={item.itemValue}
+                placeholder={item.itemPlaceholder}
+            />
+        );
+    }
     render() {
         return (
-
+            <ProfileForm>
+                {this.formItems}
+            </ProfileForm>
         )
     }
 }
 
 class MinecraftView extends Component {
+    constructor() {
+        super();
+        this.formItems = [
+            {
+                itemValue: PROFILEDATA.minecraftname,
+                itemPlaceholder: "Minecraft name",
+                itemName: "minecraftname",
+                itemType: "text"
+            }
+        ].map((item) =>
+            <FormItem
+                type={item.itemType}
+                name={item.itemName}
+                value={item.itemValue}
+                placeholder={item.itemPlaceholder}
+            />
+        );
+    }
     render() {
         return (
-
+            <ProfileForm>
+                {this.formItems}
+            </ProfileForm>
         )
     }
 }
@@ -107,11 +218,11 @@ class ProfileView extends Component {
     constructor() {
         this.state = { loaded: false };
         this.listItems = [
-            { itemText: 'Account', itemTarget: 'Account' },
-            { itemText: 'Subscription', itemTarget: 'Subscription' },
-            { itemText: 'Address', itemTarget: 'Address' },
-            { itemText: 'Minecraft', itemTarget: 'Minecraft' },
-            { itemText: 'Discord', itemTarget: 'Discord' },
+            { itemValue: 'Account', itemTarget: 'Account' },
+            { itemValue: 'Subscription', itemTarget: 'Subscription' },
+            { itemValue: 'Address', itemTarget: 'Address' },
+            { itemValue: 'Minecraft', itemTarget: 'Minecraft' },
+            { itemValue: 'Discord', itemTarget: 'Discord' },
         ];
         fetch("https://www.destiny.gg/api/profile").then((result) => {
             if (response.status !== 200) {
