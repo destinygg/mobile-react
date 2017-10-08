@@ -42,7 +42,9 @@ class ProfileList extends Component {
 class ProfileForm extends Component {
     render() {
         return (
-            <View style={styles.ProfileForm} />
+            <View style={styles.ProfileForm}>
+                {this.props.children}
+            </View>
         )
     }
 }
@@ -93,9 +95,9 @@ class AccountView extends Component {
     }
     render() {
         return (
-            <View>
+            <ProfileForm>
                 {this.formItems}
-            </View>
+            </ProfileForm>
         )
     }
 }
