@@ -6,7 +6,7 @@ import styles from './styles.js';
 
 const countries = require("../../lib/assets/countries.json");
 const countryOptions = countries.map((item) => {
-    return ({ itemName: item['name'], itemValue: item['alpha-2'] })
+    return ({ name: item['name'], value: item['alpha-2'] })
 });
 
 let PROFILEDATA = {
@@ -23,9 +23,8 @@ class ProfileList extends Component {
     _renderItem({ item }) {
         return (
             <ProfileListItem
-                itemText={item.itemText}
-                itemTarget={item.itemTarget}
-                onPress={this._onPressItem.bind(this)}
+                text={item.itemText}
+                onPress={() => this._onPressItem(item.itemTarget)}
             />
         )
     }
@@ -33,7 +32,7 @@ class ProfileList extends Component {
         return(
             <FlatList
                 data={this.props.listItems}
-                renderItem={this._renderItem.bind(this)}
+                renderItem={(item) => this._renderItem(item)}
             />
         )
     }
@@ -54,42 +53,38 @@ class AccountView extends Component {
         super();
         this.formItems = [
             { 
-                itemValue: PROFILEDATA.username,
-                itemPlaceholder: "Username", 
-                itemName: "username",
-                itemType: "text"
+                value: PROFILEDATA.username,
+                placeholder: "Username", 
+                name: "username",
+                type: "text"
             },
             {
-                itemValue: PROFILEDATA.email,
-                itemPlaceholder: "Email",
-                itemName: "email",
-                itemType: "text"
+                value: PROFILEDATA.email,
+                placeholder: "Email",
+                name: "email",
+                type: "text"
             },
             {
-                itemValue: PROFILEDATA.country,
-                itemPlaceholder: "Nationality",
-                itemName: "country",
-                itemType: "select",
+                value: PROFILEDATA.country,
+                placeholder: "Nationality",
+                name: "country",
+                type: "select",
                 selectOptions: countryOptions
             },
             {
-                itemValue: PROFILEDATA.allowGifting,
-                itemPlaceholder: "Accept Gifts",
-                itemName: "allowGifting",
-                itemType: "select",
+                value: PROFILEDATA.allowGifting,
+                placeholder: "Accept Gifts",
+                name: "allowGifting",
+                type: "select",
                 selectOptions: [
-                    { itemName: "Yes, I accept gifts", itemValue: "1" },
-                    { itemName: "No, I do not accept gifts", itemValue: "0" }
+                    { name: "Yes, I accept gifts", value: "1" },
+                    { name: "No, I do not accept gifts", value: "0" }
                 ]
             },
         ].map((item) => 
             <FormItem 
-                type={item.itemType} 
-                name={item.itemName}
-                value={item.itemValue} 
-                placeholder={item.itemPlaceholder}
-                selectOptions={item.selectOptions}
-                key={item.itemName}
+                item={item}
+                key={item.name}
             />
         );
     }
@@ -115,54 +110,51 @@ class AddressView extends Component {
         super();
         this.formItems = [
             {
-                itemValue: PROFILEDATA.fullName,
-                itemPlaceholder: "Full Name",
-                itemName: "fullName",
-                itemType: "text"
+                value: PROFILEDATA.fullName,
+                placeholder: "Full Name",
+                name: "fullName",
+                type: "text"
             },
             {
-                itemValue: PROFILEDATA.line1,
-                itemPlaceholder: "Address Line 1",
-                itemName: "line1",
-                itemType: "text"
+                value: PROFILEDATA.line1,
+                placeholder: "Address Line 1",
+                name: "line1",
+                type: "text"
             },
             {
-                itemValue: PROFILEDATA.line2,
-                itemPlaceholder: "Address Line 2",
-                itemName: "line2",
-                itemType: "text"
+                value: PROFILEDATA.line2,
+                placeholder: "Address Line 2",
+                name: "line2",
+                type: "text"
             },
             {
-                itemValue: PROFILEDATA.city,
-                itemPlaceholder: "City",
-                itemName: "city",
-                itemType: "text"
+                value: PROFILEDATA.city,
+                placeholder: "City",
+                name: "city",
+                type: "text"
             },
             {
-                itemValue: PROFILEDATA.region,
-                itemPlaceholder: "Region",
-                itemName: "region",
-                itemType: "text"
+                value: PROFILEDATA.region,
+                placeholder: "Region",
+                name: "region",
+                type: "text"
             },
             {
-                itemValue: PROFILEDATA.zip,
-                itemPlaceholder: "Postal Code",
-                itemName: "zip",
-                itemType: "text"
+                value: PROFILEDATA.zip,
+                placeholder: "Postal Code",
+                name: "zip",
+                type: "text"
             },
             {
-                itemValue: PROFILEDATA.country,
-                itemPlaceholder: "Country",
-                itemName: "country",
-                itemType: "select",
+                value: PROFILEDATA.country,
+                placeholder: "Country",
+                name: "country",
+                type: "select",
                 selectOptions: countryOptions
             }
         ].map((item) =>
             <FormItem
-                type={item.itemType}
-                name={item.itemName}
-                value={item.itemValue}
-                placeholder={item.itemPlaceholder}
+                item={item}
             />
         );
     }
@@ -180,17 +172,14 @@ class DiscordView extends Component {
         super();
         this.formItems = [
             {
-                itemValue: PROFILEDATA.discordname,
-                itemPlaceholder: "Discord name and ID (e.g., Destiny#123)",
-                itemName: "discordname",
-                itemType: "text"
+                value: PROFILEDATA.discordname,
+                placeholder: "Discord name and ID (e.g., Destiny#123)",
+                name: "discordname",
+                type: "text"
             }
         ].map((item) =>
             <FormItem
-                type={item.itemType}
-                name={item.itemName}
-                value={item.itemValue}
-                placeholder={item.itemPlaceholder}
+                item={item}
             />
         );
     }
@@ -208,17 +197,14 @@ class MinecraftView extends Component {
         super();
         this.formItems = [
             {
-                itemValue: PROFILEDATA.minecraftname,
-                itemPlaceholder: "Minecraft name",
-                itemName: "minecraftname",
-                itemType: "text"
+                value: PROFILEDATA.minecraftname,
+                placeholder: "Minecraft name",
+                name: "minecraftname",
+                type: "text"
             }
         ].map((item) =>
             <FormItem
-                type={item.itemType}
-                name={item.itemName}
-                value={item.itemValue}
-                placeholder={item.itemPlaceholder}
+                item={item}
             />
         );
     }

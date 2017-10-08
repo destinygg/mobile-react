@@ -58398,7 +58398,7 @@ function _wrapComponent(id) {
 
 var countries = require(556                              ); // 556 = ../../lib/assets/countries.json
 var countryOptions = countries.map(function (item) {
-    return { itemName: item['name'], itemValue: item['alpha-2'] };
+    return { name: item['name'], value: item['alpha-2'] };
 });
 
 var PROFILEDATA = {
@@ -58425,12 +58425,15 @@ var ProfileList = _wrapComponent('ProfileList')(function (_Component) {
     }, {
         key: '_renderItem',
         value: function _renderItem(_ref) {
+            var _this2 = this;
+
             var item = _ref.item;
 
             return _react3.default.createElement(_components2.ProfileListItem, {
-                itemText: item.itemText,
-                itemTarget: item.itemTarget,
-                onPress: this._onPressItem.bind(this),
+                text: item.itemText,
+                onPress: function onPress() {
+                    return _this2._onPressItem(item.itemTarget);
+                },
                 __source: {
                     fileName: _jsxFileName,
                     lineNumber: 25
@@ -58440,12 +58443,16 @@ var ProfileList = _wrapComponent('ProfileList')(function (_Component) {
     }, {
         key: 'render',
         value: function render() {
+            var _this3 = this;
+
             return _react3.default.createElement(_reactNative.FlatList, {
                 data: this.props.listItems,
-                renderItem: this._renderItem.bind(this),
+                renderItem: function renderItem(item) {
+                    return _this3._renderItem(item);
+                },
                 __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 34
+                    lineNumber: 33
                 }
             });
         }
@@ -58470,7 +58477,7 @@ var ProfileForm = _wrapComponent('ProfileForm')(function (_Component2) {
                 _reactNative.View,
                 { style: _styles2.default.ProfileForm, __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 45
+                        lineNumber: 44
                     }
                 },
                 this.props.children
@@ -58487,45 +58494,41 @@ var AccountView = _wrapComponent('AccountView')(function (_Component3) {
     function AccountView() {
         _classCallCheck(this, AccountView);
 
-        var _this3 = _possibleConstructorReturn(this, (AccountView.__proto__ || Object.getPrototypeOf(AccountView)).call(this));
+        var _this5 = _possibleConstructorReturn(this, (AccountView.__proto__ || Object.getPrototypeOf(AccountView)).call(this));
 
-        _this3.formItems = [{
-            itemValue: PROFILEDATA.username,
-            itemPlaceholder: "Username",
-            itemName: "username",
-            itemType: "text"
+        _this5.formItems = [{
+            value: PROFILEDATA.username,
+            placeholder: "Username",
+            name: "username",
+            type: "text"
         }, {
-            itemValue: PROFILEDATA.email,
-            itemPlaceholder: "Email",
-            itemName: "email",
-            itemType: "text"
+            value: PROFILEDATA.email,
+            placeholder: "Email",
+            name: "email",
+            type: "text"
         }, {
-            itemValue: PROFILEDATA.country,
-            itemPlaceholder: "Nationality",
-            itemName: "country",
-            itemType: "select",
+            value: PROFILEDATA.country,
+            placeholder: "Nationality",
+            name: "country",
+            type: "select",
             selectOptions: countryOptions
         }, {
-            itemValue: PROFILEDATA.allowGifting,
-            itemPlaceholder: "Accept Gifts",
-            itemName: "allowGifting",
-            itemType: "select",
-            selectOptions: [{ itemName: "Yes, I accept gifts", itemValue: "1" }, { itemName: "No, I do not accept gifts", itemValue: "0" }]
+            value: PROFILEDATA.allowGifting,
+            placeholder: "Accept Gifts",
+            name: "allowGifting",
+            type: "select",
+            selectOptions: [{ name: "Yes, I accept gifts", value: "1" }, { name: "No, I do not accept gifts", value: "0" }]
         }].map(function (item) {
             return _react3.default.createElement(_components2.FormItem, {
-                type: item.itemType,
-                name: item.itemName,
-                value: item.itemValue,
-                placeholder: item.itemPlaceholder,
-                selectOptions: item.selectOptions,
-                key: item.itemName,
+                item: item,
+                key: item.name,
                 __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 86
+                    lineNumber: 85
                 }
             });
         });
-        return _this3;
+        return _this5;
     }
 
     _createClass(AccountView, [{
@@ -58536,7 +58539,7 @@ var AccountView = _wrapComponent('AccountView')(function (_Component3) {
                 {
                     __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 98
+                        lineNumber: 93
                     }
                 },
                 this.formItems
@@ -58562,7 +58565,7 @@ var SubscriptionView = _wrapComponent('SubscriptionView')(function (_Component4)
             return _react3.default.createElement(_reactNative.View, {
                 __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 108
+                    lineNumber: 103
                 }
             });
         }
@@ -58577,57 +58580,54 @@ var AddressView = _wrapComponent('AddressView')(function (_Component5) {
     function AddressView() {
         _classCallCheck(this, AddressView);
 
-        var _this5 = _possibleConstructorReturn(this, (AddressView.__proto__ || Object.getPrototypeOf(AddressView)).call(this));
+        var _this7 = _possibleConstructorReturn(this, (AddressView.__proto__ || Object.getPrototypeOf(AddressView)).call(this));
 
-        _this5.formItems = [{
-            itemValue: PROFILEDATA.fullName,
-            itemPlaceholder: "Full Name",
-            itemName: "fullName",
-            itemType: "text"
+        _this7.formItems = [{
+            value: PROFILEDATA.fullName,
+            placeholder: "Full Name",
+            name: "fullName",
+            type: "text"
         }, {
-            itemValue: PROFILEDATA.line1,
-            itemPlaceholder: "Address Line 1",
-            itemName: "line1",
-            itemType: "text"
+            value: PROFILEDATA.line1,
+            placeholder: "Address Line 1",
+            name: "line1",
+            type: "text"
         }, {
-            itemValue: PROFILEDATA.line2,
-            itemPlaceholder: "Address Line 2",
-            itemName: "line2",
-            itemType: "text"
+            value: PROFILEDATA.line2,
+            placeholder: "Address Line 2",
+            name: "line2",
+            type: "text"
         }, {
-            itemValue: PROFILEDATA.city,
-            itemPlaceholder: "City",
-            itemName: "city",
-            itemType: "text"
+            value: PROFILEDATA.city,
+            placeholder: "City",
+            name: "city",
+            type: "text"
         }, {
-            itemValue: PROFILEDATA.region,
-            itemPlaceholder: "Region",
-            itemName: "region",
-            itemType: "text"
+            value: PROFILEDATA.region,
+            placeholder: "Region",
+            name: "region",
+            type: "text"
         }, {
-            itemValue: PROFILEDATA.zip,
-            itemPlaceholder: "Postal Code",
-            itemName: "zip",
-            itemType: "text"
+            value: PROFILEDATA.zip,
+            placeholder: "Postal Code",
+            name: "zip",
+            type: "text"
         }, {
-            itemValue: PROFILEDATA.country,
-            itemPlaceholder: "Country",
-            itemName: "country",
-            itemType: "select",
+            value: PROFILEDATA.country,
+            placeholder: "Country",
+            name: "country",
+            type: "select",
             selectOptions: countryOptions
         }].map(function (item) {
             return _react3.default.createElement(_components2.FormItem, {
-                type: item.itemType,
-                name: item.itemName,
-                value: item.itemValue,
-                placeholder: item.itemPlaceholder,
+                item: item,
                 __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 161
+                    lineNumber: 156
                 }
             });
         });
-        return _this5;
+        return _this7;
     }
 
     _createClass(AddressView, [{
@@ -58638,7 +58638,7 @@ var AddressView = _wrapComponent('AddressView')(function (_Component5) {
                 {
                     __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 171
+                        lineNumber: 163
                     }
                 },
                 this.formItems
@@ -58655,26 +58655,23 @@ var DiscordView = _wrapComponent('DiscordView')(function (_Component6) {
     function DiscordView() {
         _classCallCheck(this, DiscordView);
 
-        var _this6 = _possibleConstructorReturn(this, (DiscordView.__proto__ || Object.getPrototypeOf(DiscordView)).call(this));
+        var _this8 = _possibleConstructorReturn(this, (DiscordView.__proto__ || Object.getPrototypeOf(DiscordView)).call(this));
 
-        _this6.formItems = [{
-            itemValue: PROFILEDATA.discordname,
-            itemPlaceholder: "Discord name and ID (e.g., Destiny#123)",
-            itemName: "discordname",
-            itemType: "text"
+        _this8.formItems = [{
+            value: PROFILEDATA.discordname,
+            placeholder: "Discord name and ID (e.g., Destiny#123)",
+            name: "discordname",
+            type: "text"
         }].map(function (item) {
             return _react3.default.createElement(_components2.FormItem, {
-                type: item.itemType,
-                name: item.itemName,
-                value: item.itemValue,
-                placeholder: item.itemPlaceholder,
+                item: item,
                 __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 189
+                    lineNumber: 181
                 }
             });
         });
-        return _this6;
+        return _this8;
     }
 
     _createClass(DiscordView, [{
@@ -58685,7 +58682,7 @@ var DiscordView = _wrapComponent('DiscordView')(function (_Component6) {
                 {
                     __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 199
+                        lineNumber: 188
                     }
                 },
                 this.formItems
@@ -58702,26 +58699,23 @@ var MinecraftView = _wrapComponent('MinecraftView')(function (_Component7) {
     function MinecraftView() {
         _classCallCheck(this, MinecraftView);
 
-        var _this7 = _possibleConstructorReturn(this, (MinecraftView.__proto__ || Object.getPrototypeOf(MinecraftView)).call(this));
+        var _this9 = _possibleConstructorReturn(this, (MinecraftView.__proto__ || Object.getPrototypeOf(MinecraftView)).call(this));
 
-        _this7.formItems = [{
-            itemValue: PROFILEDATA.minecraftname,
-            itemPlaceholder: "Minecraft name",
-            itemName: "minecraftname",
-            itemType: "text"
+        _this9.formItems = [{
+            value: PROFILEDATA.minecraftname,
+            placeholder: "Minecraft name",
+            name: "minecraftname",
+            type: "text"
         }].map(function (item) {
             return _react3.default.createElement(_components2.FormItem, {
-                type: item.itemType,
-                name: item.itemName,
-                value: item.itemValue,
-                placeholder: item.itemPlaceholder,
+                item: item,
                 __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 217
+                    lineNumber: 206
                 }
             });
         });
-        return _this7;
+        return _this9;
     }
 
     _createClass(MinecraftView, [{
@@ -58732,7 +58726,7 @@ var MinecraftView = _wrapComponent('MinecraftView')(function (_Component7) {
                 {
                     __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 227
+                        lineNumber: 213
                     }
                 },
                 this.formItems
@@ -58749,11 +58743,11 @@ var ProfileView = _wrapComponent('ProfileView')(function (_Component8) {
     function ProfileView() {
         _classCallCheck(this, ProfileView);
 
-        var _this8 = _possibleConstructorReturn(this, (ProfileView.__proto__ || Object.getPrototypeOf(ProfileView)).call(this));
+        var _this10 = _possibleConstructorReturn(this, (ProfileView.__proto__ || Object.getPrototypeOf(ProfileView)).call(this));
 
-        _this8.state = { loaded: false };
-        _this8.listItems = [{ itemText: 'Account', itemTarget: 'Account' }, { itemText: 'Subscription', itemTarget: 'Subscription' }, { itemText: 'Address', itemTarget: 'Address' }, { itemText: 'Minecraft', itemTarget: 'Minecraft' }, { itemText: 'Discord', itemTarget: 'Discord' }];
-        return _this8;
+        _this10.state = { loaded: false };
+        _this10.listItems = [{ itemText: 'Account', itemTarget: 'Account' }, { itemText: 'Subscription', itemTarget: 'Subscription' }, { itemText: 'Address', itemTarget: 'Address' }, { itemText: 'Minecraft', itemTarget: 'Minecraft' }, { itemText: 'Discord', itemTarget: 'Discord' }];
+        return _this10;
     }
 
     _createClass(ProfileView, [{
@@ -58763,21 +58757,21 @@ var ProfileView = _wrapComponent('ProfileView')(function (_Component8) {
                 _reactNative.View,
                 { style: _styles2.default.ProfileView, __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 270
+                        lineNumber: 256
                     }
                 },
                 _react3.default.createElement(
                     _reactNative.View,
                     { style: _styles2.default.ProfileHeader, __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 271
+                            lineNumber: 257
                         }
                     },
                     _react3.default.createElement(
                         _reactNative.Text,
                         { style: _styles2.default.ProfileName, __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 272
+                                lineNumber: 258
                             }
                         },
                         this.state.profileName
@@ -58786,7 +58780,7 @@ var ProfileView = _wrapComponent('ProfileView')(function (_Component8) {
                         _reactNative.Text,
                         { style: _styles2.default.ProfileCreation, __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 273
+                                lineNumber: 259
                             }
                         },
                         this.state.creationDate
@@ -58794,7 +58788,7 @@ var ProfileView = _wrapComponent('ProfileView')(function (_Component8) {
                 ),
                 _react3.default.createElement(ProfileList, { listItems: this.listItems, navigation: this.props.navigation, __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 275
+                        lineNumber: 261
                     }
                 })
             );
@@ -66771,7 +66765,7 @@ module.exports = function hoistNonReactStatics(targetComponent, sourceComponent,
 __d(/* destinyapp/app/components.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.FormItem = exports.ProfileListItem = undefined;
+exports.FormItem = exports.SelectModal = exports.ProfileListItem = undefined;
 
 var _react2 = require(36     ); // 36 = react
 
@@ -66803,6 +66797,9 @@ var _components = {
     ProfileListItem: {
         displayName: 'ProfileListItem'
     },
+    SelectModal: {
+        displayName: 'SelectModal'
+    },
     FormItem: {
         displayName: 'FormItem'
     }
@@ -66831,35 +66828,34 @@ var ProfileListItem = exports.ProfileListItem = _wrapComponent('ProfileListItem'
     }
 
     _createClass(ProfileListItem, [{
-        key: '_onPress',
-        value: function _onPress() {
-            this.props.onPress(this.props.itemTarget);
-        }
-    }, {
         key: 'render',
         value: function render() {
+            var _this2 = this;
+
             return _react3.default.createElement(
                 _reactNative.TouchableHighlight,
-                { onPress: this._onPress.bind(this), style: _styles2.default.ProfileListItem, __source: {
+                { onPress: function onPress() {
+                        return _this2.props.onPress();
+                    }, style: _styles2.default.ProfileListItem, __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 11
+                        lineNumber: 8
                     }
                 },
                 _react3.default.createElement(
                     _reactNative.View,
                     { style: _styles2.default.ProfileListItemInner, __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 12
+                            lineNumber: 9
                         }
                     },
                     _react3.default.createElement(
                         _reactNative.Text,
                         { style: _styles2.default.ProfileListItemText, __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 13
+                                lineNumber: 10
                             }
                         },
-                        this.props.itemText
+                        this.props.text
                     )
                 )
             );
@@ -66869,76 +66865,174 @@ var ProfileListItem = exports.ProfileListItem = _wrapComponent('ProfileListItem'
     return ProfileListItem;
 }(_react2.Component));
 
-var FormItem = exports.FormItem = _wrapComponent('FormItem')(function (_Component2) {
-    _inherits(FormItem, _Component2);
+var SelectModal = exports.SelectModal = _wrapComponent('SelectModal')(function (_Component2) {
+    _inherits(SelectModal, _Component2);
 
-    function FormItem(props) {
-        _classCallCheck(this, FormItem);
+    function SelectModal(props) {
+        _classCallCheck(this, SelectModal);
 
-        var _this2 = _possibleConstructorReturn(this, (FormItem.__proto__ || Object.getPrototypeOf(FormItem)).call(this, props));
+        var _this3 = _possibleConstructorReturn(this, (SelectModal.__proto__ || Object.getPrototypeOf(SelectModal)).call(this, props));
 
-        _this2.state = { value: _this2.props.value };
-        return _this2;
+        _this3.state = { shown: false, value: null };
+        return _this3;
     }
 
-    _createClass(FormItem, [{
+    _createClass(SelectModal, [{
+        key: '_onSelect',
+        value: function _onSelect() {
+            this.props.onSelect(this.state.value);
+            this.setState({ shown: false });
+        }
+    }, {
+        key: 'show',
+        value: function show() {
+            this.setState({ shown: true });
+        }
+    }, {
+        key: 'hide',
+        value: function hide() {
+            this.setState({ shown: false });
+        }
+    }, {
         key: 'render',
         value: function render() {
-            var _this3 = this;
+            var _this4 = this;
 
-            if (this.props.type === "text") {
-                return _react3.default.createElement(_reactNative.TextInput, {
-                    style: _styles2.default.FormItem,
-                    value: this.props.value,
-                    placeholder: this.props.placeholder,
-                    onChangeText: function onChangeText(text) {
-                        return _this3.setState({ value: text });
+            var selectOptions = this.props.selectOptions.map(function (item) {
+                return _react3.default.createElement(_reactNative.Picker.Item, { label: item.name, value: item.value, key: item.value, __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 40
+                    }
+                });
+            });
+            return _react3.default.createElement(
+                _reactNative.Modal,
+                {
+                    animationType: 'slide',
+                    transparent: false,
+                    visible: this.state.shown,
+                    onRequestClose: function onRequestClose() {
+                        return _this4.hide();
                     },
                     __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 30
+                        lineNumber: 43
                     }
-                });
-            } else if (this.props.type === "select") {
-                var selectOptions = this.props.selectOptions.map(function (item) {
-                    return _react3.default.createElement(_reactNative.Picker.Item, { label: item.itemName, value: item.itemValue, key: item.itemValue, __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 39
-                        }
-                    });
-                });
-                return _react3.default.createElement(
+                },
+                _react3.default.createElement(
                     _reactNative.View,
-                    {
-                        __source: {
+                    { style: _styles2.default.SelectModal, __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 42
+                            lineNumber: 49
                         }
                     },
                     _react3.default.createElement(
-                        _reactNative.Text,
-                        {
-                            __source: {
+                        _reactNative.View,
+                        { style: _styles2.default.SelectModalHeader, __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 43
+                                lineNumber: 50
                             }
                         },
-                        'Test'
+                        _react3.default.createElement(_reactNative.Button, {
+                            onPress: function onPress() {
+                                return _this4._onSelect(_this4.props.value);
+                            },
+                            title: 'Done',
+                            __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 51
+                            }
+                        })
                     ),
                     _react3.default.createElement(
                         _reactNative.Picker,
                         {
                             selectedValue: this.state.value,
                             onValueChange: function onValueChange(itemValue, itemIndex) {
-                                _this3.setState({ value: itemValue });
+                                _this4.setState({ value: itemValue });
                             },
                             __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 44
+                                lineNumber: 56
                             }
                         },
                         selectOptions
                     )
+                )
+            );
+        }
+    }]);
+
+    return SelectModal;
+}(_react2.Component));
+
+var FormItem = exports.FormItem = _wrapComponent('FormItem')(function (_Component3) {
+    _inherits(FormItem, _Component3);
+
+    function FormItem(props) {
+        _classCallCheck(this, FormItem);
+
+        var _this5 = _possibleConstructorReturn(this, (FormItem.__proto__ || Object.getPrototypeOf(FormItem)).call(this, props));
+
+        _this5.state = {
+            value: _this5.props.item.value
+        };
+        return _this5;
+    }
+
+    _createClass(FormItem, [{
+        key: 'render',
+        value: function render() {
+            var _this6 = this;
+
+            if (this.props.item.type === "text") {
+                return _react3.default.createElement(_reactNative.TextInput, {
+                    style: _styles2.default.FormItem,
+                    value: this.state.value,
+                    placeholder: this.props.item.placeholder,
+                    onChangeText: function onChangeText(text) {
+                        return _this6.setState({ value: text });
+                    },
+                    __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 80
+                    }
+                });
+            } else if (this.props.item.type === "select") {
+                var displayText = this.props.item.selectOptions.filter(function (item) {
+                    return item.value === _this6.state.value;
+                });
+                return _react3.default.createElement(
+                    _reactNative.View,
+                    {
+                        __source: {
+                            fileName: _jsxFileName,
+                            lineNumber: 92
+                        }
+                    },
+                    _react3.default.createElement(ProfileListItem, {
+                        text: displayText[0].name,
+                        onPress: function onPress() {
+                            return _this6.selectModal.show();
+                        },
+                        __source: {
+                            fileName: _jsxFileName,
+                            lineNumber: 93
+                        }
+                    }),
+                    _react3.default.createElement(SelectModal, {
+                        ref: function ref(component) {
+                            return _this6.selectModal = component;
+                        },
+                        selectOptions: this.props.item.selectOptions,
+                        onSelect: function onSelect(value) {
+                            return _this6.setState({ value: value });
+                        },
+                        __source: {
+                            fileName: _jsxFileName,
+                            lineNumber: 97
+                        }
+                    })
                 );
             }
         }
