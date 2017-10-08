@@ -58450,6 +58450,9 @@ var ProfileList = _wrapComponent('ProfileList')(function (_Component) {
                 renderItem: function renderItem(item) {
                     return _this3._renderItem(item);
                 },
+                keyExtractor: function keyExtractor(item) {
+                    return item.itemText;
+                },
                 __source: {
                     fileName: _jsxFileName,
                     lineNumber: 33
@@ -58477,7 +58480,7 @@ var ProfileForm = _wrapComponent('ProfileForm')(function (_Component2) {
                 _reactNative.View,
                 { style: _styles2.default.ProfileForm, __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 44
+                        lineNumber: 45
                     }
                 },
                 this.props.children
@@ -58524,7 +58527,7 @@ var AccountView = _wrapComponent('AccountView')(function (_Component3) {
                 key: item.name,
                 __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 85
+                    lineNumber: 86
                 }
             });
         });
@@ -58539,7 +58542,7 @@ var AccountView = _wrapComponent('AccountView')(function (_Component3) {
                 {
                     __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 93
+                        lineNumber: 94
                     }
                 },
                 this.formItems
@@ -58565,7 +58568,7 @@ var SubscriptionView = _wrapComponent('SubscriptionView')(function (_Component4)
             return _react3.default.createElement(_reactNative.View, {
                 __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 103
+                    lineNumber: 104
                 }
             });
         }
@@ -58621,9 +58624,10 @@ var AddressView = _wrapComponent('AddressView')(function (_Component5) {
         }].map(function (item) {
             return _react3.default.createElement(_components2.FormItem, {
                 item: item,
+                key: item.name,
                 __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 156
+                    lineNumber: 157
                 }
             });
         });
@@ -58638,7 +58642,7 @@ var AddressView = _wrapComponent('AddressView')(function (_Component5) {
                 {
                     __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 163
+                        lineNumber: 165
                     }
                 },
                 this.formItems
@@ -58667,7 +58671,7 @@ var DiscordView = _wrapComponent('DiscordView')(function (_Component6) {
                 item: item,
                 __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 181
+                    lineNumber: 183
                 }
             });
         });
@@ -58682,7 +58686,7 @@ var DiscordView = _wrapComponent('DiscordView')(function (_Component6) {
                 {
                     __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 188
+                        lineNumber: 190
                     }
                 },
                 this.formItems
@@ -58711,7 +58715,7 @@ var MinecraftView = _wrapComponent('MinecraftView')(function (_Component7) {
                 item: item,
                 __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 206
+                    lineNumber: 208
                 }
             });
         });
@@ -58726,7 +58730,7 @@ var MinecraftView = _wrapComponent('MinecraftView')(function (_Component7) {
                 {
                     __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 213
+                        lineNumber: 215
                     }
                 },
                 this.formItems
@@ -58757,21 +58761,21 @@ var ProfileView = _wrapComponent('ProfileView')(function (_Component8) {
                 _reactNative.View,
                 { style: _styles2.default.ProfileView, __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 256
+                        lineNumber: 258
                     }
                 },
                 _react3.default.createElement(
                     _reactNative.View,
                     { style: _styles2.default.ProfileHeader, __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 257
+                            lineNumber: 259
                         }
                     },
                     _react3.default.createElement(
                         _reactNative.Text,
                         { style: _styles2.default.ProfileName, __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 258
+                                lineNumber: 260
                             }
                         },
                         this.state.profileName
@@ -58780,7 +58784,7 @@ var ProfileView = _wrapComponent('ProfileView')(function (_Component8) {
                         _reactNative.Text,
                         { style: _styles2.default.ProfileCreation, __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 259
+                                lineNumber: 261
                             }
                         },
                         this.state.creationDate
@@ -58788,7 +58792,7 @@ var ProfileView = _wrapComponent('ProfileView')(function (_Component8) {
                 ),
                 _react3.default.createElement(ProfileList, { listItems: this.listItems, navigation: this.props.navigation, __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 261
+                        lineNumber: 263
                     }
                 })
             );

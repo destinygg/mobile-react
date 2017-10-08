@@ -33,6 +33,7 @@ class ProfileList extends Component {
             <FlatList
                 data={this.props.listItems}
                 renderItem={(item) => this._renderItem(item)}
+                keyExtractor={(item) => item.itemText}
             />
         )
     }
@@ -155,6 +156,7 @@ class AddressView extends Component {
         ].map((item) =>
             <FormItem
                 item={item}
+                key={item.name}
             />
         );
     }
