@@ -5,6 +5,7 @@ import styles from './styles.js';
 
 class TwitchView extends Component {
     constructor() {
+        super();
         this.state = {"hidden": false};
     }
 
@@ -35,8 +36,8 @@ export class MainView extends Component {
     render() {
         return (
             <View style={styles.MainView}>
-                <TwitchView/>
-                <ChatView screenProps={{ chat: this.chat }}/>
+                <TwitchView />
+                <ChatView screenProps={{ chat: this.chat }} />
             </View>
         );
     }

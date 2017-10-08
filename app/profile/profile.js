@@ -1,23 +1,31 @@
 import React, { Component } from 'react';
-import { TabNavigator } from 'react-navigation';
-import { ProfileListItem } from '../components.js';
+import { View, Text, FlatList } from 'react-native';
+import { StackNavigator } from 'react-navigation';
+import { ProfileListItem, FormItem } from '../components.js';
+import styles from './styles.js';
 
 const countries = require("../../lib/assets/countries.json");
 const countryOptions = countries.map((item) => {
     return ({ itemName: item['name'], itemValue: item['alpha-2'] })
 });
 
-let PROFILEDATA;
+let PROFILEDATA = {
+    username: "Destiny",
+    email: "steven.bonnell.ii@gmail.com",
+    allowGifting: "1",
+    country: "US"
+};
 
 class ProfileList extends Component {
     _onPressItem(itemTarget) {
-        this.props.navigation.navigate({ routeName: itemTarget });
+        this.props.navigation.navigate(itemTarget);
     }
-    _renderItem(item) {
+    _renderItem({ item }) {
         return (
             <ProfileListItem
-                itemvalue={item.itemValue}
-                onPress={() => _onPressItem(item.itemTarget)}
+                itemText={item.itemText}
+                itemTarget={item.itemTarget}
+                onPress={this._onPressItem.bind(this)}
             />
         )
     }
@@ -25,14 +33,18 @@ class ProfileList extends Component {
         return(
             <FlatList
                 data={this.props.listItems}
-                renderItem={this._renderItem}
+                renderItem={this._renderItem.bind(this)}
             />
         )
     }
 }
 
 class ProfileForm extends Component {
-    
+    render() {
+        return (
+            <View style={styles.ProfileForm} />
+        )
+    }
 }
 
 class AccountView extends Component {
@@ -74,14 +86,16 @@ class AccountView extends Component {
                 name={item.itemName}
                 value={item.itemValue} 
                 placeholder={item.itemPlaceholder}
+                selectOptions={item.selectOptions}
+                key={item.itemName}
             />
         );
     }
     render() {
         return (
-            <ProfileForm>
+            <View>
                 {this.formItems}
-            </ProfileForm>
+            </View>
         )
     }
 }
@@ -89,13 +103,14 @@ class AccountView extends Component {
 class SubscriptionView extends Component {
     render() {
         return (
-
+            <View />
         )
     }
 }
 
 class AddressView extends Component {
     constructor() {
+        super();
         this.formItems = [
             {
                 itemValue: PROFILEDATA.fullName,
@@ -216,14 +231,16 @@ class MinecraftView extends Component {
 
 class ProfileView extends Component {
     constructor() {
+        super();
         this.state = { loaded: false };
         this.listItems = [
-            { itemValue: 'Account', itemTarget: 'Account' },
-            { itemValue: 'Subscription', itemTarget: 'Subscription' },
-            { itemValue: 'Address', itemTarget: 'Address' },
-            { itemValue: 'Minecraft', itemTarget: 'Minecraft' },
-            { itemValue: 'Discord', itemTarget: 'Discord' },
+            { itemText: 'Account', itemTarget: 'Account' },
+            { itemText: 'Subscription', itemTarget: 'Subscription' },
+            { itemText: 'Address', itemTarget: 'Address' },
+            { itemText: 'Minecraft', itemTarget: 'Minecraft' },
+            { itemText: 'Discord', itemTarget: 'Discord' },
         ];
+        /*
         fetch("https://www.destiny.gg/api/profile").then((result) => {
             if (response.status !== 200) {
                 this.error = true;
@@ -238,22 +255,22 @@ class ProfileView extends Component {
             })
         }, (error) => {
             this.error = true;
-        });
+        });*/
     }
     render() {
-        if (!this.state.loaded) {
-            return ( <LoadingView/> );
+        /*if (!this.state.loaded) {
+            return ( <LoadingView /> );
         }
         if (this.error) {
-            return ( <ErrorView/> );
-        }
+            return ( <ErrorView /> );
+        }*/
         return (
             <View style={styles.ProfileView}>
                 <View style={styles.ProfileHeader}>
                     <Text style={styles.ProfileName}>{this.state.profileName}</Text>
                     <Text style={styles.ProfileCreation}>{this.state.creationDate}</Text>
                 </View>
-                <ProfileList listItems={this.listItems}/>
+                <ProfileList listItems={this.listItems} navigation={this.props.navigation}/>
             </View>
         )
     }
