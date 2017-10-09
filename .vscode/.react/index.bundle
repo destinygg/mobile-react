@@ -58424,7 +58424,9 @@ var _index2 = _interopRequireDefault(_index);
 
 var _jsxFileName = '/Users/davidcako/source/destinyapp/app/profile/profile.js',
     _class,
-    _temp;
+    _temp,
+    _class2,
+    _temp2;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -58520,6 +58522,34 @@ var ProfileList = _wrapComponent('ProfileList')(function (_Component) {
 
             var item = _ref.item;
 
+            if ('header' in item) {
+                return _react3.default.createElement(
+                    _reactNative.View,
+                    { style: _styles2.default.ProfileHeader, __source: {
+                            fileName: _jsxFileName,
+                            lineNumber: 27
+                        }
+                    },
+                    _react3.default.createElement(
+                        _reactNative.Text,
+                        { style: _styles2.default.title, __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 28
+                            }
+                        },
+                        item.header.profileName
+                    ),
+                    _react3.default.createElement(
+                        _reactNative.Text,
+                        { style: _styles2.default.subtitle, __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 29
+                            }
+                        },
+                        'Created: ' + item.header.creationDate
+                    )
+                );
+            }
             return _react3.default.createElement(_components2.ProfileListItem, {
                 text: item.itemText,
                 onPress: function onPress() {
@@ -58527,7 +58557,7 @@ var ProfileList = _wrapComponent('ProfileList')(function (_Component) {
                 },
                 __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 26
+                    lineNumber: 34
                 }
             });
         }
@@ -58544,9 +58574,10 @@ var ProfileList = _wrapComponent('ProfileList')(function (_Component) {
                 keyExtractor: function keyExtractor(item) {
                     return item.itemText;
                 },
+                style: _styles2.default.List,
                 __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 34
+                    lineNumber: 42
                 }
             });
         }
@@ -58569,9 +58600,9 @@ var ProfileForm = _wrapComponent('ProfileForm')(function (_Component2) {
         value: function render() {
             return _react3.default.createElement(
                 _reactNative.View,
-                { style: _styles2.default.ProfileForm, __source: {
+                { style: [_styles2.default.View, _styles2.default.List, { marginTop: 15 }], __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 46
+                        lineNumber: 55
                     }
                 },
                 this.props.children
@@ -58582,7 +58613,7 @@ var ProfileForm = _wrapComponent('ProfileForm')(function (_Component2) {
     return ProfileForm;
 }(_react2.Component));
 
-var AccountView = _wrapComponent('AccountView')(function (_Component3) {
+var AccountView = _wrapComponent('AccountView')((_temp = _class = function (_Component3) {
     _inherits(AccountView, _Component3);
 
     function AccountView() {
@@ -58599,13 +58630,15 @@ var AccountView = _wrapComponent('AccountView')(function (_Component3) {
             value: PROFILEDATA.email,
             placeholder: "Email",
             name: "email",
-            type: "text"
+            type: "text",
+            spacer: true
         }, {
             value: PROFILEDATA.country,
             placeholder: "Nationality",
             name: "country",
             type: "select",
-            selectOptions: countryOptions
+            selectOptions: countryOptions,
+            spacer: true
         }, {
             value: PROFILEDATA.allowGifting,
             placeholder: "Accept Gifts",
@@ -58618,7 +58651,7 @@ var AccountView = _wrapComponent('AccountView')(function (_Component3) {
                 key: item.name,
                 __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 87
+                    lineNumber: 101
                 }
             });
         });
@@ -58629,20 +58662,30 @@ var AccountView = _wrapComponent('AccountView')(function (_Component3) {
         key: 'render',
         value: function render() {
             return _react3.default.createElement(
-                ProfileForm,
-                {
-                    __source: {
+                _reactNative.ScrollView,
+                { style: _styles2.default.View, __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 95
+                        lineNumber: 109
                     }
                 },
-                this.formItems
+                _react3.default.createElement(
+                    ProfileForm,
+                    {
+                        __source: {
+                            fileName: _jsxFileName,
+                            lineNumber: 110
+                        }
+                    },
+                    this.formItems
+                )
             );
         }
     }]);
 
     return AccountView;
-}(_react2.Component));
+}(_react2.Component), _class.navigationOptions = {
+    title: 'Account'
+}, _temp));
 
 var SubscriptionView = _wrapComponent('SubscriptionView')(function (_Component4) {
     _inherits(SubscriptionView, _Component4);
@@ -58659,7 +58702,7 @@ var SubscriptionView = _wrapComponent('SubscriptionView')(function (_Component4)
             return _react3.default.createElement(_reactNative.View, {
                 __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 105
+                    lineNumber: 121
                 }
             });
         }
@@ -58718,7 +58761,7 @@ var AddressView = _wrapComponent('AddressView')(function (_Component5) {
                 key: item.name,
                 __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 158
+                    lineNumber: 174
                 }
             });
         });
@@ -58729,14 +58772,22 @@ var AddressView = _wrapComponent('AddressView')(function (_Component5) {
         key: 'render',
         value: function render() {
             return _react3.default.createElement(
-                ProfileForm,
-                {
-                    __source: {
+                _reactNative.ScrollView,
+                { style: _styles2.default.View, __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 166
+                        lineNumber: 182
                     }
                 },
-                this.formItems
+                _react3.default.createElement(
+                    ProfileForm,
+                    {
+                        __source: {
+                            fileName: _jsxFileName,
+                            lineNumber: 183
+                        }
+                    },
+                    this.formItems
+                )
             );
         }
     }]);
@@ -58760,9 +58811,10 @@ var DiscordView = _wrapComponent('DiscordView')(function (_Component6) {
         }].map(function (item) {
             return _react3.default.createElement(_components2.FormItem, {
                 item: item,
+                key: item.name,
                 __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 184
+                    lineNumber: 202
                 }
             });
         });
@@ -58773,14 +58825,22 @@ var DiscordView = _wrapComponent('DiscordView')(function (_Component6) {
         key: 'render',
         value: function render() {
             return _react3.default.createElement(
-                ProfileForm,
-                {
-                    __source: {
+                _reactNative.ScrollView,
+                { style: _styles2.default.View, __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 191
+                        lineNumber: 210
                     }
                 },
-                this.formItems
+                _react3.default.createElement(
+                    ProfileForm,
+                    {
+                        __source: {
+                            fileName: _jsxFileName,
+                            lineNumber: 211
+                        }
+                    },
+                    this.formItems
+                )
             );
         }
     }]);
@@ -58804,9 +58864,10 @@ var MinecraftView = _wrapComponent('MinecraftView')(function (_Component7) {
         }].map(function (item) {
             return _react3.default.createElement(_components2.FormItem, {
                 item: item,
+                key: item.name,
                 __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 209
+                    lineNumber: 230
                 }
             });
         });
@@ -58817,14 +58878,22 @@ var MinecraftView = _wrapComponent('MinecraftView')(function (_Component7) {
         key: 'render',
         value: function render() {
             return _react3.default.createElement(
-                ProfileForm,
-                {
-                    __source: {
+                _reactNative.ScrollView,
+                { style: _styles2.default.View, __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 216
+                        lineNumber: 238
                     }
                 },
-                this.formItems
+                _react3.default.createElement(
+                    ProfileForm,
+                    {
+                        __source: {
+                            fileName: _jsxFileName,
+                            lineNumber: 239
+                        }
+                    },
+                    this.formItems
+                )
             );
         }
     }]);
@@ -58832,7 +58901,7 @@ var MinecraftView = _wrapComponent('MinecraftView')(function (_Component7) {
     return MinecraftView;
 }(_react2.Component));
 
-var ProfileView = _wrapComponent('ProfileView')((_temp = _class = function (_Component8) {
+var ProfileView = _wrapComponent('ProfileView')((_temp2 = _class2 = function (_Component8) {
     _inherits(ProfileView, _Component8);
 
     function ProfileView() {
@@ -58845,49 +58914,29 @@ var ProfileView = _wrapComponent('ProfileView')((_temp = _class = function (_Com
             profileName: PROFILEDATA.username,
             creationDate: PROFILEDATA.creationDate
         };
-        _this10.listItems = [{ itemText: 'Account', itemTarget: 'Account' }, { itemText: 'Subscription', itemTarget: 'Subscription' }, { itemText: 'Address', itemTarget: 'Address' }, { itemText: 'Minecraft', itemTarget: 'Minecraft' }, { itemText: 'Discord', itemTarget: 'Discord' }];
         return _this10;
     }
 
     _createClass(ProfileView, [{
         key: 'render',
         value: function render() {
+            this.listItems = [{
+                header: {
+                    profileName: this.state.profileName,
+                    creationDate: this.state.creationDate
+                },
+                itemText: 'header'
+            }, { itemText: 'Account', itemTarget: 'Account' }, { itemText: 'Subscription', itemTarget: 'Subscription' }, { itemText: 'Address', itemTarget: 'Address' }, { itemText: 'Minecraft', itemTarget: 'Minecraft' }, { itemText: 'Discord', itemTarget: 'Discord' }];
             return _react3.default.createElement(
                 _reactNative.View,
                 { style: _styles2.default.View, __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 266
+                        lineNumber: 297
                     }
                 },
-                _react3.default.createElement(
-                    _reactNative.View,
-                    { style: _styles2.default.ProfileHeader, __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 267
-                        }
-                    },
-                    _react3.default.createElement(
-                        _reactNative.Text,
-                        { style: _styles2.default.title, __source: {
-                                fileName: _jsxFileName,
-                                lineNumber: 268
-                            }
-                        },
-                        this.state.profileName
-                    ),
-                    _react3.default.createElement(
-                        _reactNative.Text,
-                        { style: _styles2.default.subtitle, __source: {
-                                fileName: _jsxFileName,
-                                lineNumber: 269
-                            }
-                        },
-                        'Created: ' + this.state.creationDate
-                    )
-                ),
                 _react3.default.createElement(ProfileList, { listItems: this.listItems, navigation: this.props.navigation, __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 271
+                        lineNumber: 298
                     }
                 })
             );
@@ -58895,9 +58944,9 @@ var ProfileView = _wrapComponent('ProfileView')((_temp = _class = function (_Com
     }]);
 
     return ProfileView;
-}(_react2.Component), _class.navigationOptions = {
+}(_react2.Component), _class2.navigationOptions = {
     title: 'Profile'
-}, _temp));
+}, _temp2));
 
 var ProfileNav = (0, _reactNavigation.StackNavigator)({
     Profile: { screen: ProfileView },
@@ -66941,7 +66990,7 @@ var ProfileListItem = exports.ProfileListItem = _wrapComponent('ProfileListItem'
                 _reactNative.TouchableHighlight,
                 { onPress: function onPress() {
                         return _this2.props.onPress();
-                    }, style: _styles2.default.ListItem, __source: {
+                    }, style: [this.props.style, _styles2.default.ListItem], __source: {
                         fileName: _jsxFileName,
                         lineNumber: 8
                     }
@@ -66970,7 +67019,7 @@ var SelectModal = exports.SelectModal = _wrapComponent('SelectModal')(function (
 
         var _this3 = _possibleConstructorReturn(this, (SelectModal.__proto__ || Object.getPrototypeOf(SelectModal)).call(this, props));
 
-        _this3.state = { shown: false, value: null };
+        _this3.state = { shown: false, value: _this3.props.value };
         return _this3;
     }
 
@@ -67006,7 +67055,7 @@ var SelectModal = exports.SelectModal = _wrapComponent('SelectModal')(function (
                 _reactNative.Modal,
                 {
                     animationType: 'slide',
-                    transparent: false,
+                    transparent: true,
                     visible: this.state.shown,
                     onRequestClose: function onRequestClose() {
                         return _this4.hide();
@@ -67018,42 +67067,51 @@ var SelectModal = exports.SelectModal = _wrapComponent('SelectModal')(function (
                 },
                 _react3.default.createElement(
                     _reactNative.View,
-                    { style: _styles2.default.SelectModal, __source: {
+                    { style: _styles2.default.SelectModalOuter, __source: {
                             fileName: _jsxFileName,
                             lineNumber: 47
                         }
                     },
                     _react3.default.createElement(
                         _reactNative.View,
-                        { style: _styles2.default.SelectModalHeader, __source: {
+                        { style: _styles2.default.SelectModalInner, __source: {
                                 fileName: _jsxFileName,
                                 lineNumber: 48
                             }
                         },
-                        _react3.default.createElement(_reactNative.Button, {
-                            onPress: function onPress() {
-                                return _this4._onSelect(_this4.props.value);
+                        _react3.default.createElement(
+                            _reactNative.View,
+                            { style: _styles2.default.SelectModalHeader, __source: {
+                                    fileName: _jsxFileName,
+                                    lineNumber: 49
+                                }
                             },
-                            title: 'Done',
-                            __source: {
-                                fileName: _jsxFileName,
-                                lineNumber: 49
-                            }
-                        })
-                    ),
-                    _react3.default.createElement(
-                        _reactNative.Picker,
-                        {
-                            selectedValue: this.state.value,
-                            onValueChange: function onValueChange(itemValue, itemIndex) {
-                                _this4.setState({ value: itemValue });
+                            _react3.default.createElement(_reactNative.Button, {
+                                onPress: function onPress() {
+                                    return _this4._onSelect(_this4.props.value);
+                                },
+                                title: 'Done',
+                                __source: {
+                                    fileName: _jsxFileName,
+                                    lineNumber: 50
+                                }
+                            })
+                        ),
+                        _react3.default.createElement(
+                            _reactNative.Picker,
+                            {
+                                selectedValue: this.state.value,
+                                onValueChange: function onValueChange(itemValue, itemIndex) {
+                                    _this4.setState({ value: itemValue });
+                                },
+                                itemStyle: _styles2.default.text,
+                                __source: {
+                                    fileName: _jsxFileName,
+                                    lineNumber: 55
+                                }
                             },
-                            __source: {
-                                fileName: _jsxFileName,
-                                lineNumber: 54
-                            }
-                        },
-                        selectOptions
+                            selectOptions
+                        )
                     )
                 )
             );
@@ -67082,56 +67140,73 @@ var FormItem = exports.FormItem = _wrapComponent('FormItem')(function (_Componen
         value: function render() {
             var _this6 = this;
 
+            var children = [];
+
             if (this.props.item.type === "text") {
-                return _react3.default.createElement(_reactNative.TextInput, {
+                children.push(_react3.default.createElement(_reactNative.TextInput, {
                     style: _styles2.default.FormItem,
                     value: this.state.value,
                     placeholder: this.props.item.placeholder,
+                    placeholderTextColor: '#888',
                     onChangeText: function onChangeText(text) {
                         return _this6.setState({ value: text });
                     },
+                    key: this.props.item.name,
                     __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 78
+                        lineNumber: 83
                     }
-                });
+                }));
             } else if (this.props.item.type === "select") {
                 var displayText = this.props.item.selectOptions.filter(function (item) {
                     return item.value === _this6.state.value;
                 });
-                return _react3.default.createElement(
-                    _reactNative.View,
-                    {
-                        __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 90
-                        }
+                children.push(_react3.default.createElement(ProfileListItem, {
+                    text: displayText[0].name,
+                    onPress: function onPress() {
+                        return _this6.selectModal.show();
                     },
-                    _react3.default.createElement(ProfileListItem, {
-                        text: displayText[0].name,
-                        onPress: function onPress() {
-                            return _this6.selectModal.show();
-                        },
-                        __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 91
-                        }
-                    }),
-                    _react3.default.createElement(SelectModal, {
-                        ref: function ref(component) {
-                            return _this6.selectModal = component;
-                        },
-                        selectOptions: this.props.item.selectOptions,
-                        onSelect: function onSelect(value) {
-                            return _this6.setState({ value: value });
-                        },
-                        __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 95
-                        }
-                    })
-                );
+                    key: this.props.item.name,
+                    __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 97
+                    }
+                }));
+                children.push(_react3.default.createElement(SelectModal, {
+                    ref: function ref(component) {
+                        return _this6.selectModal = component;
+                    },
+                    selectOptions: this.props.item.selectOptions,
+                    onSelect: function onSelect(value) {
+                        return _this6.setState({ value: value });
+                    },
+                    value: this.state.value,
+                    key: this.props.item.name + "Modal",
+                    __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 104
+                    }
+                }));
             }
+
+            if (this.props.item.spacer == true) {
+                children.push(_react3.default.createElement(_reactNative.View, { style: { height: 15 }, key: this.props.item.name + "After", __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 115
+                    }
+                }));
+            }
+
+            return _react3.default.createElement(
+                _reactNative.View,
+                {
+                    __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 119
+                    }
+                },
+                children
+            );
         }
     }]);
 
@@ -67163,8 +67238,20 @@ var inheritedStyles = exports.inheritedStyles = {
     highlight: {
         color: "#B5B69C"
     },
+    FormItem: {
+        color: "#888",
+        backgroundColor: "#171717",
+        paddingLeft: 15,
+        paddingTop: 10,
+        paddingBottom: 10,
+        paddingRight: 15,
+        borderColor: "#222",
+        borderBottomWidth: _reactNative.StyleSheet.hairlineWidth,
+        borderTopWidth: _reactNative.StyleSheet.hairlineWidth
+    },
     ListItemText: {
-        color: "#FFF"
+        color: "#FFF",
+        fontSize: 16
     },
     Navigation: {
         backgroundColor: "#181818",
@@ -67175,14 +67262,27 @@ var inheritedStyles = exports.inheritedStyles = {
         color: "#FFF"
     },
     ListItem: {
-        padding: 10,
         backgroundColor: "#171717",
-        borderColor: "#1F1F1F",
-        borderStyle: "solid"
+        paddingLeft: 15,
+        paddingTop: 10,
+        paddingBottom: 10,
+        paddingRight: 15,
+        borderColor: "#222",
+        borderTopWidth: _reactNative.StyleSheet.hairlineWidth,
+        borderBottomWidth: _reactNative.StyleSheet.hairlineWidth
     },
-    SelectModal: {
-        height: '50%',
-        bottom: 0
+    SelectModalOuter: {
+        flex: 1,
+        justifyContent: 'flex-end'
+    },
+    SelectModalInner: {
+        backgroundColor: "#181818"
+    },
+    SelectModalHeader: {
+        marginTop: 5,
+        marginRight: 10,
+        flexDirection: 'row',
+        justifyContent: 'flex-end'
     },
     View: {
         flex: 1,

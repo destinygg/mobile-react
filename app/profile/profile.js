@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList } from 'react-native';
+import { View, Text, FlatList, ScrollView } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import { ProfileListItem, FormItem } from '../components.js';
 import styles from './styles.js';
@@ -22,6 +22,14 @@ class ProfileList extends Component {
         this.props.navigation.navigate(itemTarget);
     }
     _renderItem({ item }) {
+        if ('header' in item) {
+            return (
+                <View style={styles.ProfileHeader}>
+                    <Text style={styles.title}>{item.header.profileName}</Text>                
+                    <Text style={styles.subtitle}>{'Created: ' + item.header.creationDate}</Text>
+                </View>
+            )
+        }
         return (
             <ProfileListItem
                 text={item.itemText}
@@ -35,6 +43,7 @@ class ProfileList extends Component {
                 data={this.props.listItems}
                 renderItem={(item) => this._renderItem(item)}
                 keyExtractor={(item) => item.itemText}
+                style={styles.List}
             />
         )
     }
@@ -43,7 +52,7 @@ class ProfileList extends Component {
 class ProfileForm extends Component {
     render() {
         return (
-            <View style={styles.ProfileForm}>
+            <View style={[styles.View, styles.List, { marginTop: 15 }]}>
                 {this.props.children}
             </View>
         )
@@ -51,6 +60,9 @@ class ProfileForm extends Component {
 }
 
 class AccountView extends Component {
+    static navigationOptions = {
+        title: 'Account',
+    };
     constructor() {
         super();
         this.formItems = [
@@ -64,14 +76,16 @@ class AccountView extends Component {
                 value: PROFILEDATA.email,
                 placeholder: "Email",
                 name: "email",
-                type: "text"
+                type: "text",
+                spacer: true
             },
             {
                 value: PROFILEDATA.country,
                 placeholder: "Nationality",
                 name: "country",
                 type: "select",
-                selectOptions: countryOptions
+                selectOptions: countryOptions,
+                spacer: true
             },
             {
                 value: PROFILEDATA.allowGifting,
@@ -92,9 +106,11 @@ class AccountView extends Component {
     }
     render() {
         return (
-            <ProfileForm>
-                {this.formItems}
-            </ProfileForm>
+            <ScrollView style={styles.View}>
+                <ProfileForm>
+                    {this.formItems}
+                </ProfileForm>
+            </ScrollView>
         )
     }
 }
@@ -163,9 +179,11 @@ class AddressView extends Component {
     }
     render() {
         return (
-            <ProfileForm>
-                {this.formItems}
-            </ProfileForm>
+            <ScrollView style={styles.View}>            
+                <ProfileForm>
+                    {this.formItems}
+                </ProfileForm>
+            </ScrollView>
         )
     }
 }
@@ -183,14 +201,17 @@ class DiscordView extends Component {
         ].map((item) =>
             <FormItem
                 item={item}
+                key={item.name}
             />
         );
     }
     render() {
         return (
-            <ProfileForm>
-                {this.formItems}
-            </ProfileForm>
+            <ScrollView style={styles.View}>            
+                <ProfileForm>
+                    {this.formItems}
+                </ProfileForm>
+            </ScrollView>
         )
     }
 }
@@ -208,14 +229,17 @@ class MinecraftView extends Component {
         ].map((item) =>
             <FormItem
                 item={item}
+                key={item.name}
             />
         );
     }
     render() {
         return (
-            <ProfileForm>
-                {this.formItems}
-            </ProfileForm>
+            <ScrollView style={styles.View}>            
+                <ProfileForm>
+                    {this.formItems}
+                </ProfileForm>
+            </ScrollView>
         )
     }
 }
@@ -231,13 +255,6 @@ class ProfileView extends Component {
             profileName: PROFILEDATA.username,
             creationDate: PROFILEDATA.creationDate
         };
-        this.listItems = [
-            { itemText: 'Account', itemTarget: 'Account' },
-            { itemText: 'Subscription', itemTarget: 'Subscription' },
-            { itemText: 'Address', itemTarget: 'Address' },
-            { itemText: 'Minecraft', itemTarget: 'Minecraft' },
-            { itemText: 'Discord', itemTarget: 'Discord' }
-        ];
         /*
         fetch("https://www.destiny.gg/api/profile").then((result) => {
             if (response.status !== 200) {
@@ -262,12 +279,22 @@ class ProfileView extends Component {
         if (this.error) {
             return ( <ErrorView /> );
         }*/
+        this.listItems = [
+            { 
+                header: {
+                    profileName: this.state.profileName ,
+                    creationDate: this.state.creationDate
+                },
+                itemText: 'header'
+            },
+            { itemText: 'Account', itemTarget: 'Account' },
+            { itemText: 'Subscription', itemTarget: 'Subscription' },
+            { itemText: 'Address', itemTarget: 'Address' },
+            { itemText: 'Minecraft', itemTarget: 'Minecraft' },
+            { itemText: 'Discord', itemTarget: 'Discord' }
+        ];
         return (
             <View style={styles.View}>
-                <View style={styles.ProfileHeader}>
-                    <Text style={styles.title}>{this.state.profileName}</Text>
-                    <Text style={styles.subtitle}>{'Created: ' + this.state.creationDate}</Text>
-                </View>
                 <ProfileList listItems={this.listItems} navigation={this.props.navigation}/>
             </View>
         )

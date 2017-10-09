@@ -16,8 +16,20 @@ export const inheritedStyles = {
     highlight: {
         color: "#B5B69C"
     },
+    FormItem: {
+        color: "#888",
+        backgroundColor: "#171717",
+        paddingLeft: 15,
+        paddingTop: 10,
+        paddingBottom: 10,
+        paddingRight: 15, 
+        borderColor: "#222",
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderTopWidth: StyleSheet.hairlineWidth
+    },
     ListItemText: {
-        color: "#FFF"
+        color: "#FFF",
+        fontSize: 16
     },
     Navigation: {
         backgroundColor: "#181818",
@@ -28,14 +40,27 @@ export const inheritedStyles = {
         color: "#FFF"
     },
     ListItem: {
-        padding: 10,
-        backgroundColor: "#171717",
-        borderColor: "#1F1F1F",
-        borderStyle: "solid"
+        backgroundColor: "#171717",             
+        paddingLeft: 15,
+        paddingTop: 10,
+        paddingBottom: 10, 
+        paddingRight: 15,       
+        borderColor: "#222",
+        borderTopWidth: StyleSheet.hairlineWidth,        
+        borderBottomWidth: StyleSheet.hairlineWidth
     },
-    SelectModal: {
-        height: '50%',
-        bottom: 0
+    SelectModalOuter: {
+        flex: 1,
+        justifyContent: 'flex-end'
+    },
+    SelectModalInner: {
+        backgroundColor: "#181818",
+    },
+    SelectModalHeader: {
+        marginTop: 5,
+        marginRight: 10,
+        flexDirection: 'row',
+        justifyContent: 'flex-end'
     },
     View: {
         flex: 1,
