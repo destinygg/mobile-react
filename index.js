@@ -1,5 +1,4 @@
 import { AppRegistry } from 'react-native';
-//import App from './App';
-import ProfileNav from './app/profile/profile.js';
+import App from './App';
 
-AppRegistry.registerComponent('destinyapp', () => ProfileNav);
+AppRegistry.registerComponent('destinyapp', () => App);

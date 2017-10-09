@@ -5,12 +5,10 @@ import styles from './styles.js';
 export class ProfileListItem extends Component {
     render() {
         return (
-            <TouchableHighlight onPress={() => this.props.onPress()} style={styles.ProfileListItem}>
-                <View style={styles.ProfileListItemInner}>
-                    <Text style={styles.ProfileListItemText}>
-                        {this.props.text}
-                    </Text>
-                </View>
+            <TouchableHighlight onPress={() => this.props.onPress()} style={styles.ListItem}>
+                <Text style={styles.ListItemText}>
+                    {this.props.text}
+                </Text>
             </TouchableHighlight>
         )
     }

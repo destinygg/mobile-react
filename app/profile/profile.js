@@ -11,6 +11,7 @@ const countryOptions = countries.map((item) => {
 
 let PROFILEDATA = {
     username: "Destiny",
+    creationDate: "03 June, 2015",
     email: "steven.bonnell.ii@gmail.com",
     allowGifting: "1",
     country: "US"
@@ -220,15 +221,22 @@ class MinecraftView extends Component {
 }
 
 class ProfileView extends Component {
+    static navigationOptions = {
+        title: 'Profile',
+    };
     constructor() {
         super();
-        this.state = { loaded: false };
+        this.state = {
+            loaded: false,
+            profileName: PROFILEDATA.username,
+            creationDate: PROFILEDATA.creationDate
+        };
         this.listItems = [
             { itemText: 'Account', itemTarget: 'Account' },
             { itemText: 'Subscription', itemTarget: 'Subscription' },
             { itemText: 'Address', itemTarget: 'Address' },
             { itemText: 'Minecraft', itemTarget: 'Minecraft' },
-            { itemText: 'Discord', itemTarget: 'Discord' },
+            { itemText: 'Discord', itemTarget: 'Discord' }
         ];
         /*
         fetch("https://www.destiny.gg/api/profile").then((result) => {
@@ -255,10 +263,10 @@ class ProfileView extends Component {
             return ( <ErrorView /> );
         }*/
         return (
-            <View style={styles.ProfileView}>
+            <View style={styles.View}>
                 <View style={styles.ProfileHeader}>
-                    <Text style={styles.ProfileName}>{this.state.profileName}</Text>
-                    <Text style={styles.ProfileCreation}>{this.state.creationDate}</Text>
+                    <Text style={styles.title}>{this.state.profileName}</Text>
+                    <Text style={styles.subtitle}>{'Created: ' + this.state.creationDate}</Text>
                 </View>
                 <ProfileList listItems={this.listItems} navigation={this.props.navigation}/>
             </View>
@@ -274,7 +282,11 @@ const ProfileNav = StackNavigator({
     Discord: { screen: DiscordView },
     Minecraft: { screen: MinecraftView }
 }, {
-    initialRouteName: 'Profile'
+    initialRouteName: 'Profile',
+    navigationOptions: {
+        headerStyle: styles.Navigation,
+        headerTitleStyle: styles.NavigationHeaderTitle
+    }
 });
 
 export default ProfileNav;
