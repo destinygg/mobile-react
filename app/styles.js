@@ -17,15 +17,12 @@ export const inheritedStyles = {
         color: "#B5B69C"
     },
     FormItem: {
-        color: "#888",
-        backgroundColor: "#171717",
-        paddingLeft: 15,
+        color: "#FFF",
         paddingTop: 10,
         paddingBottom: 10,
         paddingRight: 15, 
         borderColor: "#222",
         borderBottomWidth: StyleSheet.hairlineWidth,
-        borderTopWidth: StyleSheet.hairlineWidth
     },
     ListItemText: {
         color: "#FFF",
@@ -39,15 +36,26 @@ export const inheritedStyles = {
     NavigationHeaderTitle: {
         color: "#FFF"
     },
-    ListItem: {
+    ListItemOuter: {
         backgroundColor: "#171717",             
-        paddingLeft: 15,
-        paddingTop: 10,
-        paddingBottom: 10, 
-        paddingRight: 15,       
+        paddingLeft: 15,      
         borderColor: "#222",
-        borderTopWidth: StyleSheet.hairlineWidth,        
-        borderBottomWidth: StyleSheet.hairlineWidth
+    },
+    ListItemInner: {
+        paddingTop: 10,
+        paddingRight: 15, 
+        paddingBottom: 10,         
+        borderColor: "#222",
+        borderBottomWidth: StyleSheet.hairlineWidth        
+    },
+    firstInList: {
+        borderTopWidth: StyleSheet.hairlineWidth,                
+    },
+    lastInList: {
+        borderBottomWidth: StyleSheet.hairlineWidth,
+    },
+    innerLastInList: {
+        borderBottomWidth: 0
     },
     SelectModalOuter: {
         flex: 1,

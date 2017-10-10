@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, ScrollView } from 'react-native';
+import { View, Text, FlatList, ScrollView, Button } from 'react-native';
 import { StackNavigator } from 'react-navigation';
-import { ProfileListItem, FormItem } from '../components.js';
+import { NavList, NavListItem, FormItem } from '../components.js';
 import styles from './styles.js';
 
 const countries = require("../../lib/assets/countries.json");
@@ -17,99 +17,131 @@ let PROFILEDATA = {
     country: "US"
 };
 
-class ProfileList extends Component {
-    _onPressItem(itemTarget) {
-        this.props.navigation.navigate(itemTarget);
-    }
-    _renderItem({ item }) {
-        if ('header' in item) {
-            return (
-                <View style={styles.ProfileHeader}>
-                    <Text style={styles.title}>{item.header.profileName}</Text>                
-                    <Text style={styles.subtitle}>{'Created: ' + item.header.creationDate}</Text>
-                </View>
-            )
-        }
-        return (
-            <ProfileListItem
-                text={item.itemText}
-                onPress={() => this._onPressItem(item.itemTarget)}
-            />
-        )
-    }
-    render() {
-        return(
-            <FlatList
-                data={this.props.listItems}
-                renderItem={(item) => this._renderItem(item)}
-                keyExtractor={(item) => item.itemText}
-                style={styles.List}
-            />
-        )
-    }
-}
-
 class ProfileForm extends Component {
     render() {
+        const children = this.props.formItems.map((item, index, array) =>
+            <FormItem
+                item={item}
+                key={item.name}
+                first={index === 0}
+                last={index === (array.length - 1)}
+                onChange={(name, value) => this.props.onChange(name, value)}
+            />
+        );
+
         return (
             <View style={[styles.View, styles.List, { marginTop: 15 }]}>
-                {this.props.children}
+                {children}
             </View>
         )
     }
 }
 
-class AccountView extends Component {
-    static navigationOptions = {
-        title: 'Account',
-    };
+class FormSaveBtn extends Component {
+    render() {
+        return(
+            <View style={{ marginRight: 10 }}>
+                <Button title='Save' onPress={this.props.onSave} />
+            </View>
+        )
+    }
+}
+
+class FormView extends Component {
     constructor() {
         super();
-        this.formItems = [
-            { 
-                value: PROFILEDATA.username,
-                placeholder: "Username", 
-                name: "username",
-                type: "text"
-            },
-            {
-                value: PROFILEDATA.email,
-                placeholder: "Email",
-                name: "email",
-                type: "text",
-                spacer: true
-            },
-            {
-                value: PROFILEDATA.country,
-                placeholder: "Nationality",
-                name: "country",
-                type: "select",
-                selectOptions: countryOptions,
-                spacer: true
-            },
-            {
-                value: PROFILEDATA.allowGifting,
-                placeholder: "Accept Gifts",
-                name: "allowGifting",
-                type: "select",
-                selectOptions: [
-                    { name: "Yes, I accept gifts", value: "1" },
-                    { name: "No, I do not accept gifts", value: "0" }
-                ]
-            },
-        ].map((item) => 
-            <FormItem 
-                item={item}
-                key={item.name}
-            />
-        );
+    }
+    _onChange(name, value) {
+        let updatedState = [];
+
+        updatedState[name] = value;
+
+        this.setState(updatedState);
+    }
+    _extractState(item) {
+        let extracted = {};
+        
+        if (Array.isArray(item)) {
+            for (var i = 0; i < item.length; i++) {
+                Object.assign(extracted, this._extractState(item[i]));
+            }
+        } else {
+            extracted[item.name] = item.value;
+        }
+        return extracted;
+    }
+    save() {
+        /* send fetch to d.gg api */
+    }
+    componentWillMount() {
+        let initState = {};
+
+        Object.assign(initState, this._extractState(this.formItems));
+
+        this.initState = initState;
+
+        this.setState(initState);
     }
     render() {
         return (
             <ScrollView style={styles.View}>
-                <ProfileForm>
-                    {this.formItems}
-                </ProfileForm>
+                <ProfileForm formItems={this.formItems} onChange={(name, value) => this._onChange} />
+            </ScrollView>
+        )
+    }
+}
+
+class AccountView extends FormView {
+    static navigationOptions = {
+        title: 'Account',
+        headerRight: <FormSaveBtn onSave={() => this.save()} />
+    };
+    constructor() {
+        super();
+        this.formItems = [
+            [
+                { 
+                    value: PROFILEDATA.username,
+                    placeholder: "Username", 
+                    name: "username",
+                    type: "text"
+                },
+                {
+                    value: PROFILEDATA.email,
+                    placeholder: "Email",
+                    name: "email",
+                    type: "text",
+                }
+            ],
+            [
+                {
+                    value: PROFILEDATA.country,
+                    placeholder: "Nationality",
+                    name: "country",
+                    type: "select",
+                    selectOptions: countryOptions,
+                }
+            ],
+            [
+                {
+                    value: PROFILEDATA.allowGifting,
+                    placeholder: "Accept Gifts",
+                    name: "allowGifting",
+                    type: "select",
+                    selectOptions: [
+                        { name: "Yes, I accept gifts", value: "1" },
+                        { name: "No, I do not accept gifts", value: "0" }
+                    ]
+                },
+            ]
+        ]; 
+    }
+    render() {
+        return (
+            <ScrollView style={styles.View}>
+                <ProfileForm formItems={this.formItems[0]} onChange={(name, value) => this._onChange(name, value)} />
+                <ProfileForm formItems={this.formItems[1]} onChange={(name, value) => this._onChange(name, value)} />
+                <ProfileForm formItems={this.formItems[2]} onChange={(name, value) => this._onChange(name, value)} />
             </ScrollView>
         )
     }
@@ -123,7 +155,10 @@ class SubscriptionView extends Component {
     }
 }
 
-class AddressView extends Component {
+class AddressView extends FormView {
+    static navigationOptions = {
+        title: 'Address',
+    };
     constructor() {
         super();
         this.formItems = [
@@ -161,7 +196,8 @@ class AddressView extends Component {
                 value: PROFILEDATA.zip,
                 placeholder: "Postal Code",
                 name: "zip",
-                type: "text"
+                type: "text",
+                spacer: true
             },
             {
                 value: PROFILEDATA.country,
@@ -170,25 +206,14 @@ class AddressView extends Component {
                 type: "select",
                 selectOptions: countryOptions
             }
-        ].map((item) =>
-            <FormItem
-                item={item}
-                key={item.name}
-            />
-        );
-    }
-    render() {
-        return (
-            <ScrollView style={styles.View}>            
-                <ProfileForm>
-                    {this.formItems}
-                </ProfileForm>
-            </ScrollView>
-        )
+        ];
     }
 }
 
-class DiscordView extends Component {
+class DiscordView extends FormView {
+    static navigationOptions = {
+        title: 'Discord',
+    };
     constructor() {
         super();
         this.formItems = [
@@ -198,25 +223,14 @@ class DiscordView extends Component {
                 name: "discordname",
                 type: "text"
             }
-        ].map((item) =>
-            <FormItem
-                item={item}
-                key={item.name}
-            />
-        );
-    }
-    render() {
-        return (
-            <ScrollView style={styles.View}>            
-                <ProfileForm>
-                    {this.formItems}
-                </ProfileForm>
-            </ScrollView>
-        )
+        ];
     }
 }
 
-class MinecraftView extends Component {
+class MinecraftView extends FormView {
+    static navigationOptions = {
+        title: 'Minecraft',
+    };
     constructor() {
         super();
         this.formItems = [
@@ -226,21 +240,7 @@ class MinecraftView extends Component {
                 name: "minecraftname",
                 type: "text"
             }
-        ].map((item) =>
-            <FormItem
-                item={item}
-                key={item.name}
-            />
-        );
-    }
-    render() {
-        return (
-            <ScrollView style={styles.View}>            
-                <ProfileForm>
-                    {this.formItems}
-                </ProfileForm>
-            </ScrollView>
-        )
+        ]
     }
 }
 
@@ -280,13 +280,6 @@ class ProfileView extends Component {
             return ( <ErrorView /> );
         }*/
         this.listItems = [
-            { 
-                header: {
-                    profileName: this.state.profileName ,
-                    creationDate: this.state.creationDate
-                },
-                itemText: 'header'
-            },
             { itemText: 'Account', itemTarget: 'Account' },
             { itemText: 'Subscription', itemTarget: 'Subscription' },
             { itemText: 'Address', itemTarget: 'Address' },
@@ -294,9 +287,13 @@ class ProfileView extends Component {
             { itemText: 'Discord', itemTarget: 'Discord' }
         ];
         return (
-            <View style={styles.View}>
-                <ProfileList listItems={this.listItems} navigation={this.props.navigation}/>
-            </View>
+            <ScrollView style={styles.View}>
+                <View style={styles.ProfileHeader}>
+                    <Text style={styles.title}>{this.state.profileName}</Text>
+                    <Text style={styles.subtitle}>{'Created: ' + this.state.creationDate}</Text>
+                </View>
+                <NavList listItems={this.listItems} navigation={this.props.navigation}/>
+            </ScrollView>
         )
     }
 }

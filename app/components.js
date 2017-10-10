@@ -2,14 +2,88 @@ import React, { Component } from 'react';
 import { View, Text, TextInput, Picker, Modal, Button, TouchableHighlight, StyleSheet } from 'react-native';
 import styles from './styles.js';
 
-export class ProfileListItem extends Component {
+export class NavListItem extends Component {
     render() {
+        let outerStyle = [styles.ListItemOuter];
+        let innerStyle = [styles.ListItemInner];
+
+        if (this.props.first) { 
+            outerStyle.push(styles.firstInList); 
+        }
+
+        if (this.props.last) { 
+            outerStyle.push(styles.lastInList); 
+            innerStyle.push(styles.innerLastInList); 
+        }
+
         return (
-            <TouchableHighlight onPress={() => this.props.onPress()} style={[this.props.style, styles.ListItem]}>
-                <Text style={styles.ListItemText}>
-                    {this.props.text}
-                </Text>
+            <TouchableHighlight onPress={() => this.props.onPress()} style={outerStyle}>
+                <View style={innerStyle}>
+                    <Text style={styles.ListItemText}>
+                        {this.props.text}
+                    </Text>
+                </View>
             </TouchableHighlight>
+        )
+    }
+}
+
+export class TextInputListItem extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { value: this.props.value };
+    }
+    render() {
+        let outerStyle = [styles.ListItemOuter];
+        let innerStyle = [styles.FormItem];
+
+        if (this.props.first) {
+            outerStyle.push(styles.firstInList);
+        }
+
+        if (this.props.last) {
+            outerStyle.push(styles.lastInList);
+            innerStyle.push(styles.innerLastInList);
+        }
+
+        return (
+            <View style={outerStyle}>
+                <TextInput
+                    style={innerStyle}
+                    value={this.state.value}
+                    placeholder={this.props.placeholder}
+                    placeholderTextColor={'#888'}
+                    onChangeText={(value) => {
+                        this.setState({ value: value });
+                        this.props.onChange(this.props.name, value);
+                    }}
+                />
+            </View>
+        )
+    }
+}
+
+export class NavList extends Component {
+    _onPressItem(itemTarget) {
+        this.props.navigation.navigate(itemTarget);
+    }
+    render() {
+        const children = this.props.listItems.map((item, index, array) => {
+            return (
+                <NavListItem
+                    text={item.itemText}
+                    onPress={() => this._onPressItem(item.itemTarget)}
+                    key={index}
+                    first={index === 0}
+                    last={index === (array.length - 1)}
+                />
+            );
+        });
+
+        return (
+            <View style={styles.List}>
+                {children}
+            </View>
         )
     }
 }
@@ -21,7 +95,7 @@ export class SelectModal extends Component {
     }
 
     _onSelect() {
-        this.props.onSelect(this.state.value);
+        this.props.onSelect(this.props.name, this.state.value);
         this.setState({ shown: false });
     }
 
@@ -80,13 +154,14 @@ export class FormItem extends Component {
 
         if (this.props.item.type === "text") {
             children.push(
-                <TextInput
-                    style={styles.FormItem}
+                <TextInputListItem
+                    name={this.props.item.name}                
                     value={this.state.value}
                     placeholder={this.props.item.placeholder}
-                    placeholderTextColor={'#888'}
-                    onChangeText={(text) => this.setState({ value: text })}
+                    onChange={(name, value) => this.props.onChange(name, value)}
                     key={this.props.item.name}
+                    first={this.props.first}
+                    last={this.props.last}  
                 />
             )
         } else if (this.props.item.type === "select") {
@@ -94,17 +169,20 @@ export class FormItem extends Component {
                 return item.value === this.state.value;
             });
             children.push(
-                <ProfileListItem
+                <NavListItem
                     text={displayText[0].name}
                     onPress={() => this.selectModal.show()}
-                    key={this.props.item.name}                    
+                    key={this.props.item.name}
+                    first={this.props.first}
+                    last={this.props.last}                    
                 />
             );
             children.push(
                 <SelectModal
+                    name={this.props.item.name}                                
                     ref={(component) => this.selectModal = component}
                     selectOptions={this.props.item.selectOptions}
-                    onSelect={(value) => this.setState({ value: value })}
+                    onSelect={this.props.onChange}
                     value={this.state.value}
                     key={this.props.item.name + "Modal"}                    
                 />

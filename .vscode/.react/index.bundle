@@ -1284,7 +1284,7 @@ babelHelpers.toConsumableArray = function (arr) {
 })(typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : this);
 __d(/* destinyapp/index.js */function(global, require, module, exports) {var _reactNative = require(12            ); // 12 = react-native
 
-var _App = require(557    ); // 557 = ./App
+var _App = require(490    ); // 490 = ./App
 
 var _App2 = _interopRequireDefault(_App);
 
@@ -58340,7 +58340,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _reactNative = require(12            ); // 12 = react-native
 
-var _profile = require(490                       ); // 490 = ./app/profile/profile.js
+var _profile = require(491                       ); // 491 = ./app/profile/profile.js
 
 var _profile2 = _interopRequireDefault(_profile);
 
@@ -58409,7 +58409,7 @@ var App = _wrapComponent('App')(function (_Component) {
 }(_react2.Component));
 
 exports.default = App;
-}, 557, null, "destinyapp/App.js");
+}, 490, null, "destinyapp/App.js");
 __d(/* destinyapp/app/profile/profile.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
     value: true
 });
@@ -58422,21 +58422,22 @@ var _index = require(159                                                    ); /
 
 var _index2 = _interopRequireDefault(_index);
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _jsxFileName = '/Users/davidcako/source/destinyapp/app/profile/profile.js',
     _class,
     _temp,
-    _class2,
-    _temp2;
+    _this13 = this;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _reactNative = require(12            ); // 12 = react-native
 
-var _reactNavigation = require(491               ); // 491 = react-navigation
+var _reactNavigation = require(492               ); // 492 = react-navigation
 
-var _components2 = require(553               ); // 553 = ../components.js
+var _components2 = require(554               ); // 554 = ../components.js
 
-var _styles = require(555          ); // 555 = ./styles.js
+var _styles = require(556          ); // 556 = ./styles.js
 
 var _styles2 = _interopRequireDefault(_styles);
 
@@ -58449,26 +58450,17 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var _components = {
-    ProfileList: {
-        displayName: 'ProfileList'
-    },
     ProfileForm: {
         displayName: 'ProfileForm'
     },
-    AccountView: {
-        displayName: 'AccountView'
+    FormSaveBtn: {
+        displayName: 'FormSaveBtn'
+    },
+    FormView: {
+        displayName: 'FormView'
     },
     SubscriptionView: {
         displayName: 'SubscriptionView'
-    },
-    AddressView: {
-        displayName: 'AddressView'
-    },
-    DiscordView: {
-        displayName: 'DiscordView'
-    },
-    MinecraftView: {
-        displayName: 'MinecraftView'
     },
     ProfileView: {
         displayName: 'ProfileView'
@@ -58488,7 +58480,7 @@ function _wrapComponent(id) {
     };
 }
 
-var countries = require(556                              ); // 556 = ../../lib/assets/countries.json
+var countries = require(557                              ); // 557 = ../../lib/assets/countries.json
 var countryOptions = countries.map(function (item) {
     return { name: item['name'], value: item['alpha-2'] };
 });
@@ -58501,93 +58493,8 @@ var PROFILEDATA = {
     country: "US"
 };
 
-var ProfileList = _wrapComponent('ProfileList')(function (_Component) {
-    _inherits(ProfileList, _Component);
-
-    function ProfileList() {
-        _classCallCheck(this, ProfileList);
-
-        return _possibleConstructorReturn(this, (ProfileList.__proto__ || Object.getPrototypeOf(ProfileList)).apply(this, arguments));
-    }
-
-    _createClass(ProfileList, [{
-        key: '_onPressItem',
-        value: function _onPressItem(itemTarget) {
-            this.props.navigation.navigate(itemTarget);
-        }
-    }, {
-        key: '_renderItem',
-        value: function _renderItem(_ref) {
-            var _this2 = this;
-
-            var item = _ref.item;
-
-            if ('header' in item) {
-                return _react3.default.createElement(
-                    _reactNative.View,
-                    { style: _styles2.default.ProfileHeader, __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 27
-                        }
-                    },
-                    _react3.default.createElement(
-                        _reactNative.Text,
-                        { style: _styles2.default.title, __source: {
-                                fileName: _jsxFileName,
-                                lineNumber: 28
-                            }
-                        },
-                        item.header.profileName
-                    ),
-                    _react3.default.createElement(
-                        _reactNative.Text,
-                        { style: _styles2.default.subtitle, __source: {
-                                fileName: _jsxFileName,
-                                lineNumber: 29
-                            }
-                        },
-                        'Created: ' + item.header.creationDate
-                    )
-                );
-            }
-            return _react3.default.createElement(_components2.ProfileListItem, {
-                text: item.itemText,
-                onPress: function onPress() {
-                    return _this2._onPressItem(item.itemTarget);
-                },
-                __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 34
-                }
-            });
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var _this3 = this;
-
-            return _react3.default.createElement(_reactNative.FlatList, {
-                data: this.props.listItems,
-                renderItem: function renderItem(item) {
-                    return _this3._renderItem(item);
-                },
-                keyExtractor: function keyExtractor(item) {
-                    return item.itemText;
-                },
-                style: _styles2.default.List,
-                __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 42
-                }
-            });
-        }
-    }]);
-
-    return ProfileList;
-}(_react2.Component));
-
-var ProfileForm = _wrapComponent('ProfileForm')(function (_Component2) {
-    _inherits(ProfileForm, _Component2);
+var ProfileForm = _wrapComponent('ProfileForm')(function (_Component) {
+    _inherits(ProfileForm, _Component);
 
     function ProfileForm() {
         _classCallCheck(this, ProfileForm);
@@ -58598,14 +58505,32 @@ var ProfileForm = _wrapComponent('ProfileForm')(function (_Component2) {
     _createClass(ProfileForm, [{
         key: 'render',
         value: function render() {
+            var _this2 = this;
+
+            var children = this.props.formItems.map(function (item, index, array) {
+                return _react3.default.createElement(_components2.FormItem, {
+                    item: item,
+                    key: item.name,
+                    first: index === 0,
+                    last: index === array.length - 1,
+                    onChange: function onChange(name, value) {
+                        return _this2.props.onChange(name, value);
+                    },
+                    __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 23
+                    }
+                });
+            });
+
             return _react3.default.createElement(
                 _reactNative.View,
                 { style: [_styles2.default.View, _styles2.default.List, { marginTop: 15 }], __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 55
+                        lineNumber: 33
                     }
                 },
-                this.props.children
+                children
             );
         }
     }]);
@@ -58613,15 +58538,118 @@ var ProfileForm = _wrapComponent('ProfileForm')(function (_Component2) {
     return ProfileForm;
 }(_react2.Component));
 
-var AccountView = _wrapComponent('AccountView')((_temp = _class = function (_Component3) {
-    _inherits(AccountView, _Component3);
+var FormSaveBtn = _wrapComponent('FormSaveBtn')(function (_Component2) {
+    _inherits(FormSaveBtn, _Component2);
+
+    function FormSaveBtn() {
+        _classCallCheck(this, FormSaveBtn);
+
+        return _possibleConstructorReturn(this, (FormSaveBtn.__proto__ || Object.getPrototypeOf(FormSaveBtn)).apply(this, arguments));
+    }
+
+    _createClass(FormSaveBtn, [{
+        key: 'render',
+        value: function render() {
+            return _react3.default.createElement(
+                _reactNative.View,
+                { style: { marginRight: 10 }, __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 43
+                    }
+                },
+                _react3.default.createElement(_reactNative.Button, { title: 'Save', onPress: this.props.onSave, __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 44
+                    }
+                })
+            );
+        }
+    }]);
+
+    return FormSaveBtn;
+}(_react2.Component));
+
+var FormView = _wrapComponent('FormView')(function (_Component3) {
+    _inherits(FormView, _Component3);
+
+    function FormView() {
+        _classCallCheck(this, FormView);
+
+        return _possibleConstructorReturn(this, (FormView.__proto__ || Object.getPrototypeOf(FormView)).call(this));
+    }
+
+    _createClass(FormView, [{
+        key: '_onChange',
+        value: function _onChange(name, value) {
+            var updatedState = [];
+
+            updatedState[name] = value;
+
+            this.setState(updatedState);
+        }
+    }, {
+        key: '_extractState',
+        value: function _extractState(item) {
+            var extracted = {};
+
+            if (Array.isArray(item)) {
+                for (var i = 0; i < item.length; i++) {
+                    _extends(extracted, this._extractState(item[i]));
+                }
+            } else {
+                extracted[item.name] = item.value;
+            }
+            return extracted;
+        }
+    }, {
+        key: 'save',
+        value: function save() {}
+    }, {
+        key: 'componentWillMount',
+        value: function componentWillMount() {
+            var initState = {};
+
+            _extends(initState, this._extractState(this.formItems));
+
+            this.initState = initState;
+
+            this.setState(initState);
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _this5 = this;
+
+            return _react3.default.createElement(
+                _reactNative.ScrollView,
+                { style: _styles2.default.View, __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 87
+                    }
+                },
+                _react3.default.createElement(ProfileForm, { formItems: this.formItems, onChange: function onChange(name, value) {
+                        return _this5._onChange;
+                    }, __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 88
+                    }
+                })
+            );
+        }
+    }]);
+
+    return FormView;
+}(_react2.Component));
+
+var AccountView = function (_FormView) {
+    _inherits(AccountView, _FormView);
 
     function AccountView() {
         _classCallCheck(this, AccountView);
 
-        var _this5 = _possibleConstructorReturn(this, (AccountView.__proto__ || Object.getPrototypeOf(AccountView)).call(this));
+        var _this6 = _possibleConstructorReturn(this, (AccountView.__proto__ || Object.getPrototypeOf(AccountView)).call(this));
 
-        _this5.formItems = [{
+        _this6.formItems = [[{
             value: PROFILEDATA.username,
             placeholder: "Username",
             name: "username",
@@ -58630,62 +58658,73 @@ var AccountView = _wrapComponent('AccountView')((_temp = _class = function (_Com
             value: PROFILEDATA.email,
             placeholder: "Email",
             name: "email",
-            type: "text",
-            spacer: true
-        }, {
+            type: "text"
+        }], [{
             value: PROFILEDATA.country,
             placeholder: "Nationality",
             name: "country",
             type: "select",
-            selectOptions: countryOptions,
-            spacer: true
-        }, {
+            selectOptions: countryOptions
+        }], [{
             value: PROFILEDATA.allowGifting,
             placeholder: "Accept Gifts",
             name: "allowGifting",
             type: "select",
             selectOptions: [{ name: "Yes, I accept gifts", value: "1" }, { name: "No, I do not accept gifts", value: "0" }]
-        }].map(function (item) {
-            return _react3.default.createElement(_components2.FormItem, {
-                item: item,
-                key: item.name,
-                __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 101
-                }
-            });
-        });
-        return _this5;
+        }]];
+        return _this6;
     }
 
     _createClass(AccountView, [{
         key: 'render',
         value: function render() {
+            var _this7 = this;
+
             return _react3.default.createElement(
                 _reactNative.ScrollView,
                 { style: _styles2.default.View, __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 109
+                        lineNumber: 141
                     }
                 },
-                _react3.default.createElement(
-                    ProfileForm,
-                    {
-                        __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 110
-                        }
-                    },
-                    this.formItems
-                )
+                _react3.default.createElement(ProfileForm, { formItems: this.formItems[0], onChange: function onChange(name, value) {
+                        return _this7._onChange(name, value);
+                    }, __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 142
+                    }
+                }),
+                _react3.default.createElement(ProfileForm, { formItems: this.formItems[1], onChange: function onChange(name, value) {
+                        return _this7._onChange(name, value);
+                    }, __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 143
+                    }
+                }),
+                _react3.default.createElement(ProfileForm, { formItems: this.formItems[2], onChange: function onChange(name, value) {
+                        return _this7._onChange(name, value);
+                    }, __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 144
+                    }
+                })
             );
         }
     }]);
 
     return AccountView;
-}(_react2.Component), _class.navigationOptions = {
-    title: 'Account'
-}, _temp));
+}(FormView);
+
+AccountView.navigationOptions = {
+    title: 'Account',
+    headerRight: _react3.default.createElement(FormSaveBtn, { onSave: function onSave() {
+            return _this13.save();
+        }, __source: {
+            fileName: _jsxFileName,
+            lineNumber: 97
+        }
+    })
+};
 
 var SubscriptionView = _wrapComponent('SubscriptionView')(function (_Component4) {
     _inherits(SubscriptionView, _Component4);
@@ -58702,7 +58741,7 @@ var SubscriptionView = _wrapComponent('SubscriptionView')(function (_Component4)
             return _react3.default.createElement(_reactNative.View, {
                 __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 121
+                    lineNumber: 153
                 }
             });
         }
@@ -58711,15 +58750,15 @@ var SubscriptionView = _wrapComponent('SubscriptionView')(function (_Component4)
     return SubscriptionView;
 }(_react2.Component));
 
-var AddressView = _wrapComponent('AddressView')(function (_Component5) {
-    _inherits(AddressView, _Component5);
+var AddressView = function (_FormView2) {
+    _inherits(AddressView, _FormView2);
 
     function AddressView() {
         _classCallCheck(this, AddressView);
 
-        var _this7 = _possibleConstructorReturn(this, (AddressView.__proto__ || Object.getPrototypeOf(AddressView)).call(this));
+        var _this9 = _possibleConstructorReturn(this, (AddressView.__proto__ || Object.getPrototypeOf(AddressView)).call(this));
 
-        _this7.formItems = [{
+        _this9.formItems = [{
             value: PROFILEDATA.fullName,
             placeholder: "Full Name",
             name: "fullName",
@@ -58748,195 +58787,129 @@ var AddressView = _wrapComponent('AddressView')(function (_Component5) {
             value: PROFILEDATA.zip,
             placeholder: "Postal Code",
             name: "zip",
-            type: "text"
+            type: "text",
+            spacer: true
         }, {
             value: PROFILEDATA.country,
             placeholder: "Country",
             name: "country",
             type: "select",
             selectOptions: countryOptions
-        }].map(function (item) {
-            return _react3.default.createElement(_components2.FormItem, {
-                item: item,
-                key: item.name,
-                __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 174
-                }
-            });
-        });
-        return _this7;
+        }];
+        return _this9;
     }
 
-    _createClass(AddressView, [{
-        key: 'render',
-        value: function render() {
-            return _react3.default.createElement(
-                _reactNative.ScrollView,
-                { style: _styles2.default.View, __source: {
-                        fileName: _jsxFileName,
-                        lineNumber: 182
-                    }
-                },
-                _react3.default.createElement(
-                    ProfileForm,
-                    {
-                        __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 183
-                        }
-                    },
-                    this.formItems
-                )
-            );
-        }
-    }]);
-
     return AddressView;
-}(_react2.Component));
+}(FormView);
 
-var DiscordView = _wrapComponent('DiscordView')(function (_Component6) {
-    _inherits(DiscordView, _Component6);
+AddressView.navigationOptions = {
+    title: 'Address'
+};
+
+var DiscordView = function (_FormView3) {
+    _inherits(DiscordView, _FormView3);
 
     function DiscordView() {
         _classCallCheck(this, DiscordView);
 
-        var _this8 = _possibleConstructorReturn(this, (DiscordView.__proto__ || Object.getPrototypeOf(DiscordView)).call(this));
+        var _this10 = _possibleConstructorReturn(this, (DiscordView.__proto__ || Object.getPrototypeOf(DiscordView)).call(this));
 
-        _this8.formItems = [{
+        _this10.formItems = [{
             value: PROFILEDATA.discordname,
             placeholder: "Discord name and ID (e.g., Destiny#123)",
             name: "discordname",
             type: "text"
-        }].map(function (item) {
-            return _react3.default.createElement(_components2.FormItem, {
-                item: item,
-                key: item.name,
-                __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 202
-                }
-            });
-        });
-        return _this8;
+        }];
+        return _this10;
     }
 
-    _createClass(DiscordView, [{
-        key: 'render',
-        value: function render() {
-            return _react3.default.createElement(
-                _reactNative.ScrollView,
-                { style: _styles2.default.View, __source: {
-                        fileName: _jsxFileName,
-                        lineNumber: 210
-                    }
-                },
-                _react3.default.createElement(
-                    ProfileForm,
-                    {
-                        __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 211
-                        }
-                    },
-                    this.formItems
-                )
-            );
-        }
-    }]);
-
     return DiscordView;
-}(_react2.Component));
+}(FormView);
 
-var MinecraftView = _wrapComponent('MinecraftView')(function (_Component7) {
-    _inherits(MinecraftView, _Component7);
+DiscordView.navigationOptions = {
+    title: 'Discord'
+};
+
+var MinecraftView = function (_FormView4) {
+    _inherits(MinecraftView, _FormView4);
 
     function MinecraftView() {
         _classCallCheck(this, MinecraftView);
 
-        var _this9 = _possibleConstructorReturn(this, (MinecraftView.__proto__ || Object.getPrototypeOf(MinecraftView)).call(this));
+        var _this11 = _possibleConstructorReturn(this, (MinecraftView.__proto__ || Object.getPrototypeOf(MinecraftView)).call(this));
 
-        _this9.formItems = [{
+        _this11.formItems = [{
             value: PROFILEDATA.minecraftname,
             placeholder: "Minecraft name",
             name: "minecraftname",
             type: "text"
-        }].map(function (item) {
-            return _react3.default.createElement(_components2.FormItem, {
-                item: item,
-                key: item.name,
-                __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 230
-                }
-            });
-        });
-        return _this9;
+        }];
+        return _this11;
     }
 
-    _createClass(MinecraftView, [{
-        key: 'render',
-        value: function render() {
-            return _react3.default.createElement(
-                _reactNative.ScrollView,
-                { style: _styles2.default.View, __source: {
-                        fileName: _jsxFileName,
-                        lineNumber: 238
-                    }
-                },
-                _react3.default.createElement(
-                    ProfileForm,
-                    {
-                        __source: {
-                            fileName: _jsxFileName,
-                            lineNumber: 239
-                        }
-                    },
-                    this.formItems
-                )
-            );
-        }
-    }]);
-
     return MinecraftView;
-}(_react2.Component));
+}(FormView);
 
-var ProfileView = _wrapComponent('ProfileView')((_temp2 = _class2 = function (_Component8) {
-    _inherits(ProfileView, _Component8);
+MinecraftView.navigationOptions = {
+    title: 'Minecraft'
+};
+
+var ProfileView = _wrapComponent('ProfileView')((_temp = _class = function (_Component5) {
+    _inherits(ProfileView, _Component5);
 
     function ProfileView() {
         _classCallCheck(this, ProfileView);
 
-        var _this10 = _possibleConstructorReturn(this, (ProfileView.__proto__ || Object.getPrototypeOf(ProfileView)).call(this));
+        var _this12 = _possibleConstructorReturn(this, (ProfileView.__proto__ || Object.getPrototypeOf(ProfileView)).call(this));
 
-        _this10.state = {
+        _this12.state = {
             loaded: false,
             profileName: PROFILEDATA.username,
             creationDate: PROFILEDATA.creationDate
         };
-        return _this10;
+        return _this12;
     }
 
     _createClass(ProfileView, [{
         key: 'render',
         value: function render() {
-            this.listItems = [{
-                header: {
-                    profileName: this.state.profileName,
-                    creationDate: this.state.creationDate
-                },
-                itemText: 'header'
-            }, { itemText: 'Account', itemTarget: 'Account' }, { itemText: 'Subscription', itemTarget: 'Subscription' }, { itemText: 'Address', itemTarget: 'Address' }, { itemText: 'Minecraft', itemTarget: 'Minecraft' }, { itemText: 'Discord', itemTarget: 'Discord' }];
+            this.listItems = [{ itemText: 'Account', itemTarget: 'Account' }, { itemText: 'Subscription', itemTarget: 'Subscription' }, { itemText: 'Address', itemTarget: 'Address' }, { itemText: 'Minecraft', itemTarget: 'Minecraft' }, { itemText: 'Discord', itemTarget: 'Discord' }];
             return _react3.default.createElement(
-                _reactNative.View,
+                _reactNative.ScrollView,
                 { style: _styles2.default.View, __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 297
+                        lineNumber: 290
                     }
                 },
-                _react3.default.createElement(ProfileList, { listItems: this.listItems, navigation: this.props.navigation, __source: {
+                _react3.default.createElement(
+                    _reactNative.View,
+                    { style: _styles2.default.ProfileHeader, __source: {
+                            fileName: _jsxFileName,
+                            lineNumber: 291
+                        }
+                    },
+                    _react3.default.createElement(
+                        _reactNative.Text,
+                        { style: _styles2.default.title, __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 292
+                            }
+                        },
+                        this.state.profileName
+                    ),
+                    _react3.default.createElement(
+                        _reactNative.Text,
+                        { style: _styles2.default.subtitle, __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 293
+                            }
+                        },
+                        'Created: ' + this.state.creationDate
+                    )
+                ),
+                _react3.default.createElement(_components2.NavList, { listItems: this.listItems, navigation: this.props.navigation, __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 298
+                        lineNumber: 295
                     }
                 })
             );
@@ -58944,9 +58917,9 @@ var ProfileView = _wrapComponent('ProfileView')((_temp2 = _class2 = function (_C
     }]);
 
     return ProfileView;
-}(_react2.Component), _class2.navigationOptions = {
+}(_react2.Component), _class.navigationOptions = {
     title: 'Profile'
-}, _temp2));
+}, _temp));
 
 var ProfileNav = (0, _reactNavigation.StackNavigator)({
     Profile: { screen: ProfileView },
@@ -58964,88 +58937,88 @@ var ProfileNav = (0, _reactNavigation.StackNavigator)({
 });
 
 exports.default = ProfileNav;
-}, 490, null, "destinyapp/app/profile/profile.js");
+}, 491, null, "destinyapp/app/profile/profile.js");
 __d(/* react-navigation/src/react-navigation.js */function(global, require, module, exports) {
 
 module.exports = {
   get createNavigationContainer() {
-    return require(492                          ).default; // 492 = ./createNavigationContainer
+    return require(493                          ).default; // 493 = ./createNavigationContainer
   },
   get StateUtils() {
-    return require(497           ).default; // 497 = ./StateUtils
+    return require(498           ).default; // 498 = ./StateUtils
   },
   get addNavigationHelpers() {
-    return require(496                     ).default; // 496 = ./addNavigationHelpers
+    return require(497                     ).default; // 497 = ./addNavigationHelpers
   },
   get NavigationActions() {
-    return require(495                  ).default; // 495 = ./NavigationActions
+    return require(496                  ).default; // 496 = ./NavigationActions
   },
 
   get createNavigator() {
-    return require(498                           ).default; // 498 = ./navigators/createNavigator
+    return require(499                           ).default; // 499 = ./navigators/createNavigator
   },
   get StackNavigator() {
-    return require(499                          ).default; // 499 = ./navigators/StackNavigator
+    return require(500                          ).default; // 500 = ./navigators/StackNavigator
   },
   get TabNavigator() {
-    return require(527                        ).default; // 527 = ./navigators/TabNavigator
+    return require(528                        ).default; // 528 = ./navigators/TabNavigator
   },
   get DrawerNavigator() {
-    return require(543                           ).default; // 543 = ./navigators/DrawerNavigator
+    return require(544                           ).default; // 544 = ./navigators/DrawerNavigator
   },
 
   get StackRouter() {
-    return require(518                    ).default; // 518 = ./routers/StackRouter
+    return require(519                    ).default; // 519 = ./routers/StackRouter
   },
   get TabRouter() {
-    return require(528                  ).default; // 528 = ./routers/TabRouter
+    return require(529                  ).default; // 529 = ./routers/TabRouter
   },
 
   get Transitioner() {
-    return require(515                   ).default; // 515 = ./views/Transitioner
+    return require(516                   ).default; // 516 = ./views/Transitioner
   },
   get CardStackTransitioner() {
-    return require(500                                      ).default; // 500 = ./views/CardStack/CardStackTransitioner
+    return require(501                                      ).default; // 501 = ./views/CardStack/CardStackTransitioner
   },
   get CardStack() {
-    return require(501                          ).default; // 501 = ./views/CardStack/CardStack
+    return require(502                          ).default; // 502 = ./views/CardStack/CardStack
   },
   get Card() {
-    return require(503                     ).default; // 503 = ./views/CardStack/Card
+    return require(504                     ).default; // 504 = ./views/CardStack/Card
   },
 
   get Header() {
-    return require(506                    ).default; // 506 = ./views/Header/Header
+    return require(507                    ).default; // 507 = ./views/Header/Header
   },
   get HeaderTitle() {
-    return require(507                         ).default; // 507 = ./views/Header/HeaderTitle
+    return require(508                         ).default; // 508 = ./views/Header/HeaderTitle
   },
   get HeaderBackButton() {
-    return require(508                              ).default; // 508 = ./views/Header/HeaderBackButton
+    return require(509                              ).default; // 509 = ./views/Header/HeaderBackButton
   },
 
   get DrawerView() {
-    return require(545                        ).default; // 545 = ./views/Drawer/DrawerView
+    return require(546                        ).default; // 546 = ./views/Drawer/DrawerView
   },
   get DrawerItems() {
-    return require(550                                  ).default; // 550 = ./views/Drawer/DrawerNavigatorItems
+    return require(551                                  ).default; // 551 = ./views/Drawer/DrawerNavigatorItems
   },
 
   get TabView() {
-    return require(529                      ).default; // 529 = ./views/TabView/TabView
+    return require(530                      ).default; // 530 = ./views/TabView/TabView
   },
   get TabBarTop() {
-    return require(540                        ).default; // 540 = ./views/TabView/TabBarTop
+    return require(541                        ).default; // 541 = ./views/TabView/TabBarTop
   },
   get TabBarBottom() {
-    return require(542                           ).default; // 542 = ./views/TabView/TabBarBottom
+    return require(543                           ).default; // 543 = ./views/TabView/TabBarBottom
   },
 
   get withNavigation() {
-    return require(551                     ).default; // 551 = ./views/withNavigation
+    return require(552                     ).default; // 552 = ./views/withNavigation
   }
 };
-}, 491, null, "react-navigation/src/react-navigation.js");
+}, 492, null, "react-navigation/src/react-navigation.js");
 __d(/* react-navigation/src/createNavigationContainer.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -59066,17 +59039,17 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 exports.default = createNavigationContainer;
 
-var _invariant = require(493                ); // 493 = ./utils/invariant
+var _invariant = require(494                ); // 494 = ./utils/invariant
 
 var _invariant2 = _interopRequireDefault(_invariant);
 
-var _PlatformHelpers = require(494                ); // 494 = ./PlatformHelpers
+var _PlatformHelpers = require(495                ); // 495 = ./PlatformHelpers
 
-var _NavigationActions = require(495                  ); // 495 = ./NavigationActions
+var _NavigationActions = require(496                  ); // 496 = ./NavigationActions
 
 var _NavigationActions2 = _interopRequireDefault(_NavigationActions);
 
-var _addNavigationHelpers = require(496                     ); // 496 = ./addNavigationHelpers
+var _addNavigationHelpers = require(497                     ); // 497 = ./addNavigationHelpers
 
 var _addNavigationHelpers2 = _interopRequireDefault(_addNavigationHelpers);
 
@@ -59277,7 +59250,7 @@ function createNavigationContainer(Component) {
 
   return NavigationContainer;
 }
-}, 492, null, "react-navigation/src/createNavigationContainer.js");
+}, 493, null, "react-navigation/src/createNavigationContainer.js");
 __d(/* react-navigation/src/utils/invariant.js */function(global, require, module, exports) {
 
 'use strict';
@@ -59314,7 +59287,7 @@ function invariant(condition, format, a, b, c, d, e, f) {
 }
 
 module.exports = invariant;
-}, 493, null, "react-navigation/src/utils/invariant.js");
+}, 494, null, "react-navigation/src/utils/invariant.js");
 __d(/* react-navigation/src/PlatformHelpers.native.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -59326,7 +59299,7 @@ var BackHandler = _reactNative.BackHandler || _reactNative.BackAndroid;
 
 exports.BackHandler = BackHandler;
 exports.Linking = _reactNative.Linking;
-}, 494, null, "react-navigation/src/PlatformHelpers.native.js");
+}, 495, null, "react-navigation/src/PlatformHelpers.native.js");
 __d(/* react-navigation/src/NavigationActions.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -59395,7 +59368,7 @@ exports.default = {
 
   mapDeprecatedActionAndWarn: mapDeprecatedActionAndWarn
 };
-}, 495, null, "react-navigation/src/NavigationActions.js");
+}, 496, null, "react-navigation/src/NavigationActions.js");
 __d(/* react-navigation/src/addNavigationHelpers.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -59426,19 +59399,19 @@ exports.default = function (navigation) {
   });
 };
 
-var _NavigationActions = require(495                  ); // 495 = ./NavigationActions
+var _NavigationActions = require(496                  ); // 496 = ./NavigationActions
 
 var _NavigationActions2 = _interopRequireDefault(_NavigationActions);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-}, 496, null, "react-navigation/src/addNavigationHelpers.js");
+}, 497, null, "react-navigation/src/addNavigationHelpers.js");
 __d(/* react-navigation/src/StateUtils.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _invariant = require(493                ); // 493 = ./utils/invariant
+var _invariant = require(494                ); // 494 = ./utils/invariant
 
 var _invariant2 = _interopRequireDefault(_invariant);
 
@@ -59549,7 +59522,7 @@ var StateUtils = {
 };
 
 exports.default = StateUtils;
-}, 497, null, "react-navigation/src/StateUtils.js");
+}, 498, null, "react-navigation/src/StateUtils.js");
 __d(/* react-navigation/src/navigators/createNavigator.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -59628,7 +59601,7 @@ function createNavigator(router, routeConfigs, navigatorConfig, navigatorType) {
     return Navigator;
   };
 }
-}, 498, null, "react-navigation/src/navigators/createNavigator.js");
+}, 499, null, "react-navigation/src/navigators/createNavigator.js");
 __d(/* react-navigation/src/navigators/StackNavigator.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -59641,23 +59614,23 @@ var _react = require(36     ); // 36 = react
 
 var _react2 = _interopRequireDefault(_react);
 
-var _createNavigationContainer = require(492                           ); // 492 = ../createNavigationContainer
+var _createNavigationContainer = require(493                           ); // 493 = ../createNavigationContainer
 
 var _createNavigationContainer2 = _interopRequireDefault(_createNavigationContainer);
 
-var _createNavigator = require(498                ); // 498 = ./createNavigator
+var _createNavigator = require(499                ); // 499 = ./createNavigator
 
 var _createNavigator2 = _interopRequireDefault(_createNavigator);
 
-var _CardStackTransitioner = require(500                                       ); // 500 = ../views/CardStack/CardStackTransitioner
+var _CardStackTransitioner = require(501                                       ); // 501 = ../views/CardStack/CardStackTransitioner
 
 var _CardStackTransitioner2 = _interopRequireDefault(_CardStackTransitioner);
 
-var _StackRouter = require(518                     ); // 518 = ../routers/StackRouter
+var _StackRouter = require(519                     ); // 519 = ../routers/StackRouter
 
 var _StackRouter2 = _interopRequireDefault(_StackRouter);
 
-var _NavigatorTypes = require(526               ); // 526 = ./NavigatorTypes
+var _NavigatorTypes = require(527               ); // 527 = ./NavigatorTypes
 
 var _NavigatorTypes2 = _interopRequireDefault(_NavigatorTypes);
 
@@ -59703,7 +59676,7 @@ exports.default = function (routeConfigMap) {
 
   return (0, _createNavigationContainer2.default)(navigator);
 };
-}, 499, null, "react-navigation/src/navigators/StackNavigator.js");
+}, 500, null, "react-navigation/src/navigators/StackNavigator.js");
 __d(/* react-navigation/src/views/CardStack/CardStackTransitioner.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -59726,19 +59699,19 @@ var _class,
 
 var _reactNative = require(12            ); // 12 = react-native
 
-var _CardStack = require(501          ); // 501 = ./CardStack
+var _CardStack = require(502          ); // 502 = ./CardStack
 
 var _CardStack2 = _interopRequireDefault(_CardStack);
 
-var _CardStackStyleInterpolator = require(514                           ); // 514 = ./CardStackStyleInterpolator
+var _CardStackStyleInterpolator = require(515                           ); // 515 = ./CardStackStyleInterpolator
 
 var _CardStackStyleInterpolator2 = _interopRequireDefault(_CardStackStyleInterpolator);
 
-var _Transitioner = require(515              ); // 515 = ../Transitioner
+var _Transitioner = require(516              ); // 516 = ../Transitioner
 
 var _Transitioner2 = _interopRequireDefault(_Transitioner);
 
-var _TransitionConfigs = require(513                  ); // 513 = ./TransitionConfigs
+var _TransitionConfigs = require(514                  ); // 514 = ./TransitionConfigs
 
 var _TransitionConfigs2 = _interopRequireDefault(_TransitionConfigs);
 
@@ -59844,7 +59817,7 @@ var CardStackTransitioner = _wrapComponent('CardStackTransitioner')((_temp2 = _c
 }, _temp2));
 
 exports.default = CardStackTransitioner;
-}, 500, null, "react-navigation/src/views/CardStack/CardStackTransitioner.js");
+}, 501, null, "react-navigation/src/views/CardStack/CardStackTransitioner.js");
 __d(/* react-navigation/src/views/CardStack/CardStack.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -59863,33 +59836,33 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _clamp = require(502    ); // 502 = clamp
+var _clamp = require(503    ); // 503 = clamp
 
 var _clamp2 = _interopRequireDefault(_clamp);
 
 var _reactNative = require(12            ); // 12 = react-native
 
-var _Card = require(503     ); // 503 = ./Card
+var _Card = require(504     ); // 504 = ./Card
 
 var _Card2 = _interopRequireDefault(_Card);
 
-var _Header = require(506               ); // 506 = ../Header/Header
+var _Header = require(507               ); // 507 = ../Header/Header
 
 var _Header2 = _interopRequireDefault(_Header);
 
-var _NavigationActions = require(495                      ); // 495 = ../../NavigationActions
+var _NavigationActions = require(496                      ); // 496 = ../../NavigationActions
 
 var _NavigationActions2 = _interopRequireDefault(_NavigationActions);
 
-var _addNavigationHelpers = require(496                         ); // 496 = ../../addNavigationHelpers
+var _addNavigationHelpers = require(497                         ); // 497 = ../../addNavigationHelpers
 
 var _addNavigationHelpers2 = _interopRequireDefault(_addNavigationHelpers);
 
-var _SceneView = require(512           ); // 512 = ../SceneView
+var _SceneView = require(513           ); // 513 = ../SceneView
 
 var _SceneView2 = _interopRequireDefault(_SceneView);
 
-var _TransitionConfigs = require(513                  ); // 513 = ./TransitionConfigs
+var _TransitionConfigs = require(514                  ); // 514 = ./TransitionConfigs
 
 var _TransitionConfigs2 = _interopRequireDefault(_TransitionConfigs);
 
@@ -60300,13 +60273,13 @@ var styles = _reactNative.StyleSheet.create({
 });
 
 exports.default = CardStack;
-}, 501, null, "react-navigation/src/views/CardStack/CardStack.js");
+}, 502, null, "react-navigation/src/views/CardStack/CardStack.js");
 __d(/* clamp/index.js */function(global, require, module, exports) {module.exports = clamp;
 
 function clamp(value, min, max) {
   return min < max ? value < min ? min : value > max ? max : value : value < max ? max : value > min ? min : value;
 }
-}, 502, null, "clamp/index.js");
+}, 503, null, "clamp/index.js");
 __d(/* react-navigation/src/views/CardStack/Card.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -60325,7 +60298,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _reactNative = require(12            ); // 12 = react-native
 
-var _PointerEventsContainer = require(504                       ); // 504 = ./PointerEventsContainer
+var _PointerEventsContainer = require(505                       ); // 505 = ./PointerEventsContainer
 
 var _PointerEventsContainer2 = _interopRequireDefault(_PointerEventsContainer);
 
@@ -60410,7 +60383,7 @@ var styles = _reactNative.StyleSheet.create({
 Card = (0, _PointerEventsContainer2.default)(Card);
 
 exports.default = Card;
-}, 503, null, "react-navigation/src/views/CardStack/Card.js");
+}, 504, null, "react-navigation/src/views/CardStack/Card.js");
 __d(/* react-navigation/src/views/CardStack/PointerEventsContainer.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -60431,11 +60404,11 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 exports.default = create;
 
-var _invariant = require(493                    ); // 493 = ../../utils/invariant
+var _invariant = require(494                    ); // 494 = ../../utils/invariant
 
 var _invariant2 = _interopRequireDefault(_invariant);
 
-var _AnimatedValueSubscription = require(505                           ); // 505 = ../AnimatedValueSubscription
+var _AnimatedValueSubscription = require(506                           ); // 506 = ../AnimatedValueSubscription
 
 var _AnimatedValueSubscription2 = _interopRequireDefault(_AnimatedValueSubscription);
 
@@ -60568,7 +60541,7 @@ function create(Component) {
 
   return Container;
 }
-}, 504, null, "react-navigation/src/views/CardStack/PointerEventsContainer.js");
+}, 505, null, "react-navigation/src/views/CardStack/PointerEventsContainer.js");
 __d(/* react-navigation/src/views/AnimatedValueSubscription.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -60598,7 +60571,7 @@ var AnimatedValueSubscription = function () {
 }();
 
 exports.default = AnimatedValueSubscription;
-}, 505, null, "react-navigation/src/views/AnimatedValueSubscription.js");
+}, 506, null, "react-navigation/src/views/AnimatedValueSubscription.js");
 __d(/* react-navigation/src/views/Header/Header.js */function(global, require, module, exports) {
 
 'no babel-plugin-flow-react-proptypes';
@@ -60618,15 +60591,15 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactNative = require(12            ); // 12 = react-native
 
-var _HeaderTitle = require(507            ); // 507 = ./HeaderTitle
+var _HeaderTitle = require(508            ); // 508 = ./HeaderTitle
 
 var _HeaderTitle2 = _interopRequireDefault(_HeaderTitle);
 
-var _HeaderBackButton = require(508                 ); // 508 = ./HeaderBackButton
+var _HeaderBackButton = require(509                 ); // 509 = ./HeaderBackButton
 
 var _HeaderBackButton2 = _interopRequireDefault(_HeaderBackButton);
 
-var _HeaderStyleInterpolator = require(511                        ); // 511 = ./HeaderStyleInterpolator
+var _HeaderStyleInterpolator = require(512                        ); // 512 = ./HeaderStyleInterpolator
 
 var _HeaderStyleInterpolator2 = _interopRequireDefault(_HeaderStyleInterpolator);
 
@@ -60974,7 +60947,7 @@ var styles = _reactNative.StyleSheet.create({
 });
 
 exports.default = Header;
-}, 506, null, "react-navigation/src/views/Header/Header.js");
+}, 507, null, "react-navigation/src/views/Header/Header.js");
 __d(/* react-navigation/src/views/Header/HeaderTitle.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -61022,7 +60995,7 @@ var styles = _reactNative.StyleSheet.create({
 });
 
 exports.default = HeaderTitle;
-}, 507, null, "react-navigation/src/views/Header/HeaderTitle.js");
+}, 508, null, "react-navigation/src/views/Header/HeaderTitle.js");
 __d(/* react-navigation/src/views/Header/HeaderBackButton.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -61036,7 +61009,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactNative = require(12            ); // 12 = react-native
 
-var _TouchableItem = require(509               ); // 509 = ../TouchableItem
+var _TouchableItem = require(510               ); // 510 = ../TouchableItem
 
 var _TouchableItem2 = _interopRequireDefault(_TouchableItem);
 
@@ -61089,7 +61062,7 @@ var HeaderBackButton = function (_React$PureComponent) {
 
       var backButtonTitle = renderTruncated ? truncatedTitle : title;
 
-      var asset = require(510                      ); // 510 = ../assets/back-icon.png
+      var asset = require(511                      ); // 511 = ../assets/back-icon.png
 
       return _react2.default.createElement(
         _TouchableItem2.default,
@@ -61184,7 +61157,7 @@ var styles = _reactNative.StyleSheet.create({
 });
 
 exports.default = HeaderBackButton;
-}, 508, null, "react-navigation/src/views/Header/HeaderBackButton.js");
+}, 509, null, "react-navigation/src/views/Header/HeaderBackButton.js");
 __d(/* react-navigation/src/views/TouchableItem.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -61297,9 +61270,9 @@ var TouchableItem = _wrapComponent('TouchableItem')((_temp = _class = function (
 }, _temp));
 
 exports.default = TouchableItem;
-}, 509, null, "react-navigation/src/views/TouchableItem.js");
+}, 510, null, "react-navigation/src/views/TouchableItem.js");
 __d(/* react-navigation/src/views/assets/back-icon.png */function(global, require, module, exports) {module.exports=require(323                                         ).registerAsset({"__packager_asset":true,"httpServerLocation":"/assets/node_modules/react-navigation/src/views/assets","width":13,"height":21,"scales":[1,1.5,2,3,4],"hash":"23ea5876dd37198284f126df9ba165c8","name":"back-icon","type":"png"}); // 323 = react-native/Libraries/Image/AssetRegistry
-}, 510, null, "react-navigation/src/views/assets/back-icon.png");
+}, 511, null, "react-navigation/src/views/assets/back-icon.png");
 __d(/* react-navigation/src/views/Header/HeaderStyleInterpolator.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -61356,7 +61329,7 @@ exports.default = {
   forCenter: forCenter,
   forRight: forRight
 };
-}, 511, null, "react-navigation/src/views/Header/HeaderStyleInterpolator.js");
+}, 512, null, "react-navigation/src/views/Header/HeaderStyleInterpolator.js");
 __d(/* react-navigation/src/views/SceneView.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -61420,7 +61393,7 @@ SceneView.childContextTypes = {
   navigation: _propTypes2.default.object.isRequired
 };
 exports.default = SceneView;
-}, 512, null, "react-navigation/src/views/SceneView.js");
+}, 513, null, "react-navigation/src/views/SceneView.js");
 __d(/* react-navigation/src/views/CardStack/TransitionConfigs.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -61429,7 +61402,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _reactNative = require(12            ); // 12 = react-native
 
-var _CardStackStyleInterpolator = require(514                           ); // 514 = ./CardStackStyleInterpolator
+var _CardStackStyleInterpolator = require(515                           ); // 515 = ./CardStackStyleInterpolator
 
 var _CardStackStyleInterpolator2 = _interopRequireDefault(_CardStackStyleInterpolator);
 
@@ -61501,7 +61474,7 @@ exports.default = {
   defaultTransitionConfig: defaultTransitionConfig,
   getTransitionConfig: getTransitionConfig
 };
-}, 513, null, "react-navigation/src/views/CardStack/TransitionConfigs.js");
+}, 514, null, "react-navigation/src/views/CardStack/TransitionConfigs.js");
 __d(/* react-navigation/src/views/CardStack/CardStackStyleInterpolator.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -61626,7 +61599,7 @@ exports.default = {
   forFadeFromBottomAndroid: forFadeFromBottomAndroid,
   canUseNativeDriver: canUseNativeDriver
 };
-}, 514, null, "react-navigation/src/views/CardStack/CardStackStyleInterpolator.js");
+}, 515, null, "react-navigation/src/views/CardStack/CardStackStyleInterpolator.js");
 __d(/* react-navigation/src/views/Transitioner.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -61647,11 +61620,11 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _reactNative = require(12            ); // 12 = react-native
 
-var _invariant = require(493                 ); // 493 = ../utils/invariant
+var _invariant = require(494                 ); // 494 = ../utils/invariant
 
 var _invariant2 = _interopRequireDefault(_invariant);
 
-var _ScenesReducer = require(516              ); // 516 = ./ScenesReducer
+var _ScenesReducer = require(517              ); // 517 = ./ScenesReducer
 
 var _ScenesReducer2 = _interopRequireDefault(_ScenesReducer);
 
@@ -61902,7 +61875,7 @@ var styles = _reactNative.StyleSheet.create({
 });
 
 exports.default = Transitioner;
-}, 515, null, "react-navigation/src/views/Transitioner.js");
+}, 516, null, "react-navigation/src/views/Transitioner.js");
 __d(/* react-navigation/src/views/ScenesReducer.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -61911,11 +61884,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 exports.default = ScenesReducer;
 
-var _invariant = require(493                 ); // 493 = ../utils/invariant
+var _invariant = require(494                 ); // 494 = ../utils/invariant
 
 var _invariant2 = _interopRequireDefault(_invariant);
 
-var _shallowEqual = require(517                    ); // 517 = ../utils/shallowEqual
+var _shallowEqual = require(518                    ); // 518 = ../utils/shallowEqual
 
 var _shallowEqual2 = _interopRequireDefault(_shallowEqual);
 
@@ -62059,7 +62032,7 @@ function ScenesReducer(scenes, nextState, prevState) {
 
   return scenes;
 }
-}, 516, null, "react-navigation/src/views/ScenesReducer.js");
+}, 517, null, "react-navigation/src/views/ScenesReducer.js");
 __d(/* react-navigation/src/utils/shallowEqual.js */function(global, require, module, exports) {
 
 'use strict';
@@ -62099,7 +62072,7 @@ function shallowEqual(objA, objB) {
 }
 
 module.exports = shallowEqual;
-}, 517, null, "react-navigation/src/utils/shallowEqual.js");
+}, 518, null, "react-navigation/src/utils/shallowEqual.js");
 __d(/* react-navigation/src/routers/StackRouter.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -62108,31 +62081,31 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _pathToRegexp = require(519             ); // 519 = path-to-regexp
+var _pathToRegexp = require(520             ); // 520 = path-to-regexp
 
 var _pathToRegexp2 = _interopRequireDefault(_pathToRegexp);
 
-var _NavigationActions = require(495                   ); // 495 = ../NavigationActions
+var _NavigationActions = require(496                   ); // 496 = ../NavigationActions
 
 var _NavigationActions2 = _interopRequireDefault(_NavigationActions);
 
-var _createConfigGetter = require(521                   ); // 521 = ./createConfigGetter
+var _createConfigGetter = require(522                   ); // 522 = ./createConfigGetter
 
 var _createConfigGetter2 = _interopRequireDefault(_createConfigGetter);
 
-var _getScreenForRouteName = require(522                      ); // 522 = ./getScreenForRouteName
+var _getScreenForRouteName = require(523                      ); // 523 = ./getScreenForRouteName
 
 var _getScreenForRouteName2 = _interopRequireDefault(_getScreenForRouteName);
 
-var _StateUtils = require(497            ); // 497 = ../StateUtils
+var _StateUtils = require(498            ); // 498 = ../StateUtils
 
 var _StateUtils2 = _interopRequireDefault(_StateUtils);
 
-var _validateRouteConfigMap = require(524                       ); // 524 = ./validateRouteConfigMap
+var _validateRouteConfigMap = require(525                       ); // 525 = ./validateRouteConfigMap
 
 var _validateRouteConfigMap2 = _interopRequireDefault(_validateRouteConfigMap);
 
-var _getScreenConfigDeprecated = require(525                          ); // 525 = ./getScreenConfigDeprecated
+var _getScreenConfigDeprecated = require(526                          ); // 526 = ./getScreenConfigDeprecated
 
 var _getScreenConfigDeprecated2 = _interopRequireDefault(_getScreenConfigDeprecated);
 
@@ -62462,8 +62435,8 @@ exports.default = function (routeConfigs) {
     getScreenConfig: _getScreenConfigDeprecated2.default
   };
 };
-}, 518, null, "react-navigation/src/routers/StackRouter.js");
-__d(/* path-to-regexp/index.js */function(global, require, module, exports) {var isarray = require(520      ); // 520 = isarray
+}, 519, null, "react-navigation/src/routers/StackRouter.js");
+__d(/* path-to-regexp/index.js */function(global, require, module, exports) {var isarray = require(521      ); // 521 = isarray
 
 module.exports = pathToRegexp;
 module.exports.parse = parse;
@@ -62758,30 +62731,30 @@ function pathToRegexp(path, keys, options) {
 
   return stringToRegexp(path, keys, options);
 }
-}, 519, null, "path-to-regexp/index.js");
+}, 520, null, "path-to-regexp/index.js");
 __d(/* isarray/index.js */function(global, require, module, exports) {module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
-}, 520, null, "isarray/index.js");
+}, 521, null, "isarray/index.js");
 __d(/* react-navigation/src/routers/createConfigGetter.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _invariant = require(493                 ); // 493 = ../utils/invariant
+var _invariant = require(494                 ); // 494 = ../utils/invariant
 
 var _invariant2 = _interopRequireDefault(_invariant);
 
-var _getScreenForRouteName = require(522                      ); // 522 = ./getScreenForRouteName
+var _getScreenForRouteName = require(523                      ); // 523 = ./getScreenForRouteName
 
 var _getScreenForRouteName2 = _interopRequireDefault(_getScreenForRouteName);
 
-var _addNavigationHelpers = require(496                      ); // 496 = ../addNavigationHelpers
+var _addNavigationHelpers = require(497                      ); // 497 = ../addNavigationHelpers
 
 var _addNavigationHelpers2 = _interopRequireDefault(_addNavigationHelpers);
 
-var _validateScreenOptions = require(523                      ); // 523 = ./validateScreenOptions
+var _validateScreenOptions = require(524                      ); // 524 = ./validateScreenOptions
 
 var _validateScreenOptions2 = _interopRequireDefault(_validateScreenOptions);
 
@@ -62842,13 +62815,13 @@ exports.default = function (routeConfigs, navigatorScreenConfig) {
     return outputConfig;
   };
 };
-}, 521, null, "react-navigation/src/routers/createConfigGetter.js");
+}, 522, null, "react-navigation/src/routers/createConfigGetter.js");
 __d(/* react-navigation/src/routers/getScreenForRouteName.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = getScreenForRouteName;
 
-var _invariant = require(493                 ); // 493 = ../utils/invariant
+var _invariant = require(494                 ); // 494 = ../utils/invariant
 
 var _invariant2 = _interopRequireDefault(_invariant);
 
@@ -62873,12 +62846,12 @@ function getScreenForRouteName(routeConfigs, routeName) {
 
   (0, _invariant2.default)(false, 'Route ' + routeName + ' must define a screen or a getScreen.');
 }
-}, 522, null, "react-navigation/src/routers/getScreenForRouteName.js");
+}, 523, null, "react-navigation/src/routers/getScreenForRouteName.js");
 __d(/* react-navigation/src/routers/validateScreenOptions.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _invariant = require(493                 ); // 493 = ../utils/invariant
+var _invariant = require(494                 ); // 494 = ../utils/invariant
 
 var _invariant2 = _interopRequireDefault(_invariant);
 
@@ -62911,12 +62884,12 @@ exports.default = function (screenOptions, route) {
     })), ['}']).join('\n'));
   }
 };
-}, 523, null, "react-navigation/src/routers/validateScreenOptions.js");
+}, 524, null, "react-navigation/src/routers/validateScreenOptions.js");
 __d(/* react-navigation/src/routers/validateRouteConfigMap.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _invariant = require(493                 ); // 493 = ../utils/invariant
+var _invariant = require(494                 ); // 494 = ../utils/invariant
 
 var _invariant2 = _interopRequireDefault(_invariant);
 
@@ -62942,12 +62915,12 @@ function validateRouteConfigMap(routeConfigs) {
 }
 
 exports.default = validateRouteConfigMap;
-}, 524, null, "react-navigation/src/routers/validateRouteConfigMap.js");
+}, 525, null, "react-navigation/src/routers/validateRouteConfigMap.js");
 __d(/* react-navigation/src/routers/getScreenConfigDeprecated.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _invariant = require(493                 ); // 493 = ../utils/invariant
+var _invariant = require(494                 ); // 494 = ../utils/invariant
 
 var _invariant2 = _interopRequireDefault(_invariant);
 
@@ -62956,7 +62929,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = function () {
   return (0, _invariant2.default)(false, '`getScreenConfig` has been replaced with `getScreenOptions`');
 };
-}, 525, null, "react-navigation/src/routers/getScreenConfigDeprecated.js");
+}, 526, null, "react-navigation/src/routers/getScreenConfigDeprecated.js");
 __d(/* react-navigation/src/navigators/NavigatorTypes.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -62971,7 +62944,7 @@ exports.default = {
   TABS: TABS,
   DRAWER: DRAWER
 };
-}, 526, null, "react-navigation/src/navigators/NavigatorTypes.js");
+}, 527, null, "react-navigation/src/navigators/NavigatorTypes.js");
 __d(/* react-navigation/src/navigators/TabNavigator.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -62985,31 +62958,31 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactNative = require(12            ); // 12 = react-native
 
-var _createNavigator = require(498                ); // 498 = ./createNavigator
+var _createNavigator = require(499                ); // 499 = ./createNavigator
 
 var _createNavigator2 = _interopRequireDefault(_createNavigator);
 
-var _createNavigationContainer = require(492                           ); // 492 = ../createNavigationContainer
+var _createNavigationContainer = require(493                           ); // 493 = ../createNavigationContainer
 
 var _createNavigationContainer2 = _interopRequireDefault(_createNavigationContainer);
 
-var _TabRouter = require(528                   ); // 528 = ../routers/TabRouter
+var _TabRouter = require(529                   ); // 529 = ../routers/TabRouter
 
 var _TabRouter2 = _interopRequireDefault(_TabRouter);
 
-var _TabView = require(529                       ); // 529 = ../views/TabView/TabView
+var _TabView = require(530                       ); // 530 = ../views/TabView/TabView
 
 var _TabView2 = _interopRequireDefault(_TabView);
 
-var _TabBarTop = require(540                         ); // 540 = ../views/TabView/TabBarTop
+var _TabBarTop = require(541                         ); // 541 = ../views/TabView/TabBarTop
 
 var _TabBarTop2 = _interopRequireDefault(_TabBarTop);
 
-var _TabBarBottom = require(542                            ); // 542 = ../views/TabView/TabBarBottom
+var _TabBarBottom = require(543                            ); // 543 = ../views/TabView/TabBarBottom
 
 var _TabBarBottom2 = _interopRequireDefault(_TabBarBottom);
 
-var _NavigatorTypes = require(526               ); // 526 = ./NavigatorTypes
+var _NavigatorTypes = require(527               ); // 527 = ./NavigatorTypes
 
 var _NavigatorTypes2 = _interopRequireDefault(_NavigatorTypes);
 
@@ -63074,34 +63047,34 @@ TabNavigator.Presets = {
 };
 
 exports.default = TabNavigator;
-}, 527, null, "react-navigation/src/navigators/TabNavigator.js");
+}, 528, null, "react-navigation/src/navigators/TabNavigator.js");
 __d(/* react-navigation/src/routers/TabRouter.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _invariant = require(493                 ); // 493 = ../utils/invariant
+var _invariant = require(494                 ); // 494 = ../utils/invariant
 
 var _invariant2 = _interopRequireDefault(_invariant);
 
-var _getScreenForRouteName = require(522                      ); // 522 = ./getScreenForRouteName
+var _getScreenForRouteName = require(523                      ); // 523 = ./getScreenForRouteName
 
 var _getScreenForRouteName2 = _interopRequireDefault(_getScreenForRouteName);
 
-var _createConfigGetter = require(521                   ); // 521 = ./createConfigGetter
+var _createConfigGetter = require(522                   ); // 522 = ./createConfigGetter
 
 var _createConfigGetter2 = _interopRequireDefault(_createConfigGetter);
 
-var _NavigationActions = require(495                   ); // 495 = ../NavigationActions
+var _NavigationActions = require(496                   ); // 496 = ../NavigationActions
 
 var _NavigationActions2 = _interopRequireDefault(_NavigationActions);
 
-var _validateRouteConfigMap = require(524                       ); // 524 = ./validateRouteConfigMap
+var _validateRouteConfigMap = require(525                       ); // 525 = ./validateRouteConfigMap
 
 var _validateRouteConfigMap2 = _interopRequireDefault(_validateRouteConfigMap);
 
-var _getScreenConfigDeprecated = require(525                          ); // 525 = ./getScreenConfigDeprecated
+var _getScreenConfigDeprecated = require(526                          ); // 526 = ./getScreenConfigDeprecated
 
 var _getScreenConfigDeprecated2 = _interopRequireDefault(_getScreenConfigDeprecated);
 
@@ -63347,7 +63320,7 @@ exports.default = function (routeConfigs) {
     getScreenConfig: _getScreenConfigDeprecated2.default
   };
 };
-}, 528, null, "react-navigation/src/routers/TabRouter.js");
+}, 529, null, "react-navigation/src/routers/TabRouter.js");
 __d(/* react-navigation/src/views/TabView/TabView.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -63364,13 +63337,13 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactNative = require(12            ); // 12 = react-native
 
-var _reactNativeTabView = require(530                    ); // 530 = react-native-tab-view
+var _reactNativeTabView = require(531                    ); // 531 = react-native-tab-view
 
-var _SceneView = require(512           ); // 512 = ../SceneView
+var _SceneView = require(513           ); // 513 = ../SceneView
 
 var _SceneView2 = _interopRequireDefault(_SceneView);
 
-var _withCachedChildNavigation = require(539                              ); // 539 = ../../withCachedChildNavigation
+var _withCachedChildNavigation = require(540                              ); // 540 = ../../withCachedChildNavigation
 
 var _withCachedChildNavigation2 = _interopRequireDefault(_withCachedChildNavigation);
 
@@ -63560,30 +63533,30 @@ var styles = _reactNative.StyleSheet.create({
     overflow: 'hidden'
   }
 });
-}, 529, null, "react-navigation/src/views/TabView/TabView.js");
+}, 530, null, "react-navigation/src/views/TabView/TabView.js");
 __d(/* react-native-tab-view/src/index.js */function(global, require, module, exports) {
 
 module.exports = {
   get TabViewAnimated() {
-    return require(531                ).default; // 531 = ./TabViewAnimated
+    return require(532                ).default; // 532 = ./TabViewAnimated
   },
   get TabViewPagerPan() {
-    return require(535                ).default; // 535 = ./TabViewPagerPan
+    return require(536                ).default; // 536 = ./TabViewPagerPan
   },
   get TabViewPagerScroll() {
-    return require(534                   ).default; // 534 = ./TabViewPagerScroll
+    return require(535                   ).default; // 535 = ./TabViewPagerScroll
   },
   get TabViewPagerAndroid() {
-    return require(533                    ).default; // 533 = ./TabViewPagerAndroid
+    return require(534                    ).default; // 534 = ./TabViewPagerAndroid
   },
   get TabBar() {
-    return require(536       ).default; // 536 = ./TabBar
+    return require(537       ).default; // 537 = ./TabBar
   },
   get SceneMap() {
-    return require(538         ).default; // 538 = ./SceneMap
+    return require(539         ).default; // 539 = ./SceneMap
   }
 };
-}, 530, null, "react-native-tab-view/src/index.js");
+}, 531, null, "react-native-tab-view/src/index.js");
 __d(/* react-native-tab-view/src/TabViewAnimated.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -63603,7 +63576,7 @@ var _propTypes2 = _interopRequireDefault(_propTypes);
 
 var _reactNative = require(12            ); // 12 = react-native
 
-var _TabViewPropTypes = require(532                 ); // 532 = ./TabViewPropTypes
+var _TabViewPropTypes = require(533                 ); // 533 = ./TabViewPropTypes
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -63621,13 +63594,13 @@ var TabViewPager = void 0;
 
 switch (_reactNative.Platform.OS) {
   case 'android':
-    TabViewPager = require(533                    ).default; // 533 = ./TabViewPagerAndroid
+    TabViewPager = require(534                    ).default; // 534 = ./TabViewPagerAndroid
     break;
   case 'ios':
-    TabViewPager = require(534                   ).default; // 534 = ./TabViewPagerScroll
+    TabViewPager = require(535                   ).default; // 535 = ./TabViewPagerScroll
     break;
   default:
-    TabViewPager = require(535                ).default; // 535 = ./TabViewPagerPan
+    TabViewPager = require(536                ).default; // 536 = ./TabViewPagerPan
     break;
 }
 
@@ -63896,7 +63869,7 @@ var styles = _reactNative.StyleSheet.create({
     overflow: 'hidden'
   }
 });
-}, 531, null, "react-native-tab-view/src/TabViewAnimated.js");
+}, 532, null, "react-native-tab-view/src/TabViewAnimated.js");
 __d(/* react-native-tab-view/src/TabViewPropTypes.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -63932,7 +63905,7 @@ var SceneRendererPropType = exports.SceneRendererPropType = {
   getLastPosition: _propTypes2.default.func.isRequired,
   subscribe: _propTypes2.default.func.isRequired
 };
-}, 532, null, "react-native-tab-view/src/TabViewPropTypes.js");
+}, 533, null, "react-native-tab-view/src/TabViewPropTypes.js");
 __d(/* react-native-tab-view/src/TabViewPagerAndroid.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -63953,7 +63926,7 @@ var _propTypes2 = _interopRequireDefault(_propTypes);
 
 var _reactNative = require(12            ); // 12 = react-native
 
-var _TabViewPropTypes = require(532                 ); // 532 = ./TabViewPropTypes
+var _TabViewPropTypes = require(533                 ); // 533 = ./TabViewPropTypes
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -64137,7 +64110,7 @@ var styles = _reactNative.StyleSheet.create({
     overflow: 'hidden'
   }
 });
-}, 533, null, "react-native-tab-view/src/TabViewPagerAndroid.js");
+}, 534, null, "react-native-tab-view/src/TabViewPagerAndroid.js");
 __d(/* react-native-tab-view/src/TabViewPagerScroll.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -64158,7 +64131,7 @@ var _propTypes2 = _interopRequireDefault(_propTypes);
 
 var _reactNative = require(12            ); // 12 = react-native
 
-var _TabViewPropTypes = require(532                 ); // 532 = ./TabViewPropTypes
+var _TabViewPropTypes = require(533                 ); // 533 = ./TabViewPropTypes
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -64317,7 +64290,7 @@ var styles = _reactNative.StyleSheet.create({
     overflow: 'hidden'
   }
 });
-}, 534, null, "react-native-tab-view/src/TabViewPagerScroll.js");
+}, 535, null, "react-native-tab-view/src/TabViewPagerScroll.js");
 __d(/* react-native-tab-view/src/TabViewPagerPan.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -64337,7 +64310,7 @@ var _propTypes2 = _interopRequireDefault(_propTypes);
 
 var _reactNative = require(12            ); // 12 = react-native
 
-var _TabViewPropTypes = require(532                 ); // 532 = ./TabViewPropTypes
+var _TabViewPropTypes = require(533                 ); // 533 = ./TabViewPropTypes
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -64600,7 +64573,7 @@ var styles = _reactNative.StyleSheet.create({
     alignItems: 'stretch'
   }
 });
-}, 535, null, "react-native-tab-view/src/TabViewPagerPan.js");
+}, 536, null, "react-native-tab-view/src/TabViewPagerPan.js");
 __d(/* react-native-tab-view/src/TabBar.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -64621,11 +64594,11 @@ var _propTypes2 = _interopRequireDefault(_propTypes);
 
 var _reactNative = require(12            ); // 12 = react-native
 
-var _TouchableItem = require(537              ); // 537 = ./TouchableItem
+var _TouchableItem = require(538              ); // 538 = ./TouchableItem
 
 var _TouchableItem2 = _interopRequireDefault(_TouchableItem);
 
-var _TabViewPropTypes = require(532                 ); // 532 = ./TabViewPropTypes
+var _TabViewPropTypes = require(533                 ); // 533 = ./TabViewPropTypes
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -65160,7 +65133,7 @@ var styles = _reactNative.StyleSheet.create({
     height: 2
   }
 });
-}, 536, null, "react-native-tab-view/src/TabBar.js");
+}, 537, null, "react-native-tab-view/src/TabBar.js");
 __d(/* react-native-tab-view/src/TouchableItem.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -65276,7 +65249,7 @@ TouchableItem.defaultProps = {
   pressColor: 'rgba(255, 255, 255, .4)'
 };
 exports.default = TouchableItem;
-}, 537, null, "react-native-tab-view/src/TouchableItem.js");
+}, 538, null, "react-native-tab-view/src/TouchableItem.js");
 __d(/* react-native-tab-view/src/SceneMap.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -65327,7 +65300,7 @@ function SceneMap(scenes) {
     });
   };
 }
-}, 538, null, "react-native-tab-view/src/SceneMap.js");
+}, 539, null, "react-native-tab-view/src/SceneMap.js");
 __d(/* react-navigation/src/withCachedChildNavigation.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -65343,7 +65316,7 @@ var _react = require(36     ); // 36 = react
 
 var _react2 = _interopRequireDefault(_react);
 
-var _addNavigationHelpers = require(496                     ); // 496 = ./addNavigationHelpers
+var _addNavigationHelpers = require(497                     ); // 497 = ./addNavigationHelpers
 
 var _addNavigationHelpers2 = _interopRequireDefault(_addNavigationHelpers);
 
@@ -65414,7 +65387,7 @@ function withCachedChildNavigation(Comp) {
     return _class;
   }(_react.PureComponent), _class.displayName = 'withCachedChildNavigation(' + (Comp.displayName || Comp.name) + ')', _temp2;
 }
-}, 539, null, "react-navigation/src/withCachedChildNavigation.js");
+}, 540, null, "react-navigation/src/withCachedChildNavigation.js");
 __d(/* react-navigation/src/views/TabView/TabBarTop.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -65430,9 +65403,9 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactNative = require(12            ); // 12 = react-native
 
-var _reactNativeTabView = require(530                    ); // 530 = react-native-tab-view
+var _reactNativeTabView = require(531                    ); // 531 = react-native-tab-view
 
-var _TabBarIcon = require(541           ); // 541 = ./TabBarIcon
+var _TabBarIcon = require(542           ); // 542 = ./TabBarIcon
 
 var _TabBarIcon2 = _interopRequireDefault(_TabBarIcon);
 
@@ -65590,7 +65563,7 @@ var styles = _reactNative.StyleSheet.create({
     backgroundColor: 'transparent'
   }
 });
-}, 540, null, "react-navigation/src/views/TabView/TabBarTop.js");
+}, 541, null, "react-navigation/src/views/TabView/TabBarTop.js");
 __d(/* react-navigation/src/views/TabView/TabBarIcon.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -65709,7 +65682,7 @@ var styles = _reactNative.StyleSheet.create({
     justifyContent: 'center'
   }
 });
-}, 541, null, "react-navigation/src/views/TabView/TabBarIcon.js");
+}, 542, null, "react-navigation/src/views/TabView/TabBarIcon.js");
 __d(/* react-navigation/src/views/TabView/TabBarBottom.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -65725,7 +65698,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactNative = require(12            ); // 12 = react-native
 
-var _TabBarIcon = require(541           ); // 541 = ./TabBarIcon
+var _TabBarIcon = require(542           ); // 542 = ./TabBarIcon
 
 var _TabBarIcon2 = _interopRequireDefault(_TabBarIcon);
 
@@ -65930,7 +65903,7 @@ var styles = _reactNative.StyleSheet.create({
     backgroundColor: 'transparent'
   }
 });
-}, 542, null, "react-navigation/src/views/TabView/TabBarBottom.js");
+}, 543, null, "react-navigation/src/views/TabView/TabBarBottom.js");
 __d(/* react-navigation/src/navigators/DrawerNavigator.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -65944,31 +65917,31 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactNative = require(12            ); // 12 = react-native
 
-var _createNavigator = require(498                ); // 498 = ./createNavigator
+var _createNavigator = require(499                ); // 499 = ./createNavigator
 
 var _createNavigator2 = _interopRequireDefault(_createNavigator);
 
-var _createNavigationContainer = require(492                           ); // 492 = ../createNavigationContainer
+var _createNavigationContainer = require(493                           ); // 493 = ../createNavigationContainer
 
 var _createNavigationContainer2 = _interopRequireDefault(_createNavigationContainer);
 
-var _TabRouter = require(528                   ); // 528 = ../routers/TabRouter
+var _TabRouter = require(529                   ); // 529 = ../routers/TabRouter
 
 var _TabRouter2 = _interopRequireDefault(_TabRouter);
 
-var _DrawerScreen = require(544                           ); // 544 = ../views/Drawer/DrawerScreen
+var _DrawerScreen = require(545                           ); // 545 = ../views/Drawer/DrawerScreen
 
 var _DrawerScreen2 = _interopRequireDefault(_DrawerScreen);
 
-var _DrawerView = require(545                         ); // 545 = ../views/Drawer/DrawerView
+var _DrawerView = require(546                         ); // 546 = ../views/Drawer/DrawerView
 
 var _DrawerView2 = _interopRequireDefault(_DrawerView);
 
-var _DrawerNavigatorItems = require(550                                   ); // 550 = ../views/Drawer/DrawerNavigatorItems
+var _DrawerNavigatorItems = require(551                                   ); // 551 = ../views/Drawer/DrawerNavigatorItems
 
 var _DrawerNavigatorItems2 = _interopRequireDefault(_DrawerNavigatorItems);
 
-var _NavigatorTypes = require(526               ); // 526 = ./NavigatorTypes
+var _NavigatorTypes = require(527               ); // 527 = ./NavigatorTypes
 
 var _NavigatorTypes2 = _interopRequireDefault(_NavigatorTypes);
 
@@ -66043,7 +66016,7 @@ var DrawerNavigator = function DrawerNavigator(routeConfigs) {
 };
 
 exports.default = DrawerNavigator;
-}, 543, null, "react-navigation/src/navigators/DrawerNavigator.js");
+}, 544, null, "react-navigation/src/navigators/DrawerNavigator.js");
 __d(/* react-navigation/src/views/Drawer/DrawerScreen.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -66055,11 +66028,11 @@ var _react = require(36     ); // 36 = react
 
 var _react2 = _interopRequireDefault(_react);
 
-var _SceneView = require(512           ); // 512 = ../SceneView
+var _SceneView = require(513           ); // 513 = ../SceneView
 
 var _SceneView2 = _interopRequireDefault(_SceneView);
 
-var _withCachedChildNavigation = require(539                              ); // 539 = ../../withCachedChildNavigation
+var _withCachedChildNavigation = require(540                              ); // 540 = ../../withCachedChildNavigation
 
 var _withCachedChildNavigation2 = _interopRequireDefault(_withCachedChildNavigation);
 
@@ -66110,7 +66083,7 @@ var DrawerScreen = function (_PureComponent) {
 }(_react.PureComponent);
 
 exports.default = (0, _withCachedChildNavigation2.default)(DrawerScreen);
-}, 544, null, "react-navigation/src/views/Drawer/DrawerScreen.js");
+}, 545, null, "react-navigation/src/views/Drawer/DrawerScreen.js");
 __d(/* react-navigation/src/views/Drawer/DrawerView.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -66124,15 +66097,15 @@ var _react = require(36     ); // 36 = react
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactNativeDrawerLayoutPolyfill = require(546                                  ); // 546 = react-native-drawer-layout-polyfill
+var _reactNativeDrawerLayoutPolyfill = require(547                                  ); // 547 = react-native-drawer-layout-polyfill
 
 var _reactNativeDrawerLayoutPolyfill2 = _interopRequireDefault(_reactNativeDrawerLayoutPolyfill);
 
-var _addNavigationHelpers = require(496                         ); // 496 = ../../addNavigationHelpers
+var _addNavigationHelpers = require(497                         ); // 497 = ../../addNavigationHelpers
 
 var _addNavigationHelpers2 = _interopRequireDefault(_addNavigationHelpers);
 
-var _DrawerSidebar = require(549              ); // 549 = ./DrawerSidebar
+var _DrawerSidebar = require(550              ); // 550 = ./DrawerSidebar
 
 var _DrawerSidebar2 = _interopRequireDefault(_DrawerSidebar);
 
@@ -66282,11 +66255,11 @@ var DrawerView = function (_PureComponent) {
 }(_react.PureComponent);
 
 exports.default = DrawerView;
-}, 545, null, "react-navigation/src/views/Drawer/DrawerView.js");
-__d(/* react-native-drawer-layout-polyfill/dist/index.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", { value: true });var _reactNativeDrawerLayout = require(547                         );var _reactNativeDrawerLayout2 = _interopRequireDefault(_reactNativeDrawerLayout);function _interopRequireDefault(obj) { // 547 = react-native-drawer-layout
+}, 546, null, "react-navigation/src/views/Drawer/DrawerView.js");
+__d(/* react-native-drawer-layout-polyfill/dist/index.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", { value: true });var _reactNativeDrawerLayout = require(548                         );var _reactNativeDrawerLayout2 = _interopRequireDefault(_reactNativeDrawerLayout);function _interopRequireDefault(obj) { // 548 = react-native-drawer-layout
   return obj && obj.__esModule ? obj : { default: obj };
 }exports.default = _reactNativeDrawerLayout2.default;
-}, 546, null, "react-native-drawer-layout-polyfill/dist/index.js");
+}, 547, null, "react-native-drawer-layout-polyfill/dist/index.js");
 __d(/* react-native-drawer-layout/dist/DrawerLayout.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = undefined;var _extends = Object.assign || function (target) {
   for (var i = 1; i < arguments.length; i++) {
     var source = arguments[i];for (var key in source) {
@@ -66305,7 +66278,7 @@ __d(/* react-native-drawer-layout/dist/DrawerLayout.js */function(global, requir
   };
 }();var _class, _temp;
 var _react = require(36     );var _react2 = _interopRequireDefault(_react); // 36 = react
-var _reactNativeDismissKeyboard = require(548                            );var _reactNativeDismissKeyboard2 = _interopRequireDefault(_reactNativeDismissKeyboard); // 548 = react-native-dismiss-keyboard
+var _reactNativeDismissKeyboard = require(549                            );var _reactNativeDismissKeyboard2 = _interopRequireDefault(_reactNativeDismissKeyboard); // 549 = react-native-dismiss-keyboard
 var _reactNative = require(12            );function _interopRequireDefault(obj) { // 12 = react-native
   return obj && obj.__esModule ? obj : { default: obj };
 }function _classCallCheck(instance, Constructor) {
@@ -66528,7 +66501,7 @@ var styles = _reactNative.StyleSheet.create({
     bottom: 0,
     right: 0,
     zIndex: 1000 } });
-}, 547, null, "react-native-drawer-layout/dist/DrawerLayout.js");
+}, 548, null, "react-native-drawer-layout/dist/DrawerLayout.js");
 __d(/* react-native-dismiss-keyboard/dist/index.js */function(global, require, module, exports) {Object.defineProperty(exports, '__esModule', {
   value: true
 });
@@ -66543,7 +66516,7 @@ function dismissKeyboard() {
 }
 
 module.exports = exports.default;
-}, 548, null, "react-native-dismiss-keyboard/dist/index.js");
+}, 549, null, "react-native-dismiss-keyboard/dist/index.js");
 __d(/* react-navigation/src/views/Drawer/DrawerSidebar.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -66559,11 +66532,11 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactNative = require(12            ); // 12 = react-native
 
-var _withCachedChildNavigation = require(539                              ); // 539 = ../../withCachedChildNavigation
+var _withCachedChildNavigation = require(540                              ); // 540 = ../../withCachedChildNavigation
 
 var _withCachedChildNavigation2 = _interopRequireDefault(_withCachedChildNavigation);
 
-var _NavigationActions = require(495                      ); // 495 = ../../NavigationActions
+var _NavigationActions = require(496                      ); // 496 = ../../NavigationActions
 
 var _NavigationActions2 = _interopRequireDefault(_NavigationActions);
 
@@ -66688,7 +66661,7 @@ var styles = _reactNative.StyleSheet.create({
     backgroundColor: '#fff'
   }
 });
-}, 549, null, "react-navigation/src/views/Drawer/DrawerSidebar.js");
+}, 550, null, "react-navigation/src/views/Drawer/DrawerSidebar.js");
 __d(/* react-navigation/src/views/Drawer/DrawerNavigatorItems.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -66700,7 +66673,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactNative = require(12            ); // 12 = react-native
 
-var _TouchableItem = require(509               ); // 509 = ../TouchableItem
+var _TouchableItem = require(510               ); // 510 = ../TouchableItem
 
 var _TouchableItem2 = _interopRequireDefault(_TouchableItem);
 
@@ -66810,7 +66783,7 @@ var styles = _reactNative.StyleSheet.create({
 });
 
 exports.default = DrawerNavigatorItems;
-}, 550, null, "react-navigation/src/views/Drawer/DrawerNavigatorItems.js");
+}, 551, null, "react-navigation/src/views/Drawer/DrawerNavigatorItems.js");
 __d(/* react-navigation/src/views/withNavigation.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -66828,7 +66801,7 @@ var _propTypes = require(126         ); // 126 = prop-types
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _hoistNonReactStatics = require(552                      ); // 552 = hoist-non-react-statics
+var _hoistNonReactStatics = require(553                      ); // 553 = hoist-non-react-statics
 
 var _hoistNonReactStatics2 = _interopRequireDefault(_hoistNonReactStatics);
 
@@ -66852,7 +66825,7 @@ function withNavigation(Component) {
 
   return (0, _hoistNonReactStatics2.default)(componentWithNavigation, Component);
 }
-}, 551, null, "react-navigation/src/views/withNavigation.js");
+}, 552, null, "react-navigation/src/views/withNavigation.js");
 __d(/* hoist-non-react-statics/index.js */function(global, require, module, exports) {
 'use strict';
 
@@ -66915,11 +66888,11 @@ module.exports = function hoistNonReactStatics(targetComponent, sourceComponent,
 
     return targetComponent;
 };
-}, 552, null, "hoist-non-react-statics/index.js");
+}, 553, null, "hoist-non-react-statics/index.js");
 __d(/* destinyapp/app/components.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.FormItem = exports.SelectModal = exports.ProfileListItem = undefined;
+exports.FormItem = exports.SelectModal = exports.NavList = exports.TextInputListItem = exports.NavListItem = undefined;
 
 var _react2 = require(36     ); // 36 = react
 
@@ -66935,7 +66908,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _reactNative = require(12            ); // 12 = react-native
 
-var _styles = require(554          ); // 554 = ./styles.js
+var _styles = require(555          ); // 555 = ./styles.js
 
 var _styles2 = _interopRequireDefault(_styles);
 
@@ -66948,8 +66921,14 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var _components = {
-    ProfileListItem: {
-        displayName: 'ProfileListItem'
+    NavListItem: {
+        displayName: 'NavListItem'
+    },
+    TextInputListItem: {
+        displayName: 'TextInputListItem'
+    },
+    NavList: {
+        displayName: 'NavList'
     },
     SelectModal: {
         displayName: 'SelectModal'
@@ -66972,61 +66951,188 @@ function _wrapComponent(id) {
     };
 }
 
-var ProfileListItem = exports.ProfileListItem = _wrapComponent('ProfileListItem')(function (_Component) {
-    _inherits(ProfileListItem, _Component);
+var NavListItem = exports.NavListItem = _wrapComponent('NavListItem')(function (_Component) {
+    _inherits(NavListItem, _Component);
 
-    function ProfileListItem() {
-        _classCallCheck(this, ProfileListItem);
+    function NavListItem() {
+        _classCallCheck(this, NavListItem);
 
-        return _possibleConstructorReturn(this, (ProfileListItem.__proto__ || Object.getPrototypeOf(ProfileListItem)).apply(this, arguments));
+        return _possibleConstructorReturn(this, (NavListItem.__proto__ || Object.getPrototypeOf(NavListItem)).apply(this, arguments));
     }
 
-    _createClass(ProfileListItem, [{
+    _createClass(NavListItem, [{
         key: 'render',
         value: function render() {
             var _this2 = this;
+
+            var outerStyle = [_styles2.default.ListItemOuter];
+            var innerStyle = [_styles2.default.ListItemInner];
+
+            if (this.props.first) {
+                outerStyle.push(_styles2.default.firstInList);
+            }
+
+            if (this.props.last) {
+                outerStyle.push(_styles2.default.lastInList);
+                innerStyle.push(_styles2.default.innerLastInList);
+            }
 
             return _react3.default.createElement(
                 _reactNative.TouchableHighlight,
                 { onPress: function onPress() {
                         return _this2.props.onPress();
-                    }, style: [this.props.style, _styles2.default.ListItem], __source: {
+                    }, style: outerStyle, __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 8
+                        lineNumber: 20
                     }
                 },
                 _react3.default.createElement(
-                    _reactNative.Text,
-                    { style: _styles2.default.ListItemText, __source: {
+                    _reactNative.View,
+                    { style: innerStyle, __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 9
+                            lineNumber: 21
                         }
                     },
-                    this.props.text
+                    _react3.default.createElement(
+                        _reactNative.Text,
+                        { style: _styles2.default.ListItemText, __source: {
+                                fileName: _jsxFileName,
+                                lineNumber: 22
+                            }
+                        },
+                        this.props.text
+                    )
                 )
             );
         }
     }]);
 
-    return ProfileListItem;
+    return NavListItem;
 }(_react2.Component));
 
-var SelectModal = exports.SelectModal = _wrapComponent('SelectModal')(function (_Component2) {
-    _inherits(SelectModal, _Component2);
+var TextInputListItem = exports.TextInputListItem = _wrapComponent('TextInputListItem')(function (_Component2) {
+    _inherits(TextInputListItem, _Component2);
+
+    function TextInputListItem(props) {
+        _classCallCheck(this, TextInputListItem);
+
+        var _this3 = _possibleConstructorReturn(this, (TextInputListItem.__proto__ || Object.getPrototypeOf(TextInputListItem)).call(this, props));
+
+        _this3.state = { value: _this3.props.value };
+        return _this3;
+    }
+
+    _createClass(TextInputListItem, [{
+        key: 'render',
+        value: function render() {
+            var _this4 = this;
+
+            var outerStyle = [_styles2.default.ListItemOuter];
+            var innerStyle = [_styles2.default.FormItem];
+
+            if (this.props.first) {
+                outerStyle.push(_styles2.default.firstInList);
+            }
+
+            if (this.props.last) {
+                outerStyle.push(_styles2.default.lastInList);
+                innerStyle.push(_styles2.default.innerLastInList);
+            }
+
+            return _react3.default.createElement(
+                _reactNative.View,
+                { style: outerStyle, __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 50
+                    }
+                },
+                _react3.default.createElement(_reactNative.TextInput, {
+                    style: innerStyle,
+                    value: this.state.value,
+                    placeholder: this.props.placeholder,
+                    placeholderTextColor: '#888',
+                    onChangeText: function onChangeText(value) {
+                        _this4.setState({ value: value });
+                        _this4.props.onChange(_this4.props.name, value);
+                    },
+                    __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 51
+                    }
+                })
+            );
+        }
+    }]);
+
+    return TextInputListItem;
+}(_react2.Component));
+
+var NavList = exports.NavList = _wrapComponent('NavList')(function (_Component3) {
+    _inherits(NavList, _Component3);
+
+    function NavList() {
+        _classCallCheck(this, NavList);
+
+        return _possibleConstructorReturn(this, (NavList.__proto__ || Object.getPrototypeOf(NavList)).apply(this, arguments));
+    }
+
+    _createClass(NavList, [{
+        key: '_onPressItem',
+        value: function _onPressItem(itemTarget) {
+            this.props.navigation.navigate(itemTarget);
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _this6 = this;
+
+            var children = this.props.listItems.map(function (item, index, array) {
+                return _react3.default.createElement(NavListItem, {
+                    text: item.itemText,
+                    onPress: function onPress() {
+                        return _this6._onPressItem(item.itemTarget);
+                    },
+                    key: index,
+                    first: index === 0,
+                    last: index === array.length - 1,
+                    __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 73
+                    }
+                });
+            });
+
+            return _react3.default.createElement(
+                _reactNative.View,
+                { style: _styles2.default.List, __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 84
+                    }
+                },
+                children
+            );
+        }
+    }]);
+
+    return NavList;
+}(_react2.Component));
+
+var SelectModal = exports.SelectModal = _wrapComponent('SelectModal')(function (_Component4) {
+    _inherits(SelectModal, _Component4);
 
     function SelectModal(props) {
         _classCallCheck(this, SelectModal);
 
-        var _this3 = _possibleConstructorReturn(this, (SelectModal.__proto__ || Object.getPrototypeOf(SelectModal)).call(this, props));
+        var _this7 = _possibleConstructorReturn(this, (SelectModal.__proto__ || Object.getPrototypeOf(SelectModal)).call(this, props));
 
-        _this3.state = { shown: false, value: _this3.props.value };
-        return _this3;
+        _this7.state = { shown: false, value: _this7.props.value };
+        return _this7;
     }
 
     _createClass(SelectModal, [{
         key: '_onSelect',
         value: function _onSelect() {
-            this.props.onSelect(this.state.value);
+            this.props.onSelect(this.props.name, this.state.value);
             this.setState({ shown: false });
         }
     }, {
@@ -67042,12 +67148,12 @@ var SelectModal = exports.SelectModal = _wrapComponent('SelectModal')(function (
     }, {
         key: 'render',
         value: function render() {
-            var _this4 = this;
+            var _this8 = this;
 
             var selectOptions = this.props.selectOptions.map(function (item) {
                 return _react3.default.createElement(_reactNative.Picker.Item, { label: item.name, value: item.value, key: item.value, __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 38
+                        lineNumber: 112
                     }
                 });
             });
@@ -67058,42 +67164,42 @@ var SelectModal = exports.SelectModal = _wrapComponent('SelectModal')(function (
                     transparent: true,
                     visible: this.state.shown,
                     onRequestClose: function onRequestClose() {
-                        return _this4.hide();
+                        return _this8.hide();
                     },
                     __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 41
+                        lineNumber: 115
                     }
                 },
                 _react3.default.createElement(
                     _reactNative.View,
                     { style: _styles2.default.SelectModalOuter, __source: {
                             fileName: _jsxFileName,
-                            lineNumber: 47
+                            lineNumber: 121
                         }
                     },
                     _react3.default.createElement(
                         _reactNative.View,
                         { style: _styles2.default.SelectModalInner, __source: {
                                 fileName: _jsxFileName,
-                                lineNumber: 48
+                                lineNumber: 122
                             }
                         },
                         _react3.default.createElement(
                             _reactNative.View,
                             { style: _styles2.default.SelectModalHeader, __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 49
+                                    lineNumber: 123
                                 }
                             },
                             _react3.default.createElement(_reactNative.Button, {
                                 onPress: function onPress() {
-                                    return _this4._onSelect(_this4.props.value);
+                                    return _this8._onSelect(_this8.props.value);
                                 },
                                 title: 'Done',
                                 __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 50
+                                    lineNumber: 124
                                 }
                             })
                         ),
@@ -67102,12 +67208,12 @@ var SelectModal = exports.SelectModal = _wrapComponent('SelectModal')(function (
                             {
                                 selectedValue: this.state.value,
                                 onValueChange: function onValueChange(itemValue, itemIndex) {
-                                    _this4.setState({ value: itemValue });
+                                    _this8.setState({ value: itemValue });
                                 },
                                 itemStyle: _styles2.default.text,
                                 __source: {
                                     fileName: _jsxFileName,
-                                    lineNumber: 55
+                                    lineNumber: 129
                                 }
                             },
                             selectOptions
@@ -67121,70 +67227,72 @@ var SelectModal = exports.SelectModal = _wrapComponent('SelectModal')(function (
     return SelectModal;
 }(_react2.Component));
 
-var FormItem = exports.FormItem = _wrapComponent('FormItem')(function (_Component3) {
-    _inherits(FormItem, _Component3);
+var FormItem = exports.FormItem = _wrapComponent('FormItem')(function (_Component5) {
+    _inherits(FormItem, _Component5);
 
     function FormItem(props) {
         _classCallCheck(this, FormItem);
 
-        var _this5 = _possibleConstructorReturn(this, (FormItem.__proto__ || Object.getPrototypeOf(FormItem)).call(this, props));
+        var _this9 = _possibleConstructorReturn(this, (FormItem.__proto__ || Object.getPrototypeOf(FormItem)).call(this, props));
 
-        _this5.state = {
-            value: _this5.props.item.value
+        _this9.state = {
+            value: _this9.props.item.value
         };
-        return _this5;
+        return _this9;
     }
 
     _createClass(FormItem, [{
         key: 'render',
         value: function render() {
-            var _this6 = this;
+            var _this10 = this;
 
             var children = [];
 
             if (this.props.item.type === "text") {
-                children.push(_react3.default.createElement(_reactNative.TextInput, {
-                    style: _styles2.default.FormItem,
+                children.push(_react3.default.createElement(TextInputListItem, {
+                    name: this.props.item.name,
                     value: this.state.value,
                     placeholder: this.props.item.placeholder,
-                    placeholderTextColor: '#888',
-                    onChangeText: function onChangeText(text) {
-                        return _this6.setState({ value: text });
+                    onChange: function onChange(name, value) {
+                        return _this10.props.onChange(name, value);
                     },
                     key: this.props.item.name,
+                    first: this.props.first,
+                    last: this.props.last,
                     __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 83
+                        lineNumber: 157
                     }
                 }));
             } else if (this.props.item.type === "select") {
                 var displayText = this.props.item.selectOptions.filter(function (item) {
-                    return item.value === _this6.state.value;
+                    return item.value === _this10.state.value;
                 });
-                children.push(_react3.default.createElement(ProfileListItem, {
+                children.push(_react3.default.createElement(NavListItem, {
                     text: displayText[0].name,
                     onPress: function onPress() {
-                        return _this6.selectModal.show();
+                        return _this10.selectModal.show();
                     },
                     key: this.props.item.name,
+                    first: this.props.first,
+                    last: this.props.last,
                     __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 97
+                        lineNumber: 172
                     }
                 }));
                 children.push(_react3.default.createElement(SelectModal, {
+                    name: this.props.item.name,
                     ref: function ref(component) {
-                        return _this6.selectModal = component;
+                        return _this10.selectModal = component;
                     },
                     selectOptions: this.props.item.selectOptions,
-                    onSelect: function onSelect(value) {
-                        return _this6.setState({ value: value });
-                    },
+                    onSelect: this.props.onChange,
                     value: this.state.value,
                     key: this.props.item.name + "Modal",
                     __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 104
+                        lineNumber: 181
                     }
                 }));
             }
@@ -67192,7 +67300,7 @@ var FormItem = exports.FormItem = _wrapComponent('FormItem')(function (_Componen
             if (this.props.item.spacer == true) {
                 children.push(_react3.default.createElement(_reactNative.View, { style: { height: 15 }, key: this.props.item.name + "After", __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 115
+                        lineNumber: 193
                     }
                 }));
             }
@@ -67202,7 +67310,7 @@ var FormItem = exports.FormItem = _wrapComponent('FormItem')(function (_Componen
                 {
                     __source: {
                         fileName: _jsxFileName,
-                        lineNumber: 119
+                        lineNumber: 197
                     }
                 },
                 children
@@ -67212,7 +67320,7 @@ var FormItem = exports.FormItem = _wrapComponent('FormItem')(function (_Componen
 
     return FormItem;
 }(_react2.Component));
-}, 553, null, "destinyapp/app/components.js");
+}, 554, null, "destinyapp/app/components.js");
 __d(/* destinyapp/app/styles.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
     value: true
 });
@@ -67239,15 +67347,12 @@ var inheritedStyles = exports.inheritedStyles = {
         color: "#B5B69C"
     },
     FormItem: {
-        color: "#888",
-        backgroundColor: "#171717",
-        paddingLeft: 15,
+        color: "#FFF",
         paddingTop: 10,
         paddingBottom: 10,
         paddingRight: 15,
         borderColor: "#222",
-        borderBottomWidth: _reactNative.StyleSheet.hairlineWidth,
-        borderTopWidth: _reactNative.StyleSheet.hairlineWidth
+        borderBottomWidth: _reactNative.StyleSheet.hairlineWidth
     },
     ListItemText: {
         color: "#FFF",
@@ -67261,15 +67366,26 @@ var inheritedStyles = exports.inheritedStyles = {
     NavigationHeaderTitle: {
         color: "#FFF"
     },
-    ListItem: {
+    ListItemOuter: {
         backgroundColor: "#171717",
         paddingLeft: 15,
+        borderColor: "#222"
+    },
+    ListItemInner: {
         paddingTop: 10,
-        paddingBottom: 10,
         paddingRight: 15,
+        paddingBottom: 10,
         borderColor: "#222",
-        borderTopWidth: _reactNative.StyleSheet.hairlineWidth,
         borderBottomWidth: _reactNative.StyleSheet.hairlineWidth
+    },
+    firstInList: {
+        borderTopWidth: _reactNative.StyleSheet.hairlineWidth
+    },
+    lastInList: {
+        borderBottomWidth: _reactNative.StyleSheet.hairlineWidth
+    },
+    innerLastInList: {
+        borderBottomWidth: 0
     },
     SelectModalOuter: {
         flex: 1,
@@ -67293,7 +67409,7 @@ var inheritedStyles = exports.inheritedStyles = {
 var styles = _reactNative.StyleSheet.create(_extends({}, inheritedStyles));
 
 exports.default = styles;
-}, 554, null, "destinyapp/app/styles.js");
+}, 555, null, "destinyapp/app/styles.js");
 __d(/* destinyapp/app/profile/styles.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
     value: true
 });
@@ -67302,20 +67418,20 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _reactNative = require(12            ); // 12 = react-native
 
-var _styles = require(554           ); // 554 = ../styles.js
+var _styles = require(555           ); // 555 = ../styles.js
 
 var styles = _reactNative.StyleSheet.create(_extends({}, _styles.inheritedStyles, {
     ProfileHeader: {
-        marginLeft: 10,
+        marginLeft: 15,
         marginBottom: 20,
         marginTop: 10
     }
 }));
 
 exports.default = styles;
-}, 555, null, "destinyapp/app/profile/styles.js");
+}, 556, null, "destinyapp/app/profile/styles.js");
 __d(/* Destiny/assets/countries.json */function(global, require, module, exports) {module.exports = module.exports = [{ "name": "Afghanistan", "alpha-2": "AF", "country-code": "004" }, { "name": "Åland Islands", "alpha-2": "AX", "country-code": "248" }, { "name": "Albania", "alpha-2": "AL", "country-code": "008" }, { "name": "Algeria", "alpha-2": "DZ", "country-code": "012" }, { "name": "American Samoa", "alpha-2": "AS", "country-code": "016" }, { "name": "Andorra", "alpha-2": "AD", "country-code": "020" }, { "name": "Angola", "alpha-2": "AO", "country-code": "024" }, { "name": "Anguilla", "alpha-2": "AI", "country-code": "660" }, { "name": "Antarctica", "alpha-2": "AQ", "country-code": "010" }, { "name": "Antigua and Barbuda", "alpha-2": "AG", "country-code": "028" }, { "name": "Argentina", "alpha-2": "AR", "country-code": "032" }, { "name": "Armenia", "alpha-2": "AM", "country-code": "051" }, { "name": "Aruba", "alpha-2": "AW", "country-code": "533" }, { "name": "Australia", "alpha-2": "AU", "country-code": "036" }, { "name": "Austria", "alpha-2": "AT", "country-code": "040" }, { "name": "Azerbaijan", "alpha-2": "AZ", "country-code": "031" }, { "name": "Bahamas", "alpha-2": "BS", "country-code": "044" }, { "name": "Bahrain", "alpha-2": "BH", "country-code": "048" }, { "name": "Bangladesh", "alpha-2": "BD", "country-code": "050" }, { "name": "Barbados", "alpha-2": "BB", "country-code": "052" }, { "name": "Belarus", "alpha-2": "BY", "country-code": "112" }, { "name": "Belgium", "alpha-2": "BE", "country-code": "056" }, { "name": "Belize", "alpha-2": "BZ", "country-code": "084" }, { "name": "Benin", "alpha-2": "BJ", "country-code": "204" }, { "name": "Bermuda", "alpha-2": "BM", "country-code": "060" }, { "name": "Bhutan", "alpha-2": "BT", "country-code": "064" }, { "name": "Bolivia, Plurinational State of", "alpha-2": "BO", "country-code": "068" }, { "name": "Bonaire, Sint Eustatius and Saba", "alpha-2": "BQ", "country-code": "535" }, { "name": "Bosnia and Herzegovina", "alpha-2": "BA", "country-code": "070" }, { "name": "Botswana", "alpha-2": "BW", "country-code": "072" }, { "name": "Bouvet Island", "alpha-2": "BV", "country-code": "074" }, { "name": "Brazil", "alpha-2": "BR", "country-code": "076" }, { "name": "British Indian Ocean Territory", "alpha-2": "IO", "country-code": "086" }, { "name": "Brunei Darussalam", "alpha-2": "BN", "country-code": "096" }, { "name": "Bulgaria", "alpha-2": "BG", "country-code": "100" }, { "name": "Burkina Faso", "alpha-2": "BF", "country-code": "854" }, { "name": "Burundi", "alpha-2": "BI", "country-code": "108" }, { "name": "Cambodia", "alpha-2": "KH", "country-code": "116" }, { "name": "Cameroon", "alpha-2": "CM", "country-code": "120" }, { "name": "Canada", "alpha-2": "CA", "country-code": "124" }, { "name": "Cape Verde", "alpha-2": "CV", "country-code": "132" }, { "name": "Cayman Islands", "alpha-2": "KY", "country-code": "136" }, { "name": "Central African Republic", "alpha-2": "CF", "country-code": "140" }, { "name": "Chad", "alpha-2": "TD", "country-code": "148" }, { "name": "Chile", "alpha-2": "CL", "country-code": "152" }, { "name": "China", "alpha-2": "CN", "country-code": "156" }, { "name": "Christmas Island", "alpha-2": "CX", "country-code": "162" }, { "name": "Cocos (Keeling) Islands", "alpha-2": "CC", "country-code": "166" }, { "name": "Colombia", "alpha-2": "CO", "country-code": "170" }, { "name": "Comoros", "alpha-2": "KM", "country-code": "174" }, { "name": "Congo", "alpha-2": "CG", "country-code": "178" }, { "name": "Congo, the Democratic Republic of the", "alpha-2": "CD", "country-code": "180" }, { "name": "Cook Islands", "alpha-2": "CK", "country-code": "184" }, { "name": "Costa Rica", "alpha-2": "CR", "country-code": "188" }, { "name": "Côte d'Ivoire", "alpha-2": "CI", "country-code": "384" }, { "name": "Croatia", "alpha-2": "HR", "country-code": "191" }, { "name": "Cuba", "alpha-2": "CU", "country-code": "192" }, { "name": "Curaçao", "alpha-2": "CW", "country-code": "531" }, { "name": "Cyprus", "alpha-2": "CY", "country-code": "196" }, { "name": "Czech Republic", "alpha-2": "CZ", "country-code": "203" }, { "name": "Denmark", "alpha-2": "DK", "country-code": "208" }, { "name": "Djibouti", "alpha-2": "DJ", "country-code": "262" }, { "name": "Dominica", "alpha-2": "DM", "country-code": "212" }, { "name": "Dominican Republic", "alpha-2": "DO", "country-code": "214" }, { "name": "Ecuador", "alpha-2": "EC", "country-code": "218" }, { "name": "Egypt", "alpha-2": "EG", "country-code": "818" }, { "name": "El Salvador", "alpha-2": "SV", "country-code": "222" }, { "name": "Equatorial Guinea", "alpha-2": "GQ", "country-code": "226" }, { "name": "Eritrea", "alpha-2": "ER", "country-code": "232" }, { "name": "Estonia", "alpha-2": "EE", "country-code": "233" }, { "name": "Ethiopia", "alpha-2": "ET", "country-code": "231" }, { "name": "Falkland Islands (Malvinas)", "alpha-2": "FK", "country-code": "238" }, { "name": "Faroe Islands", "alpha-2": "FO", "country-code": "234" }, { "name": "Fiji", "alpha-2": "FJ", "country-code": "242" }, { "name": "Finland", "alpha-2": "FI", "country-code": "246" }, { "name": "France", "alpha-2": "FR", "country-code": "250" }, { "name": "French Guiana", "alpha-2": "GF", "country-code": "254" }, { "name": "French Polynesia", "alpha-2": "PF", "country-code": "258" }, { "name": "French Southern Territories", "alpha-2": "TF", "country-code": "260" }, { "name": "Gabon", "alpha-2": "GA", "country-code": "266" }, { "name": "Gambia", "alpha-2": "GM", "country-code": "270" }, { "name": "Georgia", "alpha-2": "GE", "country-code": "268" }, { "name": "Germany", "alpha-2": "DE", "country-code": "276" }, { "name": "Ghana", "alpha-2": "GH", "country-code": "288" }, { "name": "Gibraltar", "alpha-2": "GI", "country-code": "292" }, { "name": "Greece", "alpha-2": "GR", "country-code": "300" }, { "name": "Greenland", "alpha-2": "GL", "country-code": "304" }, { "name": "Grenada", "alpha-2": "GD", "country-code": "308" }, { "name": "Guadeloupe", "alpha-2": "GP", "country-code": "312" }, { "name": "Guam", "alpha-2": "GU", "country-code": "316" }, { "name": "Guatemala", "alpha-2": "GT", "country-code": "320" }, { "name": "Guernsey", "alpha-2": "GG", "country-code": "831" }, { "name": "Guinea", "alpha-2": "GN", "country-code": "324" }, { "name": "Guinea-Bissau", "alpha-2": "GW", "country-code": "624" }, { "name": "Guyana", "alpha-2": "GY", "country-code": "328" }, { "name": "Haiti", "alpha-2": "HT", "country-code": "332" }, { "name": "Heard Island and McDonald Islands", "alpha-2": "HM", "country-code": "334" }, { "name": "Holy See (Vatican City State)", "alpha-2": "VA", "country-code": "336" }, { "name": "Honduras", "alpha-2": "HN", "country-code": "340" }, { "name": "Hong Kong", "alpha-2": "HK", "country-code": "344" }, { "name": "Hungary", "alpha-2": "HU", "country-code": "348" }, { "name": "Iceland", "alpha-2": "IS", "country-code": "352" }, { "name": "India", "alpha-2": "IN", "country-code": "356" }, { "name": "Indonesia", "alpha-2": "ID", "country-code": "360" }, { "name": "Iran, Islamic Republic of", "alpha-2": "IR", "country-code": "364" }, { "name": "Iraq", "alpha-2": "IQ", "country-code": "368" }, { "name": "Ireland", "alpha-2": "IE", "country-code": "372" }, { "name": "Isle of Man", "alpha-2": "IM", "country-code": "833" }, { "name": "Israel", "alpha-2": "IL", "country-code": "376" }, { "name": "Italy", "alpha-2": "IT", "country-code": "380" }, { "name": "Jamaica", "alpha-2": "JM", "country-code": "388" }, { "name": "Japan", "alpha-2": "JP", "country-code": "392" }, { "name": "Jersey", "alpha-2": "JE", "country-code": "832" }, { "name": "Jordan", "alpha-2": "JO", "country-code": "400" }, { "name": "Kazakhstan", "alpha-2": "KZ", "country-code": "398" }, { "name": "Kenya", "alpha-2": "KE", "country-code": "404" }, { "name": "Kiribati", "alpha-2": "KI", "country-code": "296" }, { "name": "Korea, Democratic People's Republic of", "alpha-2": "KP", "country-code": "408" }, { "name": "Korea, Republic of", "alpha-2": "KR", "country-code": "410" }, { "name": "Kuwait", "alpha-2": "KW", "country-code": "414" }, { "name": "Kyrgyzstan", "alpha-2": "KG", "country-code": "417" }, { "name": "Lao People's Democratic Republic", "alpha-2": "LA", "country-code": "418" }, { "name": "Latvia", "alpha-2": "LV", "country-code": "428" }, { "name": "Lebanon", "alpha-2": "LB", "country-code": "422" }, { "name": "Lesotho", "alpha-2": "LS", "country-code": "426" }, { "name": "Liberia", "alpha-2": "LR", "country-code": "430" }, { "name": "Libya", "alpha-2": "LY", "country-code": "434" }, { "name": "Liechtenstein", "alpha-2": "LI", "country-code": "438" }, { "name": "Lithuania", "alpha-2": "LT", "country-code": "440" }, { "name": "Luxembourg", "alpha-2": "LU", "country-code": "442" }, { "name": "Macao", "alpha-2": "MO", "country-code": "446" }, { "name": "Macedonia, the former Yugoslav Republic of", "alpha-2": "MK", "country-code": "807" }, { "name": "Madagascar", "alpha-2": "MG", "country-code": "450" }, { "name": "Malawi", "alpha-2": "MW", "country-code": "454" }, { "name": "Malaysia", "alpha-2": "MY", "country-code": "458" }, { "name": "Maldives", "alpha-2": "MV", "country-code": "462" }, { "name": "Mali", "alpha-2": "ML", "country-code": "466" }, { "name": "Malta", "alpha-2": "MT", "country-code": "470" }, { "name": "Marshall Islands", "alpha-2": "MH", "country-code": "584" }, { "name": "Martinique", "alpha-2": "MQ", "country-code": "474" }, { "name": "Mauritania", "alpha-2": "MR", "country-code": "478" }, { "name": "Mauritius", "alpha-2": "MU", "country-code": "480" }, { "name": "Mayotte", "alpha-2": "YT", "country-code": "175" }, { "name": "Mexico", "alpha-2": "MX", "country-code": "484" }, { "name": "Micronesia, Federated States of", "alpha-2": "FM", "country-code": "583" }, { "name": "Moldova, Republic of", "alpha-2": "MD", "country-code": "498" }, { "name": "Monaco", "alpha-2": "MC", "country-code": "492" }, { "name": "Mongolia", "alpha-2": "MN", "country-code": "496" }, { "name": "Montenegro", "alpha-2": "ME", "country-code": "499" }, { "name": "Montserrat", "alpha-2": "MS", "country-code": "500" }, { "name": "Morocco", "alpha-2": "MA", "country-code": "504" }, { "name": "Mozambique", "alpha-2": "MZ", "country-code": "508" }, { "name": "Myanmar", "alpha-2": "MM", "country-code": "104" }, { "name": "Namibia", "alpha-2": "NA", "country-code": "516" }, { "name": "Nauru", "alpha-2": "NR", "country-code": "520" }, { "name": "Nepal", "alpha-2": "NP", "country-code": "524" }, { "name": "Netherlands", "alpha-2": "NL", "country-code": "528" }, { "name": "New Caledonia", "alpha-2": "NC", "country-code": "540" }, { "name": "New Zealand", "alpha-2": "NZ", "country-code": "554" }, { "name": "Nicaragua", "alpha-2": "NI", "country-code": "558" }, { "name": "Niger", "alpha-2": "NE", "country-code": "562" }, { "name": "Nigeria", "alpha-2": "NG", "country-code": "566" }, { "name": "Niue", "alpha-2": "NU", "country-code": "570" }, { "name": "Norfolk Island", "alpha-2": "NF", "country-code": "574" }, { "name": "Northern Mariana Islands", "alpha-2": "MP", "country-code": "580" }, { "name": "Norway", "alpha-2": "NO", "country-code": "578" }, { "name": "Oman", "alpha-2": "OM", "country-code": "512" }, { "name": "Pakistan", "alpha-2": "PK", "country-code": "586" }, { "name": "Palau", "alpha-2": "PW", "country-code": "585" }, { "name": "Palestinian Territory, Occupied", "alpha-2": "PS", "country-code": "275" }, { "name": "Panama", "alpha-2": "PA", "country-code": "591" }, { "name": "Papua New Guinea", "alpha-2": "PG", "country-code": "598" }, { "name": "Paraguay", "alpha-2": "PY", "country-code": "600" }, { "name": "Peru", "alpha-2": "PE", "country-code": "604" }, { "name": "Philippines", "alpha-2": "PH", "country-code": "608" }, { "name": "Pitcairn", "alpha-2": "PN", "country-code": "612" }, { "name": "Poland", "alpha-2": "PL", "country-code": "616" }, { "name": "Portugal", "alpha-2": "PT", "country-code": "620" }, { "name": "Puerto Rico", "alpha-2": "PR", "country-code": "630" }, { "name": "Qatar", "alpha-2": "QA", "country-code": "634" }, { "name": "Réunion", "alpha-2": "RE", "country-code": "638" }, { "name": "Romania", "alpha-2": "RO", "country-code": "642" }, { "name": "Russian Federation", "alpha-2": "RU", "country-code": "643" }, { "name": "Rwanda", "alpha-2": "RW", "country-code": "646" }, { "name": "Saint Barthélemy", "alpha-2": "BL", "country-code": "652" }, { "name": "Saint Helena, Ascension and Tristan da Cunha", "alpha-2": "SH", "country-code": "654" }, { "name": "Saint Kitts and Nevis", "alpha-2": "KN", "country-code": "659" }, { "name": "Saint Lucia", "alpha-2": "LC", "country-code": "662" }, { "name": "Saint Martin (French part)", "alpha-2": "MF", "country-code": "663" }, { "name": "Saint Pierre and Miquelon", "alpha-2": "PM", "country-code": "666" }, { "name": "Saint Vincent and the Grenadines", "alpha-2": "VC", "country-code": "670" }, { "name": "Samoa", "alpha-2": "WS", "country-code": "882" }, { "name": "San Marino", "alpha-2": "SM", "country-code": "674" }, { "name": "Sao Tome and Principe", "alpha-2": "ST", "country-code": "678" }, { "name": "Saudi Arabia", "alpha-2": "SA", "country-code": "682" }, { "name": "Senegal", "alpha-2": "SN", "country-code": "686" }, { "name": "Serbia", "alpha-2": "RS", "country-code": "688" }, { "name": "Seychelles", "alpha-2": "SC", "country-code": "690" }, { "name": "Sierra Leone", "alpha-2": "SL", "country-code": "694" }, { "name": "Singapore", "alpha-2": "SG", "country-code": "702" }, { "name": "Sint Maarten (Dutch part)", "alpha-2": "SX", "country-code": "534" }, { "name": "Slovakia", "alpha-2": "SK", "country-code": "703" }, { "name": "Slovenia", "alpha-2": "SI", "country-code": "705" }, { "name": "Solomon Islands", "alpha-2": "SB", "country-code": "090" }, { "name": "Somalia", "alpha-2": "SO", "country-code": "706" }, { "name": "South Africa", "alpha-2": "ZA", "country-code": "710" }, { "name": "South Georgia and the South Sandwich Islands", "alpha-2": "GS", "country-code": "239" }, { "name": "South Sudan", "alpha-2": "SS", "country-code": "728" }, { "name": "Spain", "alpha-2": "ES", "country-code": "724" }, { "name": "Sri Lanka", "alpha-2": "LK", "country-code": "144" }, { "name": "Sudan", "alpha-2": "SD", "country-code": "729" }, { "name": "Suriname", "alpha-2": "SR", "country-code": "740" }, { "name": "Svalbard and Jan Mayen", "alpha-2": "SJ", "country-code": "744" }, { "name": "Swaziland", "alpha-2": "SZ", "country-code": "748" }, { "name": "Sweden", "alpha-2": "SE", "country-code": "752" }, { "name": "Switzerland", "alpha-2": "CH", "country-code": "756" }, { "name": "Syrian Arab Republic", "alpha-2": "SY", "country-code": "760" }, { "name": "Taiwan, Province of China", "alpha-2": "TW", "country-code": "158" }, { "name": "Tajikistan", "alpha-2": "TJ", "country-code": "762" }, { "name": "Tanzania, United Republic of", "alpha-2": "TZ", "country-code": "834" }, { "name": "Thailand", "alpha-2": "TH", "country-code": "764" }, { "name": "Timor-Leste", "alpha-2": "TL", "country-code": "626" }, { "name": "Togo", "alpha-2": "TG", "country-code": "768" }, { "name": "Tokelau", "alpha-2": "TK", "country-code": "772" }, { "name": "Tonga", "alpha-2": "TO", "country-code": "776" }, { "name": "Trinidad and Tobago", "alpha-2": "TT", "country-code": "780" }, { "name": "Tunisia", "alpha-2": "TN", "country-code": "788" }, { "name": "Turkey", "alpha-2": "TR", "country-code": "792" }, { "name": "Turkmenistan", "alpha-2": "TM", "country-code": "795" }, { "name": "Turks and Caicos Islands", "alpha-2": "TC", "country-code": "796" }, { "name": "Tuvalu", "alpha-2": "TV", "country-code": "798" }, { "name": "Uganda", "alpha-2": "UG", "country-code": "800" }, { "name": "Ukraine", "alpha-2": "UA", "country-code": "804" }, { "name": "United Arab Emirates", "alpha-2": "AE", "country-code": "784" }, { "name": "United Kingdom", "alpha-2": "GB", "country-code": "826" }, { "name": "United States", "alpha-2": "US", "country-code": "840" }, { "name": "United States Minor Outlying Islands", "alpha-2": "UM", "country-code": "581" }, { "name": "Uruguay", "alpha-2": "UY", "country-code": "858" }, { "name": "Uzbekistan", "alpha-2": "UZ", "country-code": "860" }, { "name": "Vanuatu", "alpha-2": "VU", "country-code": "548" }, { "name": "Venezuela, Bolivarian Republic of", "alpha-2": "VE", "country-code": "862" }, { "name": "Viet Nam", "alpha-2": "VN", "country-code": "704" }, { "name": "Virgin Islands, British", "alpha-2": "VG", "country-code": "092" }, { "name": "Virgin Islands, U.S.", "alpha-2": "VI", "country-code": "850" }, { "name": "Wallis and Futuna", "alpha-2": "WF", "country-code": "876" }, { "name": "Western Sahara", "alpha-2": "EH", "country-code": "732" }, { "name": "Yemen", "alpha-2": "YE", "country-code": "887" }, { "name": "Zambia", "alpha-2": "ZM", "country-code": "894" }, { "name": "Zimbabwe", "alpha-2": "ZW", "country-code": "716" }];
-}, 556, null, "Destiny/assets/countries.json");
+}, 557, null, "Destiny/assets/countries.json");
 ;require(54);
 ;require(0);
 //# sourceMappingURL=index.map

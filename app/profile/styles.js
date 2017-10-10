@@ -4,7 +4,7 @@ import { inheritedStyles } from '../styles.js';
 const styles = StyleSheet.create({
     ...inheritedStyles,
     ProfileHeader: {
-        marginLeft: 10,
+        marginLeft: 15,
         marginBottom: 20,
         marginTop: 10
     }
