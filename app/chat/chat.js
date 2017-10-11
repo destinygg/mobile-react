@@ -3,6 +3,39 @@ import { FlatList } from 'react-native';
 import Chat from '../lib/assets/chat/js/chat.js';
 import ChatWindow from '../lib/assets/chat/js/window.js';
 import style from './styles.js';
+import emoteStyles from './emotes.js';
+import emotes from '../../lib/assets/emotes.json'
+
+const destinyEmoteSet = new Set(emotes['destiny']);
+const twitchEmoteSet = new Set(emotes['twitch']);
+
+const gemoteregex = new RegExp(`\b`)
+
+function formatMessage(str){
+    if(!gemoteregex || !twitchemoteregex) {
+        const emoticons = [...destinyEmoteSet].join('|');
+        const twitchemotes = [...twitchEmoteSet].join('|');
+        gemoteregex = new RegExp(`\b${emoticons}\b`);
+        twitchemoteregex = new RegExp(`\b${twitchemotes}\b`);
+    }
+    //let regex = (message && message.user && message.user.hasFeature(UserFeatures.SUBSCRIBERT0)) || (!message || !message.user) ? twitchemoteregex : gemoteregex;
+    let regex = gemoteregex;
+    let result;
+    let formatted = [];
+
+    while ((result = re.exec(str)) !== null) {
+        const before = str.substring(0, result.index);
+
+        if (before !== "") {
+            formatted.push({"string": before});            
+        }
+
+        formatted.push({"emote": result[0]});
+
+        str = str.substring(result.index + result[0].length);
+    }
+    return formatted;
+}
 
 export default class MobileChatView extends Component {
     constructor(props) {
@@ -19,13 +52,13 @@ export default class MobileChatView extends Component {
             <FlatList
                 data={this.state.messages}
                 style={this.props.styles}
-                renderItem={({ item }) => <MobileChatEntry {...item} />}
+                renderItem={({ item }) => <MobileChatMessage {...item} />}
             />
         )
     }
 }
 
-class MobileChatEntry extends Component {
+class MobileChatMessage extends Component {
     /*
         { "id", "username", "classes" }
     */
@@ -33,12 +66,23 @@ class MobileChatEntry extends Component {
         super(props);
     }
     render() {
-        let componentStyle = [styles.chatMessage];
+        let messageFeatures = [];
         
         for (var i = 0; i < this.props.classes; i++) {
-            componentStyle.push(this.props.classes[i]);
+            messageFeatures.push(this.props.classes[i]);
         }
-        // build entry
+
+        const formatted = formatMessage(this.props.message).map((message) => {
+            if ('string' in message) {
+                return <Text>{message.string}</Text>
+            } else if ('emote' in message) {
+                return <Emote name={message.emote} />
+            }
+        });
+        
+        return(
+            <View style={styles.ChatMessage}>{formatted}</View>
+        )
     }
 }
 
