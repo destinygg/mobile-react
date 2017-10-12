@@ -4,12 +4,25 @@ import Chat from '../lib/assets/chat/js/chat.js';
 import ChatWindow from '../lib/assets/chat/js/window.js';
 import style from './styles.js';
 import emoteStyles from './emotes.js';
-import emotes from '../../lib/assets/emotes.json'
+import features from '../../lib/assets/chat/features.js';
+
+const emotes = require('../../lib/assets/emotes.json');
 
 const destinyEmoteSet = new Set(emotes['destiny']);
 const twitchEmoteSet = new Set(emotes['twitch']);
 
-const gemoteregex = new RegExp(`\b`)
+const gemoteregex = new RegExp(`\b`);
+
+const emotes = new Map(destinyEmoteSet.concat(twitchEmoteSet).map(
+    (item) => [item, require(`../../lib/assets/emotes/emoticons/${item}.png`)]
+));
+
+function getFeature(name) {
+    let feature = features.valueOf(name);
+    if (feature) {
+        return `../../lib/assets/chat/icons/icons/${feature.id}.png`;
+    }
+}
 
 function formatMessage(str){
     if(!gemoteregex || !twitchemoteregex) {
@@ -37,6 +50,22 @@ function formatMessage(str){
     return formatted;
 }
 
+class UserFeature extends Component {
+    render() {
+        return (
+            <Image source={ features.valueOf() } />
+        )
+    }
+}
+
+class Emote extends Component {
+    render() {
+        return (
+            <Image source={ emotes.get(this.props.name) } /> 
+        )
+    }
+}
+
 export default class MobileChatView extends Component {
     constructor(props) {
         super(props);
@@ -51,7 +80,7 @@ export default class MobileChatView extends Component {
         return (
             <FlatList
                 data={this.state.messages}
-                style={this.props.styles}
+                style={styles.ChatView}
                 renderItem={({ item }) => <MobileChatMessage {...item} />}
             />
         )
