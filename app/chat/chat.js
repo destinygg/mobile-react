@@ -17,13 +17,6 @@ const emotes = new Map(destinyEmoteSet.concat(twitchEmoteSet).map(
     (item) => [item, require(`../../lib/assets/emotes/emoticons/${item}.png`)]
 ));
 
-function getFeature(name) {
-    let feature = features.valueOf(name);
-    if (feature) {
-        return `../../lib/assets/chat/icons/icons/${feature.id}.png`;
-    }
-}
-
 function formatMessage(str){
     if(!gemoteregex || !twitchemoteregex) {
         const emoticons = [...destinyEmoteSet].join('|');
@@ -50,10 +43,32 @@ function formatMessage(str){
     return formatted;
 }
 
-class UserFeature extends Component {
+class UserFlair extends Component {
+    getFeature() {
+        let feature = features.valueOf(this.props.name);
+        if (feature) {
+            return `../../lib/assets/chat/icons/icons/${feature.id}.png`;
+        }
+    }
+
     render() {
         return (
-            <Image source={ features.valueOf() } />
+            <Image source={ this.getFeature() } />
+        );
+    }
+}
+
+class UserBadge extends Component {
+    render() {
+        const features = this.props.user.features.map((feature) =>
+            <UserFlair name={feature} />    
+        );
+
+        return (
+            <View>
+                {features}
+                <Text style={this.props.styles}>{this.props.user.username}</Text>
+            </View>
         )
     }
 }
@@ -62,7 +77,39 @@ class Emote extends Component {
     render() {
         return (
             <Image source={ emotes.get(this.props.name) } /> 
-        )
+        );
+    }
+}
+
+class MobileChatMessage extends Component {
+    constructor(props) {
+        super(props);
+    }
+    render() {
+        let messageFeatures = [];
+
+        for (var i = 0; i < this.props.message.classes; i++) {
+            messageFeatures.push(this.props.message.classes[i]);
+        }
+
+        const formatted = formatMessage(this.props.message.text).map((message) => {
+            if ('string' in message) {
+                return <Text>{message.string}</Text>
+            } else if ('emote' in message) {
+                return <Emote name={message.emote} />
+            }
+        });
+
+        return (
+            <View style={styles.ChatMessage}>
+                {this.props.timeStamp === true
+                    ? <Text style={styles.Timestamp}>this.props.message.timestamp</Text>
+                    : null
+                }
+                <UserBadge user={this.props.message.user} />
+                {formatted}
+            </View>
+        );
     }
 }
 
@@ -83,35 +130,7 @@ export default class MobileChatView extends Component {
                 style={styles.ChatView}
                 renderItem={({ item }) => <MobileChatMessage {...item} />}
             />
-        )
-    }
-}
-
-class MobileChatMessage extends Component {
-    /*
-        { "id", "username", "classes" }
-    */
-    constructor(props) {
-        super(props);
-    }
-    render() {
-        let messageFeatures = [];
-        
-        for (var i = 0; i < this.props.classes; i++) {
-            messageFeatures.push(this.props.classes[i]);
-        }
-
-        const formatted = formatMessage(this.props.message).map((message) => {
-            if ('string' in message) {
-                return <Text>{message.string}</Text>
-            } else if ('emote' in message) {
-                return <Emote name={message.emote} />
-            }
-        });
-        
-        return(
-            <View style={styles.ChatMessage}>{formatted}</View>
-        )
+        );
     }
 }
 

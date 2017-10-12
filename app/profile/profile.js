@@ -71,7 +71,19 @@ class FormView extends Component {
         return extracted;
     }
     save() {
-        /* send fetch to d.gg api */
+        this.showActiveIndicator();
+        fetch(`https://destiny.gg/${this.endpoint}`).then((response) => {
+            if (response.status === 200) {
+                this.props.navigation.goBack();
+                // re-initialize user data here
+            } else {
+                this.showFailAlert();
+            }
+            this.hideActiveIndicator();
+        }).catch((error) => {
+            this.showFailAlert();
+            this.hideActiveIndicator();
+        });
     }
     componentWillMount() {
         let initState = {};
@@ -98,6 +110,7 @@ class AccountView extends FormView {
     };
     constructor() {
         super();
+        this.endpoint = '/profile/account/update';
         this.formItems = [
             [
                 { 
@@ -161,6 +174,7 @@ class AddressView extends FormView {
     };
     constructor() {
         super();
+        this.endpoint = '/profile/address/update';        
         this.formItems = [
             {
                 value: PROFILEDATA.fullName,
@@ -216,6 +230,7 @@ class DiscordView extends FormView {
     };
     constructor() {
         super();
+        this.endpoint = '/profile/discord/update';        
         this.formItems = [
             {
                 value: PROFILEDATA.discordname,
@@ -233,6 +248,7 @@ class MinecraftView extends FormView {
     };
     constructor() {
         super();
+        this.endpoint = '/profile/minecraft/update';        
         this.formItems = [
             {
                 value: PROFILEDATA.minecraftname,
