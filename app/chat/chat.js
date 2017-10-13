@@ -1,26 +1,23 @@
 import React, { Component } from 'react';
-import { FlatList } from 'react-native';
-import Chat from '../lib/assets/chat/js/chat.js';
-import ChatWindow from '../lib/assets/chat/js/window.js';
-import style from './styles.js';
-import emoteStyles from './emotes.js';
-import features from '../../lib/assets/chat/features.js';
+import { View, TextInput, FlatList, Text, Image } from 'react-native';
+import Chat from '../../lib/assets/chat/js/chat.js';
+import ChatWindow from '../../lib/assets/chat/js/window.js';
+import styles from './styles.js';
+import features from '../../lib/assets/chat/js/features.js';
+import { emoteImgs, icons } from './images.js';
 
-const emotes = require('../../lib/assets/emotes.json');
+const emoteDir = require('../../lib/assets/emotes.json');
 
-const destinyEmoteSet = new Set(emotes['destiny']);
-const twitchEmoteSet = new Set(emotes['twitch']);
+const destinyEmotes = Array.from(emoteDir['destiny']);
+const twitchEmotes = Array.from(emoteDir['twitch']);
 
 const gemoteregex = new RegExp(`\b`);
-
-const emotes = new Map(destinyEmoteSet.concat(twitchEmoteSet).map(
-    (item) => [item, require(`../../lib/assets/emotes/emoticons/${item}.png`)]
-));
+let twitchemoteregex;
 
 function formatMessage(str){
     if(!gemoteregex || !twitchemoteregex) {
-        const emoticons = [...destinyEmoteSet].join('|');
-        const twitchemotes = [...twitchEmoteSet].join('|');
+        const emoticons = destinyEmotes.join('|');
+        const twitchemotes = twitchEmotes.join('|');
         gemoteregex = new RegExp(`\b${emoticons}\b`);
         twitchemoteregex = new RegExp(`\b${twitchemotes}\b`);
     }
@@ -29,7 +26,7 @@ function formatMessage(str){
     let result;
     let formatted = [];
 
-    while ((result = re.exec(str)) !== null) {
+    while ((result = regex.exec(str)) !== null) {
         const before = str.substring(0, result.index);
 
         if (before !== "") {
@@ -45,29 +42,53 @@ function formatMessage(str){
 
 class UserFlair extends Component {
     getFeature() {
-        let feature = features.valueOf(this.props.name);
-        if (feature) {
-            return `../../lib/assets/chat/icons/icons/${feature.id}.png`;
+        if (this.props.name in icons) {
+            return icons[this.props.name];
         }
     }
-
     render() {
         return (
-            <Image source={ this.getFeature() } />
+            <Image style={styles.Flair} source={ this.getFeature() } />
         );
     }
 }
 
 class UserBadge extends Component {
     render() {
-        const features = this.props.user.features.map((feature) =>
-            <UserFlair name={feature} />    
-        );
+        let features = [];
+        let messageStyles = [styles.MessageText, styles.UserText];
+        
+        for (var i = 0; i < this.props.user.features.length; i++) {
+            switch (this.props.user.features[i]) {
+                case "protected": {
+                    break;
+                } 
+                case "vip": {
+                    break;
+                }
+                case "moderator": {
+                    break;
+                } 
+                case "admin": {
+                    break;
+                } 
+                case "flair7": {
+                    break;
+                }
+                case "subscriber": {
+                    messageStyles.push(styles.Subscriber);
+                }
+                default: {
+                    features.push(<UserFlair key={features.length} name={this.props.user.features[i]} />)
+                    break;
+                }
+            }
+        }
 
         return (
-            <View>
+            <View style={{flexDirection: 'row'}}>
                 {features}
-                <Text style={this.props.styles}>{this.props.user.username}</Text>
+                <Text style={messageStyles}>{this.props.user.username}: </Text>
             </View>
         )
     }
@@ -76,7 +97,7 @@ class UserBadge extends Component {
 class Emote extends Component {
     render() {
         return (
-            <Image source={ emotes.get(this.props.name) } /> 
+            <Image style={styles.Emote} source={ emoteImgs.get(this.props.name) } /> 
         );
     }
 }
@@ -88,15 +109,15 @@ class MobileChatMessage extends Component {
     render() {
         let messageFeatures = [];
 
-        for (var i = 0; i < this.props.message.classes; i++) {
+        /*for (var i = 0; i < this.props.message.classes; i++) {
             messageFeatures.push(this.props.message.classes[i]);
-        }
+        }*/
 
-        const formatted = formatMessage(this.props.message.text).map((message) => {
+        const formatted = formatMessage(this.props.message.text).map((message, index) => {
             if ('string' in message) {
-                return <Text>{message.string}</Text>
+                return <Text style={styles.MessageText} key={index}>{message.string}</Text>
             } else if ('emote' in message) {
-                return <Emote name={message.emote} />
+                return <Emote key={index} name={message.emote} />
             }
         });
 
@@ -113,23 +134,78 @@ class MobileChatMessage extends Component {
     }
 }
 
+class MobileChatInput extends Component {
+    render() {
+        return (
+            <TextInput
+                style={styles.ChatInput}
+                placeholder={'Write something...'}
+                placeholderTextColor="#888"
+                onSubmitEditing={this.props.onSubmit}
+            />
+        )
+    }
+}
+
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+}
+
+POSSIBLE_MESSAGES = [
+    {
+        user: {
+            username: 'criminal_cutie',
+            features: ['subscriber']
+        },
+        text: 'FerretLOL FerretLOL FerretLOL FerretLOL'
+    },
+    {
+        user: {
+            username: 'RightToBearArmsLOL',
+            features: ['subscriber', 'flair4']
+        },
+        text: `KILL YOURSELF NoTears KILL YOURSELF NoTears KILL YOURSELF NoTears`
+    }
+]
+
 export default class MobileChatView extends Component {
     constructor(props) {
         super(props);
-        this.chat = props.screenProps.chat;
+        //this.chat = props.screenProps.chat;
         this.state = {
-            "messages": [],
+            "messages": [
+                {
+                    user: {
+                        username: 'criminal_cutie',
+                        features: ['subscriber']
+                    },
+                    text: 'FerretLOL'
+                }
+            ],
+            extraData: false
         }
-        this.chat.bindView(this);
+        //this.chat.bindView(this);
+        setInterval(() => {
+            const message = getRandomInt(0,2);
+            let messages = this.state.messages;
+            messages.push(POSSIBLE_MESSAGES[message]);
+            this.setState({ messages: messages, extraData: !this.state.extraData });
+        }, 1000);
     }
 
     render() {
         return (
-            <FlatList
-                data={this.state.messages}
-                style={styles.ChatView}
-                renderItem={({ item }) => <MobileChatMessage {...item} />}
-            />
+            <View style={[styles.View, styles.ChatView]}>
+                <FlatList
+                    data={this.state.messages}
+                    style={styles.ChatViewList}
+                    extraData={this.state.extraData}
+                    renderItem={({ item }, index) => <MobileChatMessage message={item} key={index}/>}
+                />
+                <MobileChatInput onSubmit={() => this.send()} />
+            </View>
         );
     }
 }
