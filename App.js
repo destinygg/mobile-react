@@ -12,8 +12,7 @@ class App extends Component {
         super();
         /*this.chat = new MobileChat()
                           .withEmotes(emotes)
-                          .withGui()
-                          .withWhispers();*/
+                          .withGui();*/
     }
     render() {
         return (
