@@ -1,4 +1,3 @@
-MobileChat seems pretty good?  need to subclass Message classes and hook them up to react component with
-the new formatting functionality.  also need to figure out how UserBadge fits in to it.
+set up MobileChatMessage to accept existing interfaces.  make sure comboWillComplete is handled correctly.
 
 plug buildFeatures into react components

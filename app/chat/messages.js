@@ -3,7 +3,9 @@ import { View, Text, Image } from 'react-native';
 import styles from './styles.js';
 import { emoteImgs, icons } from './images.js';
 import UserFeatures from '../../lib/assets/chat/js/features.js';
+import { DATE_FORMATS } from '../../lib/assets/chat/js/const.js';
 import { UrlFormatter } from '../../lib/assets/chat/js/formatters.js';
+import moment from 'moment';
 
 
 const emoteDir = require('../../lib/assets/emotes.json');
@@ -347,8 +349,7 @@ class ChatUIMessage {
         classes.push(this.classes);
         classes.unshift(`msg-${this.type.toLowerCase()}`);
         classes.unshift(`msg-chat`);
-        attr['class'] = classes.join(' ');
-        return $('<div></div>', attr).html(content)[0].outerHTML;
+        return <MobileChatMessage content={content} classes={classes} />
     }
 
     html(chat = null) {
@@ -356,5 +357,134 @@ class ChatUIMessage {
     }
 
     afterRender(chat = null) { }
+
+}
+
+class ChatMessage extends ChatUIMessage {
+
+    constructor(message, timestamp = null, type = MessageTypes.CHAT) {
+        super(message);
+        this.user = null;
+        this.type = type;
+        this.continued = false;
+        this.timestamp = timestamp ? moment.utc(timestamp).local() : moment();
+    }
+
+    html(chat = null) {
+        const classes = [], attr = {};
+        if (this.continued)
+            classes.push('msg-continue');
+        return this.wrap(
+            [buildTime(this), buildMessageTxt(chat, this)],
+            classes,
+            attr
+        );
+    }
+}
+
+class ChatUserMessage extends ChatMessage {
+
+    constructor(message, user, timestamp = null) {
+        super(message, timestamp, MessageTypes.USER);
+        this.user = user;
+        this.id = null;
+        this.isown = false;
+        this.highlighted = false;
+        this.historical = false;
+        this.target = null;
+        this.tag = null;
+        this.slashme = false;
+        this.mentioned = [];
+    }
+
+    html(chat = null) {
+        const classes = [], attr = {};
+
+        if (this.id)
+            attr['data-id'] = this.id;
+        if (this.user && this.user.username)
+            attr['data-username'] = this.user.username.toLowerCase();
+        if (this.mentioned && this.mentioned.length > 0)
+            attr['data-mentioned'] = this.mentioned.join(' ').toLowerCase();
+
+        if (this.isown)
+            classes.push('msg-own');
+        if (this.slashme)
+            classes.push('msg-me');
+        if (this.historical)
+            classes.push('msg-historical');
+        if (this.highlighted)
+            classes.push('msg-highlight');
+        if (this.continued && !this.target)
+            classes.push('msg-continue');
+        if (this.tag)
+            classes.push(`msg-tagged msg-tagged-${this.tag}`);
+        if (this.target)
+            classes.push(`msg-whisper`);
+
+        let ctrl = <ChatText>:</ChatText>;
+        if (this.target)
+            ctrl = <ChatText> whispered you ... </ChatText>;
+        else if (this.slashme)
+            ctrl = null;
+        else if (this.continued)
+            ctrl = null;
+
+        const user = <UserBadge name={this.user.username} features={buildFeatures(this.user)} />;
+        return this.wrap(
+            [buildTime(this), user, ctrl, buildMessageTxt(chat, this)],
+            classes,
+            attr
+        );
+    }
+
+}
+
+function ChatEmoteMessageCount(message) {
+    if (!message || !message._combo)
+        return;
+    let stepClass = ''
+    if (message.emotecount >= 50)
+        stepClass = ' x50'
+    else if (message.emotecount >= 30)
+        stepClass = ' x30'
+    else if (message.emotecount >= 20)
+        stepClass = ' x20'
+    else if (message.emotecount >= 10)
+        stepClass = ' x10'
+    else if (message.emotecount >= 5)
+        stepClass = ' x5'
+    if (!message._combo)
+        console.error('no combo', message._combo)
+    message.ui.setState({ combo: stepClass });
+}
+const ChatEmoteMessageCountThrottle = throttle(63, ChatEmoteMessageCount)
+
+class ChatEmoteMessage extends ChatMessage {
+
+    constructor(emote, timestamp, count = 1) {
+        super(emote, timestamp, MessageTypes.EMOTE)
+        this.emotecount = count
+    }   
+
+    html(chat = null) {
+        this._text = formatters.get('emote').format(chat, this.message, this);
+
+        return this.wrap([buildTime(this), this._text]);
+    }
+
+    afterRender(chat = null) {
+        this.ui.setState({ combo: this.emotecount });
+    }
+
+    incEmoteCount() {
+        ++this.emotecount
+        ChatEmoteMessageCountThrottle(this)
+    }
+
+    completeCombo() {
+        this.ui.setState({ comboWillComplete: true });                
+        ChatEmoteMessageCount(this)
+    }
 
 }
