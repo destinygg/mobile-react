@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
-import ChatView from '../chat/chat.js';
+import { MobileChatView } from '../chat/chat.js';
 import styles from './styles.js';
 
 class TwitchView extends Component {
@@ -37,7 +37,7 @@ export class MainView extends Component {
         return (
             <View style={styles.MainView}>
                 <TwitchView />
-                <ChatView screenProps={{ chat: this.chat }} />
+                <MobileChatView screenProps={{ chat: this.chat }} />
             </View>
         );
     }

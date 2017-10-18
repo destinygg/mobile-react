@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { StatusBar, View } from 'react-native';
 //import InitNav from './app/navigation.js';
 //import ProfileNav from './app/profile/profile.js';
-import MobileChatView from './app/chat/chat.js';
+import { MobileChat, MobileChatView } from './app/chat/chat.js';
 
 
 //const emotes = require('./emotes.json');

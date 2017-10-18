@@ -41,29 +41,21 @@ POSSIBLE_MESSAGES = [
     }
 ]
 
-export default class MobileChatView extends Component {
+export class MobileChatView extends Component {
     constructor(props) {
         super(props);
-        //this.chat = props.screenProps.chat;
+        this.chat = props.screenProps.chat;
         this.state = {
-            "messages": [
-                {
-                    user: {
-                        username: 'criminal_cutie',
-                        features: ['subscriber']
-                    },
-                    text: 'FerretLOL'
-                }
-            ],
+            "messages": [],
             extraData: false
         }
-        //this.chat.bindView(this);
-        setInterval(() => {
-            const message = getRandomInt(0,2);
-            let messages = this.state.messages;
-            messages.push(POSSIBLE_MESSAGES[message]);
-            this.setState({ messages: messages, extraData: !this.state.extraData });
-        }, 1000);
+        /* I suspect that both the MobileChatView in the main view as well as 
+           the separate one will stay mounted, so we will have to keep the one
+           that is in-view bound to the chat instance, i.e. chat.bindView(ChatView);
+
+           i'd instead like to try passing around a MobileChatView instance that is
+           associated with the Chat itself, and rendering it in 2 diff places.
+        */
     }
 
     render() {
@@ -73,7 +65,7 @@ export default class MobileChatView extends Component {
                     data={this.state.messages}
                     style={styles.ChatViewList}
                     extraData={this.state.extraData}
-                    renderItem={({ item }, index) => <MobileChatMessage message={item} key={index}/>}
+                    renderItem={item => item}
                 />
                 <MobileChatInput onSubmit={() => this.send()} />
             </View>
@@ -94,11 +86,7 @@ class MobileWindow extends ChatWindow {
         this.visible = false
         this.tag = null
         this.lastmessage = null
-        this.ui = $(`<div id="chat-win-${name}" class="chat-output ${type} nano" style="display: none;">` +
-            `<div class="chat-lines nano-content"></div>` +
-            `<div class="chat-scroll-notify">More messages below</div>` +
-            `</div>`)
-        this.lines = this.ui.find('.chat-lines')
+        this.ui = ui;
     }
 
     destroy() {
@@ -127,10 +115,10 @@ class MobileWindow extends ChatWindow {
     }
 
     addMessage(chat, message) {
-        message.ui = $(message.html(chat))
+        message.ui = message.html(chat)
         message.afterRender(chat)
         this.lastmessage = message
-        this.lines.append(message.ui)
+        this.ui.addMessage(message.ui);
         this.linecount++
         this.cleanup()
     }
@@ -183,7 +171,7 @@ class MobileWindow extends ChatWindow {
 }
 
 /* Subclass reimplementing all methods using jQuery. */
-class MobileChat extends Chat {
+export class MobileChat extends Chat {
     constructor() {
         super();
         this.messageBuilder = MobileMessageBuilder;
