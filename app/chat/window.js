@@ -6,19 +6,17 @@ export default class MobileWindow extends EventEmitter {
         this.name = name
         this.label = label
         this.maxlines = 0
-        this.linecount = 0
-        this.locks = 0
-        this.waspinned = true
-        this.scrollplugin = null
-        this.visible = false
         this.tag = null
         this.lastmessage = null
+        this.locks = 0
+        this.visible = true;
         this.ui = ui;
+        this.lines = [];
     }
 
     destroy() {
-        this.ui.remove();
-        this.scrollplugin.destroy();
+        this.lines = [];
+        this.ui.sync();
         return this;
     }
 
@@ -26,38 +24,8 @@ export default class MobileWindow extends EventEmitter {
         const normalized = this.name.toLowerCase()
         this.maxlines = chat.settings.get('maxlines')
         this.tag = chat.taggednicks.get(normalized) || tagcolors[Math.floor(Math.random() * tagcolors.length)]
+        chat.addWindow(normalized, this)
         return this
-    }
-
-    show() {
-        if (!this.visible) {
-            this.visible = true
-        }
-    }
-
-    hide() {
-        if (this.visible) {
-            this.visible = false
-        }
-    }
-
-    addMessage(chat, message) {
-        message.ui = message.html(chat)
-        message.afterRender(chat)
-        this.lastmessage = message
-        this.ui.addMessage(message.ui);
-        this.linecount++
-        this.cleanup()
-    }
-
-    getlines(sel) {
-        return this.ui.getLines(sel);
-    }
-
-    removelines(sel) {
-        const remove = this.lines.children(sel);
-        this.linecount -= remove.length;
-        remove.remove();
     }
 
     locked() {
@@ -67,32 +35,47 @@ export default class MobileWindow extends EventEmitter {
     lock() {
         this.locks++;
         if (this.locks === 1) {
-            this.waspinned = this.scrollplugin.isPinned();
+            this.waspinned = this.ui.isPinned();
         }
     }
 
     unlock() {
         this.locks--;
         if (this.locks === 0) {
-            this.scrollplugin.updateAndPin(this.waspinned);
+            this.ui.updateAndPin(this.waspinned);
         }
+    }
+
+    addMessage(chat, message) {
+        message.ui = message.html(chat)
+        message.afterRender(chat)
+        this.lastmessage = message
+        this.lines.push(message.ui);
+        this.ui.sync(this.lines);
+        this.cleanup()
+    }
+
+    getlines(sel) {
+        return this.ui.getLines(sel);
+    }
+
+    removelines(sel) {
+        this.ui.removeLines(sel);
     }
 
     // Rid excess chat lines if the chat is pinned
     // Get the scroll position before adding the new line / removing old lines
     cleanup() {
-        if (this.scrollplugin.isPinned() || this.waspinned) {
-            const lines = this.lines.children();
+        if (this.ui.isPinned() || this.waspinned) {
             if (lines.length >= this.maxlines) {
-                const remove = lines.slice(0, lines.length - this.maxlines);
-                this.linecount -= remove.length;
-                remove.remove();
+                this.lines.slice(0, lines.length - this.maxlines);
+                this.ui.sync();
             }
         }
     }
 
     updateAndPin(pin = true) {
-        this.scrollplugin.updateAndPin(pin);
+        if (pin) {this.ui.pin();}
     }
 
 }

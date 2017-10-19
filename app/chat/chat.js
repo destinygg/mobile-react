@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, TextInput, FlatList } from 'react-native';
+import { View, TextInput, FlatList, KeyboardAvoidingView } from 'react-native';
 import Chat from '../../lib/assets/chat/js/chat';
 import styles from './styles';
 
@@ -44,9 +44,10 @@ export class MobileChatView extends Component {
         super(props);
         this.chat = props.screenProps.chat;
         this.state = {
-            "messages": [],
+            messages: [],
             extraData: false
         }
+        this.isPinned = true;
         /* I suspect that both the MobileChatView in the main view as well as 
            the separate one will stay mounted, so we will have to keep the one
            that is in-view bound to the chat instance, i.e. chat.bindView(ChatView);
@@ -58,16 +59,44 @@ export class MobileChatView extends Component {
 
     render() {
         return (
-            <View style={[styles.View, styles.ChatView]}>
+            <KeyboardAvoidingView behavior='padding' style={[styles.View, styles.ChatView]}>
                 <FlatList
                     data={this.state.messages}
                     style={styles.ChatViewList}
                     extraData={this.state.extraData}
                     renderItem={item => item}
+                    ref={(ref) => this.messageList = ref }
+                    onScrollBeginDrag={(e) => this.isPinned = false}
+                    onMomentumScrollEnd={(e) => this._onScrollEnd(e)}
+                    onContentSizeChange={(width, height) => this.contentHeight = height}
+                    onLayout={(e) => this.height = e.nativeEvent.layout.height}
+                    // should use getitemlayout here too for perf
                 />
                 <MobileChatInput onSubmit={() => this.send()} />
-            </View>
+            </KeyboardAvoidingView>
         );
+    }
+
+    _onScrollEnd(e) {
+        if (this.contentHeight - e.nativeEvent.contentOffset - this.height < 35) {
+            this.isPinned = true;
+        } else {
+            this.isPinned = false;
+        }
+    }
+
+    isPinned() {
+        return this.isPinned;
+    }
+
+    pin() {
+        this.messageList.scrollToEnd();
+        this.isPinned = true;
+    }
+
+    sync() {
+        this.setState({ messages: this.chat.mainwindow.lines });
+        if (this.isPinned) { this.messageList.scrollToEnd(); }
     }
 }
 
@@ -76,19 +105,18 @@ export class MobileChat extends Chat {
     constructor() {
         super();
     }
-    
-    withGui() {
 
-    }
+    censor(nick) {
+        const c = this.mainwindow.getlines(nick.toLowerCase());
 
-    withHistory() {
-        if (history && history.length > 0) {
-            this.backlogloading = true;
-            history.forEach(line => this.source.parseAndDispatch({ data: line }));
-            this.backlogloading = false;
-            this.mainwindow.updateAndPin();
+        for (let i = 0; i < c.length; i++) {
+            if (this.settings.get('showremoved')) {                
+                c[i].addClass('msg-censored');
+            } else {
+                this.mainwindow.lines.splice(this.mainwindow.lines.indexOf(c[i]), 1);
+            }
         }
-        return this;
+        this.mainwindow.ui.sync();
     }
 
     saveSettings() {
@@ -108,6 +136,10 @@ export class MobileChat extends Chat {
                 if (this.settings.get('showhispersinchat'))
                     this.messageBuilder.whisper(data.data, user, this.user.username, data.timestamp, messageid).into(this)
         }
+    }
+
+    removeMessageByNick(nick) {
+        this.mainwindow.removelines(nick.toLowerCase);
     }
 
     cmdSTALK() {
@@ -154,6 +186,63 @@ export class MobileChat extends Chat {
                 this.busystalk = false;
                 this.messageBuilder.error(`Could not complete request.`).into(this)
             });
+    }
+
+    cmdTAG(parts) {
+        if (parts.length === 0) {
+            if (this.taggednicks.size > 0) {
+                MessageBuilder.info(`Tagged nicks: ${[...this.taggednicks.keys()].join(',')}. Available colors: ${tagcolors.join(',')}`).into(this);
+            } else {
+                MessageBuilder.info(`No tagged nicks. Available colors: ${tagcolors.join(',')}`).into(this);
+            }
+            return;
+        }
+        if (!nickregex.test(parts[0])) {
+            MessageBuilder.error('Invalid nick - /tag <nick> <color>').into(this);
+            return;
+        }
+        const n = parts[0].toLowerCase();
+        if (n === this.user.username.toLowerCase()) {
+            MessageBuilder.error('Cannot tag yourself').into(this);
+            return;
+        }
+        const color = parts[1] && tagcolors.indexOf(parts[1]) !== -1 ? parts[1] : tagcolors[Math.floor(Math.random() * tagcolors.length)];
+        const lines = this.mainwindow.getlines(n);
+
+        for (let i = 0; i < lines.length; i++) {
+            lines[i].removeClass(Chat.removeClasses('msg-tagged'))
+                    .addClass(`msg-tagged msg-tagged-${color}`);
+        }
+        this.taggednicks.set(n, color);
+        MessageBuilder.info(`Tagged ${this.user.username} as ${color}`).into(this);
+
+        this.settings.set('taggednicks', [...this.taggednicks]);
+        this.applySettings();
+    }
+
+    cmdUNTAG(parts) {
+        if (parts.length === 0) {
+            if (this.taggednicks.size > 0) {
+                MessageBuilder.info(`Tagged nicks: ${[...this.taggednicks.keys()].join(',')}. Available colors: ${tagcolors.join(',')}`).into(this);
+            } else {
+                MessageBuilder.info(`No tagged nicks. Available colors: ${tagcolors.join(',')}`).into(this);
+            }
+            return;
+        }
+        if (!nickregex.test(parts[0])) {
+            MessageBuilder.error('Invalid nick - /untag <nick> <color>').into(this);
+            return;
+        }
+        const n = parts[0].toLowerCase();
+        this.taggednicks.delete(n);
+        const lines = this.mainwindow.getlines(n);
+        
+        for (let i = 0; i < lines.length; i++) {
+            lines[i].removeClass(Chat.removeClasses('msg-tagged'));
+        }
+        MessageBuilder.info(`Un-tagged ${n}`).into(this);
+        this.settings.set('taggednicks', [...this.taggednicks]);
+        this.applySettings();
     }
 
     cmdMENTIONS() {
