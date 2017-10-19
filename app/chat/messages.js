@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { View, Text, Image } from 'react-native';
-import styles from './styles.js';
-import { emoteImgs, icons } from './images.js';
-import UserFeatures from '../../lib/assets/chat/js/features.js';
-import { DATE_FORMATS } from '../../lib/assets/chat/js/const.js';
-import { UrlFormatter } from '../../lib/assets/chat/js/formatters.js';
+import styles from './styles';
+import { emoteImgs, icons } from './images';
+import UserFeatures from '../../lib/assets/chat/js/features';
+import { DATE_FORMATS } from '../../lib/assets/chat/js/const';
+import { UrlFormatter } from '../../lib/assets/chat/js/formatters';
 import moment from 'moment';
 
 

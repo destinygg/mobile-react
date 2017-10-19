@@ -1,3 +1,4 @@
 [submodule "lib"]
 	path = lib
 	url = https://github.com/destinygg/website.git
+        branch = mobile 

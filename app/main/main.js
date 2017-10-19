@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
-import { MobileChatView } from '../chat/chat.js';
-import styles from './styles.js';
+import { MobileChatView } from '../chat/chat';
+import styles from './styles';
 
 class TwitchView extends Component {
     constructor() {

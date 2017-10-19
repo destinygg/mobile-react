@@ -1,9 +1,9 @@
 import { StackNavigator, DrawerNavigator } from 'react-navigation';
 import AuthView from './auth/auth.js'
-import MainView from './main/main.js';
-import { MobileChatView } from './chat/chat.js';
-import ProfileView from './profile/profile.js';
-import MessageView from './messages/messages.js';
+import MainView from './main/main';
+import { MobileChatView } from './chat/chat';
+import ProfileView from './profile/profile';
+import MessageView from './messages/messages';
 
 const MainNav = DrawerNavigator({
     MainView: { screen: MainView },

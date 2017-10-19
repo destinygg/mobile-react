@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { View, Text, FlatList, ScrollView, Button } from 'react-native';
 import { StackNavigator } from 'react-navigation';
-import { NavList, NavListItem, FormItem } from '../components.js';
-import styles from './styles.js';
+import { NavList, NavListItem, FormItem } from '../components';
+import styles from './styles';
 
 const countries = require("../../lib/assets/countries.json");
 const countryOptions = countries.map((item) => {

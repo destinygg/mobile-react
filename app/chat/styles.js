@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { inheritedStyles } from '../styles.js';
+import { inheritedStyles } from '../styles';
 
 const styles = StyleSheet.create({
     ...inheritedStyles,

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { View, TextInput, FlatList } from 'react-native';
-import Chat from '../../lib/assets/chat/js/chat.js';
-import ChatWindow from '../../lib/assets/chat/js/window.js';
-import styles from './styles.js';
-import { MobileMessageBuiler } from './messages.js';
+import Chat from '../../lib/assets/chat/js/chat';
+import ChatWindow from '../../lib/assets/chat/js/window';
+import styles from './styles';
+import { MobileMessageBuiler } from './messages';
 
 class MobileChatInput extends Component {
     render() {
@@ -124,7 +124,7 @@ class MobileWindow extends ChatWindow {
     }
 
     getlines(sel) {
-        return this.lines.children(sel);
+        return this.ui.getLines(sel);
     }
 
     removelines(sel) {

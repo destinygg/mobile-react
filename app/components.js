@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, TextInput, Picker, Modal, Button, TouchableHighlight, StyleSheet } from 'react-native';
-import styles from './styles.js';
+import styles from './styles';
 
 export class NavListItem extends Component {
     render() {

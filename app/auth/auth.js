@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
-import style from './styles.js';
+import style from './styles';
 
 class AuthView extends Component {
     render() {

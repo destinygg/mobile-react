@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { WebView } from 'react-native';
-import styles from './styles.js';
+import styles from './styles';
 
 class MessageView extends Component {
     constructor() {
