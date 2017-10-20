@@ -2,21 +2,13 @@ import React, { Component } from 'react';
 import { View, Text, Image } from 'react-native';
 import styles from './styles';
 import { emoteImgs, icons } from './images';
+import { UrlFormatter, GreenTextFormatter, EmoteFormatter, MentionedUserFormatter } from './formatters'
 import UserFeatures from '../../lib/assets/chat/js/features';
 import { DATE_FORMATS } from '../../lib/assets/chat/js/const';
-import { UrlFormatter } from '../../lib/assets/chat/js/formatters';
 import moment from 'moment';
+import throttle from 'throttle-debounce/throttle'
 
-
-const emoteDir = require('../../lib/assets/emotes.json');
-
-const destinyEmotes = Array.from(emoteDir['destiny']);
-const twitchEmotes = Array.from(emoteDir['twitch']);
-
-const gemoteregex = new RegExp(`\b`);
-let twitchemoteregex;
-
-const MessageTypes = {
+export const MessageTypes = {
     STATUS: 'STATUS',
     ERROR: 'ERROR',
     INFO: 'INFO',
@@ -27,6 +19,7 @@ const MessageTypes = {
     USER: 'USER',
     EMOTE: 'EMOTE'
 }
+
 const formatters = new Map()
 formatters.set('url', new UrlFormatter())
 formatters.set('green', new GreenTextFormatter())
@@ -95,98 +88,6 @@ function buildTime(message) {
     const datetime = message.timestamp.format(DATE_FORMATS.FULL);
     const label = message.timestamp.format(DATE_FORMATS.TIME);
     return <Time title="${datetime}">${label}</Time>;
-}
-
-class EmoteFormatter {
-    format(chat, msg, message=null) {
-        if (!gemoteregex || !twitchemoteregex) {
-            const emoticons = destinyEmotes.join('|');
-            const twitchemotes = twitchEmotes.join('|');
-            gemoteregex = new RegExp(`\b${emoticons}\b`);
-            twitchemoteregex = new RegExp(`\b${twitchemotes}\b`);
-        }
-        //let regex = (message && message.user && message.user.hasFeature(UserFeatures.SUBSCRIBERT0)) || (!message || !message.user) ? twitchemoteregex : gemoteregex;
-        let regex = gemoteregex;
-        let result;
-        let formatted = [];
-
-        while ((result = regex.exec(msg)) !== null) {
-            const before = msg.substring(0, result.index);
-
-            if (before !== "") {
-                formatted.push({ "string": before, "greenText": msg.greenText });
-            }
-
-            formatted.push({ "emote": result[0] });
-
-            msg = msg.substring(result.index + result[0].length);
-        }
-        return formatted;
-    }
-}
-
-class MentionedUserFormatter {
-
-    format(chat, msg, message = null) {
-        if (message && message.mentioned && message.mentioned.length > 0) {
-            let formatted = [];
-            
-            for (let i = 0; i < msg.length; i++) {
-                if (!('string' in msg[i])) {
-                    formatted.push(msg[i]);
-                    continue;
-                }
-                let regex = new RegExp(`\b${message.mentioned.join('|')}\b`)
-                let result;
-                let match = false;
-
-                while ((result = regex.exec(msg[i])) !== null) {
-                    match = true;
-                    const before = msg[i].substring(0, result.index);
-
-                    if (before !== "") {
-                        formatted.push({string: before, greenText: msg.greenText});
-                    }
-
-                    formatted.push({ mention: result[0] });
-                    msg[i] = msg[i].substring(result.index + result[0].length);
-                }
-
-                if (!match) {
-                    formatted.push(msg[i]);
-                }                    
-            }
-            return formatted;            
-        }
-        return msg;
-    }
-}
-
-class GreenTextFormatter {
-
-    format(chat, msg, message = null) {
-        if (message.user && msg.indexOf('&gt;') === 0) {
-            if (message.user.hasAnyFeatures(
-                UserFeatures.SUBSCRIBER,
-                UserFeatures.SUBSCRIBERT0,
-                UserFeatures.SUBSCRIBERT1,
-                UserFeatures.SUBSCRIBERT2,
-                UserFeatures.SUBSCRIBERT3,
-                UserFeatures.SUBSCRIBERT4,
-                UserFeatures.NOTABLE,
-                UserFeatures.TRUSTED,
-                UserFeatures.CONTRIBUTOR,
-                UserFeatures.COMPCHALLENGE,
-                UserFeatures.ADMIN,
-                UserFeatures.MODERATOR
-            ))
-                msg.greenText = true;
-        } else {
-            msg.greenText = false;
-        }
-        return msg;
-    }
-
 }
 
 class UserFlair extends Component {
@@ -268,7 +169,7 @@ export class MobileChatEmoteMessage extends Component {
     }
 }
 
-class MobileMessageBuilder {
+export class MobileMessageBuilder {
 
     static element(message, classes = []) {
         return new ChatUIMessage(message, classes)

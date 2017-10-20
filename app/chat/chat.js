@@ -1,4 +1,5 @@
 import Chat from '../../lib/assets/chat/js/chat';
+import MobileWindow from './window';
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -10,6 +11,7 @@ function getRandomInt(min, max) {
 export class MobileChat extends Chat {
     constructor() {
         super();
+        this.mainwindow = new MobileWindow('main').into(this);
     }
 
     censor(nick) {
@@ -229,4 +231,5 @@ export class MobileChat extends Chat {
                 this.messageBuilder.info(`End of ban information`).into(this);
             })
     }
+    redrawWindowIndicators() {}
 }

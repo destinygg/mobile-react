@@ -16,7 +16,16 @@ class TwitchView extends Component {
 
         return (
             <WebView
-              source={}
+              source={{html: `
+                <iframe
+                    src="http://player.twitch.tv/?destiny"
+                    height="<height>"
+                    width="<width>"
+                    frameborder="<frameborder>"
+                    scrolling="<scrolling>"
+                    allowfullscreen="<allowfullscreen>">
+                </iframe>
+              `}}
               style={style}
             />
         );

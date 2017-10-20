@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
-import style from './styles';
+//import styles from './styles';
 
 class InitView extends Component {
     constructor(props) {

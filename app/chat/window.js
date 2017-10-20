@@ -3,6 +3,19 @@ import { View, TextInput, FlatList, KeyboardAvoidingView } from 'react-native';
 import styles from './styles';
 import EventEmitter from '../../lib/assets/chat/js/emitter';
 
+const tagcolors = [
+    "green",
+    "yellow",
+    "orange",
+    "red",
+    "purple",
+    "blue",
+    "sky",
+    "lime",
+    "pink",
+    "black"
+];
+
 class MobileChatInput extends Component {
     render() {
         return (
@@ -23,7 +36,7 @@ export class MobileChatView extends Component {
             messages: [],
             extraData: false
         }
-        this.isPinned = true;
+        this.pinned = true;
         this.input = null;
         this.inputElem = null;
     }
@@ -54,19 +67,19 @@ export class MobileChatView extends Component {
 
     _onScrollEnd(e) {
         if (this.contentHeight - e.nativeEvent.contentOffset - this.height < 35) {
-            this.isPinned = true;
+            this.pinned = true;
         } else {
-            this.isPinned = false;
+            this.pinned = false;
         }
     }
 
     isPinned() {
-        return this.isPinned;
+        return this.pinned;
     }
 
     pin() {
         this.messageList.scrollToEnd();
-        this.isPinned = true;
+        this.pinned = true;
     }
 
     send() {
@@ -76,7 +89,7 @@ export class MobileChatView extends Component {
 
     sync() {
         this.setState({ messages: this.chat.mainwindow.lines });
-        if (this.isPinned) { this.messageList.scrollToEnd(); }
+        if (this.pinned) { this.messageList.scrollToEnd(); }
     }
 }
 
@@ -91,7 +104,6 @@ export default class MobileWindow extends EventEmitter {
         this.chat = null;
         this.locks = 0
         this.visible = true;
-        this.ui = <MobileChatView window={this}/>; 
         this.lines = [];
     }
 
@@ -107,6 +119,7 @@ export default class MobileWindow extends EventEmitter {
         this.tag = chat.taggednicks.get(normalized) || tagcolors[Math.floor(Math.random() * tagcolors.length)]
         chat.addWindow(normalized, this)
         this.chat = chat;
+        this.uiElem = <MobileChatView chat={this.chat} window={this} ref={(ref) => this.ui = ref} />;         
         return this
     }
 
@@ -117,6 +130,7 @@ export default class MobileWindow extends EventEmitter {
     lock() {
         this.locks++;
         if (this.locks === 1) {
+            console.dir(this.ui);
             this.waspinned = this.ui.isPinned();
         }
     }
@@ -167,4 +181,10 @@ export default class MobileWindow extends EventEmitter {
         if (pin) {this.ui.pin();}
     }
 
+}
+
+export class ChatViewWrapper extends Component {
+    render() {
+        return this.props.screenProps.chat.mainwindow.uiElem;
+    }
 }

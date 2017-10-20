@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { WebView } from 'react-native';
-import styles from './styles';
+//import styles from './styles';
 
 class MessageView extends Component {
     constructor() {
@@ -10,16 +10,7 @@ class MessageView extends Component {
     }
 
     render() {
-        let style = [styles.TwitchView];
 
-        if (this.state.hidden) { style.push(styles.TwitchViewHidden); }
-
-        return (
-            <WebView
-                source={}
-                style={style}
-            />
-        );
     }
 
     shouldComponentUpdate() {

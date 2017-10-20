@@ -1,28 +1,26 @@
 import React, { Component } from 'react';
 import { StatusBar, View } from 'react-native';
-//import InitNav from './app/navigation';
-//import ProfileNav from './app/profile/profile';
+import InitNav from './app/navigation';
 import { MobileChat, MobileChatView } from './app/chat/chat';
 
 
-//const emotes = require('./emotes.json');
+const emotes = require('./lib/assets/emotes.json');
 
 class App extends Component {
     constructor() {
         super();
-        /*this.chat = new MobileChat()
-                          .withEmotes(emotes)
-                          .withGui();*/
+        this.chat = new MobileChat()
+                          .withEmotes(emotes);
+        global.chat = this.chat;
     }
     render() {
         return (
             <View style={{ flex: 1 }}>
                 <StatusBar barStyle='light-content' />
-                <MobileChatView />
+                <InitNav screenProps={{ chat: this.chat }} />                
             </View>
         );
     }
 }
-// <InitNav screenProps={{ chat: this.chat }} />
 
 export default App;
