@@ -1,3 +1,1 @@
-set up MobileChatMessage to accept existing interfaces.  make sure comboWillComplete is handled correctly.
-
-plug buildFeatures into react components
+textinput will need to have manipulatable state for emote insertion.

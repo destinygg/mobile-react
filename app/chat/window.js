@@ -1,4 +1,84 @@
+import React, { Component } from 'react';
+import { View, TextInput, FlatList, KeyboardAvoidingView } from 'react-native';
+import styles from './styles';
 import EventEmitter from '../../lib/assets/chat/js/emitter';
+
+class MobileChatInput extends Component {
+    render() {
+        return (
+            <TextInput
+                style={styles.ChatInput}
+                placeholder={'Write something...'}
+                placeholderTextColor="#888"
+                onSubmitEditing={this.props.onSubmit}
+            />
+        )
+    }
+}
+
+export class MobileChatView extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            messages: [],
+            extraData: false
+        }
+        this.isPinned = true;
+        this.input = null;
+        this.inputElem = null;
+    }
+
+    render() {
+        return (
+            <KeyboardAvoidingView behavior='padding' style={[styles.View, styles.ChatView]}>
+                <FlatList
+                    data={this.state.messages}
+                    style={styles.ChatViewList}
+                    extraData={this.state.extraData}
+                    renderItem={item => item}
+                    ref={(ref) => this.messageList = ref}
+                    onScrollBeginDrag={(e) => this.isPinned = false}
+                    onMomentumScrollEnd={(e) => this._onScrollEnd(e)}
+                    onContentSizeChange={(width, height) => this.contentHeight = height}
+                    onLayout={(e) => this.height = e.nativeEvent.layout.height}
+                // should use getitemlayout here too for perf
+                />
+                <MobileChatInput 
+                    ref={(ref) => this.inputElem = ref}
+                    onChangeText={(text) => this.input = text}
+                    onSubmit={() => this.send()}
+                />
+            </KeyboardAvoidingView>
+        );
+    }
+
+    _onScrollEnd(e) {
+        if (this.contentHeight - e.nativeEvent.contentOffset - this.height < 35) {
+            this.isPinned = true;
+        } else {
+            this.isPinned = false;
+        }
+    }
+
+    isPinned() {
+        return this.isPinned;
+    }
+
+    pin() {
+        this.messageList.scrollToEnd();
+        this.isPinned = true;
+    }
+
+    send() {
+        this.props.window.chat.control.emit('SEND', this.input.trim());
+        this.inputElem.clear();
+    }
+
+    sync() {
+        this.setState({ messages: this.chat.mainwindow.lines });
+        if (this.isPinned) { this.messageList.scrollToEnd(); }
+    }
+}
 
 export default class MobileWindow extends EventEmitter {
     constructor(name, type = '', label = '') {
@@ -8,9 +88,10 @@ export default class MobileWindow extends EventEmitter {
         this.maxlines = 0
         this.tag = null
         this.lastmessage = null
+        this.chat = null;
         this.locks = 0
         this.visible = true;
-        this.ui = ui;
+        this.ui = <MobileChatView window={this}/>; 
         this.lines = [];
     }
 
@@ -25,6 +106,7 @@ export default class MobileWindow extends EventEmitter {
         this.maxlines = chat.settings.get('maxlines')
         this.tag = chat.taggednicks.get(normalized) || tagcolors[Math.floor(Math.random() * tagcolors.length)]
         chat.addWindow(normalized, this)
+        this.chat = chat;
         return this
     }
 
@@ -51,16 +133,23 @@ export default class MobileWindow extends EventEmitter {
         message.afterRender(chat)
         this.lastmessage = message
         this.lines.push(message.ui);
-        this.ui.sync(this.lines);
+        this.ui.sync();
         this.cleanup()
     }
 
     getlines(sel) {
-        return this.ui.getLines(sel);
+        return this.lines.filter((line) => {
+            line.props.msg.user === sel;
+        });
     }
 
     removelines(sel) {
-        this.ui.removeLines(sel);
+        for (let i = 0; i < this.lines.length; i++) {
+            if (this.lines[i].props.msg.user === sel) {
+                this.lines.splice(i, 1);
+            }
+        }
+        this.ui.sync();
     }
 
     // Rid excess chat lines if the chat is pinned

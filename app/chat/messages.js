@@ -204,40 +204,10 @@ class UserFlair extends Component {
 
 class UserBadge extends Component {
     render() {
-        let features = [];
-        let messageStyles = [styles.MessageText, styles.UserText];
-
-        for (var i = 0; i < this.props.user.features.length; i++) {
-            switch (this.props.user.features[i]) {
-                case "protected": {
-                    break;
-                }
-                case "vip": {
-                    break;
-                }
-                case "moderator": {
-                    break;
-                }
-                case "admin": {
-                    break;
-                }
-                case "flair7": {
-                    break;
-                }
-                case "subscriber": {
-                    messageStyles.push(styles.Subscriber);
-                }
-                default: {
-                    features.push(<UserFlair key={features.length} name={this.props.user.features[i]} />)
-                    break;
-                }
-            }
-        }
-
         return (
             <View style={{ flexDirection: 'row' }}>
-                {features}
-                <Text style={messageStyles}>{this.props.user.username}: </Text>
+                {this.props.children}
+                <Text style={this.props.user.features}>{this.props.user.username}: </Text>
             </View>
         )
     }
@@ -254,27 +224,47 @@ class Emote extends Component {
 export class MobileChatMessage extends Component {
     constructor(props) {
         super(props);
+        this.formatted = [];
     }
     render() {
-
-        const formatted = formatMessage(this.props.message.text).map((message, index) => {
-            if ('string' in message) {
-                return <Text style={styles.MessageText} key={index}>{message.string}</Text>
-            } else if ('emote' in message) {
-                return <Emote key={index} name={message.emote} />
+        for (let i = 0; i < this.props.text.length; i++) {
+            if ('string' in this.props.text[i]) {
+                this.formatted.push(<MsgText>{this.props.text[i].string}</MsgText>);
+                continue;
+            } else if ('emote' in this.props.text[i]) {
+                this.formatted.push(<Emote name={this.props.text[i].emote} />);
+                continue;
+            } else if ('mention' in this.props.text[i]) {
+                this.formatted.push(<Mention user={this.props.text[i].mention}/>);
+                continue;
+            } else if ('greenText' in this.props.text[i]) {
+                this.formatted.push(<GreenText>{this.props.text[i].greenText}</GreenText>);
+                continue;
             }
-        });
-
+        }
         return (
-            <View style={styles.ChatMessage}>
-                {this.props.timeStamp === true
-                    ? <Text style={styles.Timestamp}>this.props.message.timestamp</Text>
-                    : null
-                }
-                <UserBadge user={this.props.message.user} />
-                {this.props.formatted}
+            <View style={this.props.msg.classes}>
+                {this.props.time}
+                {this.props.user}
+                <Text>{this.props.ctrl}</Text>
+                {this.formatted}
             </View>
         );
+    }
+}
+
+export class MobileChatEmoteMessage extends Component {
+    render() {
+        let combo = [];
+        if (this.state.combo > 1) {
+            combo.push(<Text style={[this.state.comboClass, comboCount]}>{this.state.combo}</Text>);
+            combo.push(<Text style={[this.state.comboClass, comboX]}> X</Text>);
+            combo.push(<Text style={this.state.comboClass}> Hits</Text>);
+            combo.push(<Text style={comboCombo}> C-C-C-COMBO</Text>);
+        }
+        return (
+            <View>{this.props.emote}{combo}</View>
+        )
     }
 }
 
@@ -345,11 +335,17 @@ class ChatUIMessage {
         return this;
     }
 
-    wrap(content, classes = [], attr = {}) {
-        classes.push(this.classes);
-        classes.unshift(`msg-${this.type.toLowerCase()}`);
-        classes.unshift(`msg-chat`);
-        return <MobileChatMessage content={content} classes={classes} />
+    wrap(time, user, ctrl, text) {
+        this.classes.unshift(`msg-${this.type.toLowerCase()}`);
+        this.classes.unshift(`msg-chat`);
+        this.ui = <MobileChatMessage
+                        msg={this} 
+                        time={time} 
+                        user={user} 
+                        ctrl={ctrl} 
+                        text={text}
+                    />;
+        return this.ui;
     }
 
     html(chat = null) {
@@ -371,13 +367,10 @@ class ChatMessage extends ChatUIMessage {
     }
 
     html(chat = null) {
-        const classes = [], attr = {};
         if (this.continued)
-            classes.push('msg-continue');
+            this.classes.push('msg-continue');
         return this.wrap(
-            [buildTime(this), buildMessageTxt(chat, this)],
-            classes,
-            attr
+            buildTime(this), null, null, buildMessageTxt(chat, this)
         );
     }
 }
@@ -398,29 +391,20 @@ class ChatUserMessage extends ChatMessage {
     }
 
     html(chat = null) {
-        const classes = [], attr = {};
-
-        if (this.id)
-            attr['data-id'] = this.id;
-        if (this.user && this.user.username)
-            attr['data-username'] = this.user.username.toLowerCase();
-        if (this.mentioned && this.mentioned.length > 0)
-            attr['data-mentioned'] = this.mentioned.join(' ').toLowerCase();
-
         if (this.isown)
-            classes.push('msg-own');
+            this.classes.push('msg-own');
         if (this.slashme)
-            classes.push('msg-me');
+            this.classes.push('msg-me');
         if (this.historical)
-            classes.push('msg-historical');
+            this.classes.push('msg-historical');
         if (this.highlighted)
-            classes.push('msg-highlight');
+            this.classes.push('msg-highlight');
         if (this.continued && !this.target)
-            classes.push('msg-continue');
+            this.classes.push('msg-continue');
         if (this.tag)
-            classes.push(`msg-tagged msg-tagged-${this.tag}`);
+            this.classes.push(`msg-tagged msg-tagged-${this.tag}`);
         if (this.target)
-            classes.push(`msg-whisper`);
+            this.classes.push(`msg-whisper`);
 
         let ctrl = <ChatText>:</ChatText>;
         if (this.target)
@@ -430,11 +414,9 @@ class ChatUserMessage extends ChatMessage {
         else if (this.continued)
             ctrl = null;
 
-        const user = <UserBadge name={this.user.username} features={buildFeatures(this.user)} />;
+        const user = <UserBadge user={this.user}>{buildFeatures(this.user)}</UserBadge>;
         return this.wrap(
-            [buildTime(this), user, ctrl, buildMessageTxt(chat, this)],
-            classes,
-            attr
+            buildTime(this), user, ctrl, buildMessageTxt(chat, this)
         );
     }
 
@@ -456,7 +438,7 @@ function ChatEmoteMessageCount(message) {
         stepClass = ' x5'
     if (!message._combo)
         console.error('no combo', message._combo)
-    message.ui.setState({ combo: stepClass });
+    message.ui.setState({ comboClass: stepClass });
 }
 const ChatEmoteMessageCountThrottle = throttle(63, ChatEmoteMessageCount)
 
@@ -469,8 +451,11 @@ class ChatEmoteMessage extends ChatMessage {
 
     html(chat = null) {
         this._text = formatters.get('emote').format(chat, this.message, this);
-
-        return this.wrap([buildTime(this), this._text]);
+        const emote = <Emote name={this._text} />;
+        this.classes.unshift(`msg-${this.type.toLowerCase()}`);
+        this.classes.unshift(`msg-chat`);
+        this.ui = <MobileChatEmoteMessage time={buildTime(this)} emote={emote} />
+        return this.ui;
     }
 
     afterRender(chat = null) {
@@ -479,11 +464,11 @@ class ChatEmoteMessage extends ChatMessage {
 
     incEmoteCount() {
         ++this.emotecount
+        this.ui.setState({ combo: this.emotecount });        
         ChatEmoteMessageCountThrottle(this)
     }
 
     completeCombo() {
-        this.ui.setState({ comboWillComplete: true });                
         ChatEmoteMessageCount(this)
     }
 
