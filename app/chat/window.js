@@ -48,12 +48,16 @@ export class MobileChatView extends Component {
                     data={this.state.messages}
                     style={styles.ChatViewList}
                     extraData={this.state.extraData}
-                    renderItem={item => item}
+                    renderItem={item => {
+                        console.log(item)
+                        return item.item;
+                    }}
                     ref={(ref) => this.messageList = ref}
                     onScrollBeginDrag={(e) => this.isPinned = false}
                     onMomentumScrollEnd={(e) => this._onScrollEnd(e)}
                     onContentSizeChange={(width, height) => this.contentHeight = height}
                     onLayout={(e) => this.height = e.nativeEvent.layout.height}
+                    keyExtractor={(item, index) => index}
                 // should use getitemlayout here too for perf
                 />
                 <MobileChatInput 
@@ -83,12 +87,12 @@ export class MobileChatView extends Component {
     }
 
     send() {
-        this.props.window.chat.control.emit('SEND', this.input.trim());
+        this.props.chat.control.emit('SEND', this.input.trim());
         this.inputElem.clear();
     }
 
     sync() {
-        this.setState({ messages: this.chat.mainwindow.lines });
+        this.setState({ messages: this.props.chat.mainwindow.lines });
         if (this.pinned) { this.messageList.scrollToEnd(); }
     }
 }
@@ -119,7 +123,7 @@ export default class MobileWindow extends EventEmitter {
         this.tag = chat.taggednicks.get(normalized) || tagcolors[Math.floor(Math.random() * tagcolors.length)]
         chat.addWindow(normalized, this)
         this.chat = chat;
-        this.uiElem = <MobileChatView chat={this.chat} window={this} ref={(ref) => this.ui = ref} />;         
+        this.uiElem = <MobileChatView chat={this.chat} ref={(ref) => this.ui = ref} />;         
         return this
     }
 
@@ -138,7 +142,7 @@ export default class MobileWindow extends EventEmitter {
     unlock() {
         this.locks--;
         if (this.locks === 0) {
-            this.ui.updateAndPin(this.waspinned);
+            this.updateAndPin(this.waspinned);
         }
     }
 
@@ -170,7 +174,7 @@ export default class MobileWindow extends EventEmitter {
     // Get the scroll position before adding the new line / removing old lines
     cleanup() {
         if (this.ui.isPinned() || this.waspinned) {
-            if (lines.length >= this.maxlines) {
+            if (this.lines.length >= this.maxlines) {
                 this.lines.slice(0, lines.length - this.maxlines);
                 this.ui.sync();
             }

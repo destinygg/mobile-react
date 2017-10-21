@@ -21,10 +21,10 @@ export const MessageTypes = {
 }
 
 const formatters = new Map()
-formatters.set('url', new UrlFormatter())
+//formatters.set('url', new UrlFormatter())
 formatters.set('green', new GreenTextFormatter())
 formatters.set('emote', new EmoteFormatter())
-formatters.set('mentioned', new MentionedUserFormatter())
+//formatters.set('mentioned', new MentionedUserFormatter())
 
 function buildMessageTxt(chat, message) {
     // TODO we strip off the `/me ` of every message -- must be a better way to do this
@@ -77,9 +77,9 @@ function buildFeatures(user) {
             if (a > b) return -1; if (a < b) return 1;
             return 0;
         })
-        .map(e => {
+        .map((e, index) => {
             const f = UserFeatures.valueOf(e);
-            return <UserFlair name={e.toLowerCase()} title={f !== null ? f.label : e} />;
+            return <UserFlair name={e.toLowerCase()} title={f !== null ? f.label : e} key={index}/>;
         });
     return features;
 }
@@ -87,7 +87,7 @@ function buildFeatures(user) {
 function buildTime(message) {
     const datetime = message.timestamp.format(DATE_FORMATS.FULL);
     const label = message.timestamp.format(DATE_FORMATS.TIME);
-    return <Time title="${datetime}">${label}</Time>;
+    return <Time title={datetime}>{label}</Time>;
 }
 
 class UserFlair extends Component {
@@ -103,12 +103,27 @@ class UserFlair extends Component {
     }
 }
 
+class Time extends Component {
+    render() {
+        return (
+            <Text style={styles.time}>{this.props.children}</Text>
+        )
+    }
+}
+
 class UserBadge extends Component {
+    constructor(props) {
+        super(props);
+        this.style = [];
+        for (let i = 0; i < this.props.user.features.length; i++) {
+            this.style.push(styles[this.props.user.features[i]]);
+        }
+    }
     render() {
         return (
             <View style={{ flexDirection: 'row' }}>
                 {this.props.children}
-                <Text style={this.props.user.features}>{this.props.user.username}: </Text>
+                <Text key='userBadgeText' style={this.style}>{this.props.user.username}: </Text>
             </View>
         )
     }
@@ -122,27 +137,35 @@ class Emote extends Component {
     }
 }
 
+class MsgText extends Component {
+    render() {
+        return (
+            <Text style={styles.MsgText}>{this.props.children}</Text>
+        )
+    }
+}
+
 export class MobileChatMessage extends Component {
     constructor(props) {
         super(props);
         this.formatted = [];
-    }
-    render() {
         for (let i = 0; i < this.props.text.length; i++) {
             if ('string' in this.props.text[i]) {
-                this.formatted.push(<MsgText>{this.props.text[i].string}</MsgText>);
+                this.formatted.push(<MsgText key={i}>{this.props.text[i].string}</MsgText>);
                 continue;
             } else if ('emote' in this.props.text[i]) {
-                this.formatted.push(<Emote name={this.props.text[i].emote} />);
+                this.formatted.push(<Emote  key={i} name={this.props.text[i].emote} />);
                 continue;
             } else if ('mention' in this.props.text[i]) {
-                this.formatted.push(<Mention user={this.props.text[i].mention}/>);
+                this.formatted.push(<Mention  key={i} user={this.props.text[i].mention}/>);
                 continue;
             } else if ('greenText' in this.props.text[i]) {
-                this.formatted.push(<GreenText>{this.props.text[i].greenText}</GreenText>);
+                this.formatted.push(<GreenText key={i}>{this.props.text[i].greenText}</GreenText>);
                 continue;
             }
         }
+    }
+    render() {
         return (
             <View style={this.props.msg.classes}>
                 {this.props.time}
@@ -237,16 +260,17 @@ class ChatUIMessage {
     }
 
     wrap(time, user, ctrl, text) {
-        this.classes.unshift(`msg-${this.type.toLowerCase()}`);
-        this.classes.unshift(`msg-chat`);
-        this.ui = <MobileChatMessage
+        this.classes.unshift(styles[`msg-${this.type.toLowerCase()}`]);
+        this.classes.unshift(styles[`msg-chat`]);
+        this.uiElem = <MobileChatMessage
                         msg={this} 
                         time={time} 
                         user={user} 
                         ctrl={ctrl} 
                         text={text}
+                        ref={ref => this.ui = ref}
                     />;
-        return this.ui;
+        return this.uiElem;
     }
 
     html(chat = null) {
@@ -269,7 +293,7 @@ class ChatMessage extends ChatUIMessage {
 
     html(chat = null) {
         if (this.continued)
-            this.classes.push('msg-continue');
+            this.classes.push(styles['msg-continue']);
         return this.wrap(
             buildTime(this), null, null, buildMessageTxt(chat, this)
         );
@@ -293,23 +317,24 @@ class ChatUserMessage extends ChatMessage {
 
     html(chat = null) {
         if (this.isown)
-            this.classes.push('msg-own');
+            this.classes.push(styles['msg-own']);
         if (this.slashme)
-            this.classes.push('msg-me');
+            this.classes.push(styles['msg-me']);
         if (this.historical)
-            this.classes.push('msg-historical');
+            this.classes.push(styles['msg-historical']);
         if (this.highlighted)
-            this.classes.push('msg-highlight');
+            this.classes.push(styles['msg-highlight']);
         if (this.continued && !this.target)
-            this.classes.push('msg-continue');
+            this.classes.push(styles['msg-continue']);
         if (this.tag)
-            this.classes.push(`msg-tagged msg-tagged-${this.tag}`);
+            this.classes.push(styles[`msg-tagged`]);
+            this.classes.push(styles[`msg-tagged-${this.tag}`]);
         if (this.target)
-            this.classes.push(`msg-whisper`);
+            this.classes.push(styles[`msg-whisper`]);
 
-        let ctrl = <ChatText>:</ChatText>;
+        let ctrl = <MsgText>:</MsgText>;
         if (this.target)
-            ctrl = <ChatText> whispered you ... </ChatText>;
+            ctrl = <MsgText> whispered you ... </MsgText>;
         else if (this.slashme)
             ctrl = null;
         else if (this.continued)
@@ -353,10 +378,14 @@ class ChatEmoteMessage extends ChatMessage {
     html(chat = null) {
         this._text = formatters.get('emote').format(chat, this.message, this);
         const emote = <Emote name={this._text} />;
-        this.classes.unshift(`msg-${this.type.toLowerCase()}`);
-        this.classes.unshift(`msg-chat`);
-        this.ui = <MobileChatEmoteMessage time={buildTime(this)} emote={emote} />
-        return this.ui;
+        this.classes.unshift(styles[`msg-${this.type.toLowerCase()}`]);
+        this.classes.unshift(styles[`msg-chat`]);
+        this.uiElem = <MobileChatEmoteMessage 
+                            time={buildTime(this)} 
+                            emote={emote} 
+                            ref={ref => this.ui = ref}
+                        />
+        return this.uiElem;
     }
 
     afterRender(chat = null) {

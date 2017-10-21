@@ -17,10 +17,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap'
     },
-    MessageText: {
+    MsgText: {
         color: '#ccc',
         fontSize: 13,
         marginLeft: 2
+    },
+    'msg-chat': {
+        flexDirection: 'row'
     },
     UserText: {
        fontWeight: '600' 

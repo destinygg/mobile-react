@@ -96,8 +96,10 @@ export class EmoteFormatter {
         let regex = gemoteregex;
         let result;
         let formatted = [];
+        let match = false;
 
         while ((result = regex.exec(msg)) !== null) {
+            match = true;
             const before = msg.substring(0, result.index);
 
             if (before !== "") {
@@ -108,6 +110,11 @@ export class EmoteFormatter {
 
             msg = msg.substring(result.index + result[0].length);
         }
+
+        if (!match) {
+            formatted.push({ "string": msg, "greenText": msg.greenText });
+        }
+
         return formatted;
     }
 }
