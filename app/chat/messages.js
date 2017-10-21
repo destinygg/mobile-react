@@ -94,12 +94,19 @@ class UserFlair extends Component {
     getFeature() {
         if (this.props.name in icons) {
             return icons[this.props.name];
+        } else {
+            return null;
         }
     }
     render() {
-        return (
-            <Image style={styles.Flair} source={this.getFeature()} />
-        );
+        const feature = this.getFeature();
+        if (feature !== null) {
+            return (
+                <Image style={styles.Flair} source={feature} />
+            );
+        } else {
+            return null;
+        }
     }
 }
 
@@ -121,10 +128,10 @@ class UserBadge extends Component {
     }
     render() {
         return (
-            <View style={{ flexDirection: 'row' }}>
+            <Text>
                 {this.props.children}
                 <Text key='userBadgeText' style={this.style}>{this.props.user.username}</Text>
-            </View>
+            </Text>
         )
     }
 }
@@ -149,15 +156,16 @@ export class MobileChatMessage extends Component {
     constructor(props) {
         super(props);
         this.formatted = [];
+        if (this.props.msg.user && this.props.msg.user.username == "Bot_v2_Beta") debugger;
         for (let i = 0; i < this.props.text.length; i++) {
             if ('string' in this.props.text[i]) {
                 this.formatted.push(<MsgText key={i}>{this.props.text[i].string}</MsgText>);
                 continue;
             } else if ('emote' in this.props.text[i]) {
-                this.formatted.push(<Emote  key={i} name={this.props.text[i].emote} />);
+                this.formatted.push(<Emote key={i} name={this.props.text[i].emote} />);
                 continue;
             } else if ('mention' in this.props.text[i]) {
-                this.formatted.push(<Mention  key={i} user={this.props.text[i].mention}/>);
+                this.formatted.push(<Mention key={i} user={this.props.text[i].mention}/>);
                 continue;
             } else if ('greenText' in this.props.text[i]) {
                 this.formatted.push(<GreenText key={i}>{this.props.text[i].greenText}</GreenText>);
@@ -167,12 +175,12 @@ export class MobileChatMessage extends Component {
     }
     render() {
         return (
-            <View style={this.props.msg.classes}>
+            <Text style={this.props.msg.classes}>
                 {this.props.time}
                 {this.props.user}
                 <Text>{this.props.ctrl}</Text>
                 {this.formatted}
-            </View>
+            </Text>
         );
     }
 }
@@ -187,7 +195,7 @@ export class MobileChatEmoteMessage extends Component {
             combo.push(<Text style={comboCombo}> C-C-C-COMBO</Text>);
         }
         return (
-            <View>{this.props.emote}{combo}</View>
+            <Text>{this.props.emote}{combo}</Text>
         )
     }
 }
@@ -340,7 +348,9 @@ class ChatUserMessage extends ChatMessage {
         else if (this.continued)
             ctrl = null;
 
-        const user = <UserBadge user={this.user}>{buildFeatures(this.user)}</UserBadge>;
+        const user = (this.continued) ?
+                    null : 
+                    <UserBadge user={this.user}>{buildFeatures(this.user)}</UserBadge>;
         return this.wrap(
             buildTime(this), user, ctrl, buildMessageTxt(chat, this)
         );

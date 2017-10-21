@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     },
     'msg-chat': {
         flexDirection: 'row',
-        height: 20
+        flexWrap: 'wrap',
     },
     subscriber: {
         color: '#488ce7'
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
         padding: 8,
     },
     Emote: {
-        marginTop: -7
+        marginTop: 7
     },
     Flair: {
         marginTop: -1,

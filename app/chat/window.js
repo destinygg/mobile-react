@@ -53,7 +53,7 @@ export class MobileChatView extends Component {
                         return item.item;
                     }}
                     ref={(ref) => this.messageList = ref}
-                    onScrollBeginDrag={(e) => this.isPinned = false}
+                    onScrollBeginDrag={(e) => this.pinned = true}
                     onMomentumScrollEnd={(e) => this._onScrollEnd(e)}
                     onContentSizeChange={(width, height) => this.contentHeight = height}
                     onLayout={(e) => this.height = e.nativeEvent.layout.height}
@@ -70,11 +70,11 @@ export class MobileChatView extends Component {
     }
 
     _onScrollEnd(e) {
-        if (this.contentHeight - e.nativeEvent.contentOffset - this.height < 35) {
+        /*if (this.contentHeight - e.nativeEvent.contentOffset - this.height < 100) {
             this.pinned = true;
         } else {
             this.pinned = false;
-        }
+        }*/
     }
 
     isPinned() {
