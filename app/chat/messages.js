@@ -106,7 +106,7 @@ class UserFlair extends Component {
 class Time extends Component {
     render() {
         return (
-            <Text style={styles.time}>{this.props.children}</Text>
+            <Text style={styles.Time}>{this.props.children}</Text>
         )
     }
 }
@@ -114,7 +114,7 @@ class Time extends Component {
 class UserBadge extends Component {
     constructor(props) {
         super(props);
-        this.style = [];
+        this.style = [styles.UserBadge];
         for (let i = 0; i < this.props.user.features.length; i++) {
             this.style.push(styles[this.props.user.features[i]]);
         }
@@ -123,7 +123,7 @@ class UserBadge extends Component {
         return (
             <View style={{ flexDirection: 'row' }}>
                 {this.props.children}
-                <Text key='userBadgeText' style={this.style}>{this.props.user.username}: </Text>
+                <Text key='userBadgeText' style={this.style}>{this.props.user.username}</Text>
             </View>
         )
     }

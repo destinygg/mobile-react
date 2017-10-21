@@ -5,10 +5,10 @@ const styles = StyleSheet.create({
     ...inheritedStyles,
     ChatView: {
         flex: 1,
-        paddingTop: 25,
+        paddingTop: 0,
         paddingBottom: 10,
-        paddingRight: 10,
-        paddingLeft: 10,
+        paddingRight: 2,
+        paddingLeft: 2,
     },
     ChatViewList: {
         flex: 1
@@ -19,20 +19,30 @@ const styles = StyleSheet.create({
     },
     MsgText: {
         color: '#ccc',
-        fontSize: 13,
-        marginLeft: 2
+        fontSize: 12,
+        marginLeft: 2,
+        height: 15
     },
     'msg-chat': {
-        flexDirection: 'row'
+        flexDirection: 'row',
+        height: 20
     },
-    UserText: {
-       fontWeight: '600' 
+    subscriber: {
+        color: '#488ce7'
+    },
+    'flair-3': {
+        color: '#0060ff'
+    },
+    UserBadge: {
+       fontWeight: '600',
+       color: '#cacaca',
+       fontSize: 12
     },
     Subscriber: {
         color: '#488ce7'
     },
     ChatInput: {
-        fontSize: 13,
+        fontSize: 12,
         color: "#ccc",
         borderRadius: 3,
         borderColor: '#222',
@@ -44,6 +54,11 @@ const styles = StyleSheet.create({
     },
     Flair: {
         marginTop: -1,
+    },
+    Time: {
+        fontSize: 10,
+        color: '#414141',
+        fontWeight: '200'
     }
 });
 
