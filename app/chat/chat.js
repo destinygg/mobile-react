@@ -1,5 +1,6 @@
 import Chat from '../../lib/assets/chat/js/chat';
 import MobileWindow from './window';
+import {MessageTypes, MobileMessageBuilder as MessageBuilder} from './messages'
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -43,6 +44,24 @@ export class MobileChat extends Chat {
 
                 if (this.settings.get('showhispersinchat'))
                     this.messageBuilder.whisper(data.data, user, this.user.username, data.timestamp, messageid).into(this)
+        }
+    }
+
+    onMSG(data){
+        let textonly = Chat.extractTextOnly(data.data);
+        const isemote = this.emoticons.has(textonly) || this.twitchemotes.has(textonly);
+        const win = this.mainwindow;
+        if(isemote && win.lastmessage !== null && Chat.extractTextOnly(win.lastmessage.message) === textonly){
+            if(win.lastmessage.type === MessageTypes.EMOTE) {
+                this.mainwindow.lock();
+                win.lastmessage.incEmoteCount();
+                this.mainwindow.unlock();
+            } else {
+                win.lines.pop();
+                MessageBuilder.emote(textonly, data.timestamp, 2).into(this);
+            }
+        } else if(!this.resolveMessage(data.nick, data.data)){
+            MessageBuilder.message(data.data, this.users.get(data.nick.toLowerCase()), data.timestamp).into(this);
         }
     }
 

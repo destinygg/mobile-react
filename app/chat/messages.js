@@ -139,7 +139,9 @@ class UserBadge extends Component {
 class Emote extends Component {
     render() {
         return (
-            <Image style={styles.Emote} source={emoteImgs.get(this.props.name)} />
+            <View style={{width: 15, height: 20}}>
+                <Image style={styles.Emote} source={emoteImgs.get(this.props.name)} />
+            </View>
         );
     }
 }
@@ -156,7 +158,6 @@ export class MobileChatMessage extends Component {
     constructor(props) {
         super(props);
         this.formatted = [];
-        if (this.props.msg.user && this.props.msg.user.username == "Bot_v2_Beta") debugger;
         for (let i = 0; i < this.props.text.length; i++) {
             if ('string' in this.props.text[i]) {
                 this.formatted.push(<MsgText key={i}>{this.props.text[i].string}</MsgText>);
@@ -340,13 +341,13 @@ class ChatUserMessage extends ChatMessage {
         if (this.target)
             this.classes.push(styles[`msg-whisper`]);
 
-        let ctrl = <MsgText>:</MsgText>;
+        let ctrl = <MsgText>: </MsgText>;
         if (this.target)
             ctrl = <MsgText> whispered you ... </MsgText>;
         else if (this.slashme)
             ctrl = null;
         else if (this.continued)
-            ctrl = null;
+            ctrl = <MsgText>> </MsgText>;
 
         const user = (this.continued) ?
                     null : 

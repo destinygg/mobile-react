@@ -20,8 +20,7 @@ const styles = StyleSheet.create({
     MsgText: {
         color: '#ccc',
         fontSize: 12,
-        marginLeft: 2,
-        height: 15
+        minHeight: 20        
     },
     'msg-chat': {
         flexDirection: 'row',
@@ -50,7 +49,10 @@ const styles = StyleSheet.create({
         padding: 8,
     },
     Emote: {
-        marginTop: 7
+        marginTop: 10,
+        height: 15,
+        resizeMode: 'contain',
+        overflow: 'visible'
     },
     Flair: {
         marginTop: -1,
