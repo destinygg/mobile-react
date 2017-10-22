@@ -10,6 +10,9 @@ const styles = StyleSheet.create({
         paddingRight: 2,
         paddingLeft: 2,
     },
+    ChatWrapper: {
+        paddingTop: 20
+    },
     ChatViewList: {
         flex: 1
     },
@@ -20,11 +23,13 @@ const styles = StyleSheet.create({
     MsgText: {
         color: '#ccc',
         fontSize: 12,
-        minHeight: 20        
+        lineHeight: 18               
     },
     'msg-chat': {
         flexDirection: 'row',
         flexWrap: 'wrap',
+        backgroundColor: 'transparent',
+        minHeight: 18       
     },
     subscriber: {
         color: '#488ce7'
@@ -49,13 +54,13 @@ const styles = StyleSheet.create({
         padding: 8,
     },
     Emote: {
-        marginTop: 10,
+        marginTop: 3,
         height: 15,
         resizeMode: 'contain',
         overflow: 'visible'
     },
     Flair: {
-        marginTop: -1,
+        height: 8
     },
     Time: {
         fontSize: 10,

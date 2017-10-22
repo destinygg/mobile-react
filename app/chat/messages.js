@@ -139,9 +139,7 @@ class UserBadge extends Component {
 class Emote extends Component {
     render() {
         return (
-            <View style={{width: 15, height: 20}}>
-                <Image style={styles.Emote} source={emoteImgs.get(this.props.name)} />
-            </View>
+            <Image style={styles.Emote} source={emoteImgs.get(this.props.name)} />
         );
     }
 }
@@ -187,13 +185,17 @@ export class MobileChatMessage extends Component {
 }
 
 export class MobileChatEmoteMessage extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {};
+    }
     render() {
         let combo = [];
         if (this.state.combo > 1) {
-            combo.push(<Text style={[this.state.comboClass, comboCount]}>{this.state.combo}</Text>);
-            combo.push(<Text style={[this.state.comboClass, comboX]}> X</Text>);
-            combo.push(<Text style={this.state.comboClass}> Hits</Text>);
-            combo.push(<Text style={comboCombo}> C-C-C-COMBO</Text>);
+            combo.push(<Text key='ComboCount' style={[this.state.comboClass, styles.ComboCount]}>{this.state.combo}</Text>);
+            combo.push(<Text key='ComboX' style={[this.state.comboClass, styles.ComboX]}> X</Text>);
+            combo.push(<Text key='Hits' style={this.state.comboClass}> Hits</Text>);
+            combo.push(<Text key='ComboCombo' style={styles.ComboCombo}> C-C-C-COMBO</Text>);
         }
         return (
             <Text>{this.props.emote}{combo}</Text>
@@ -375,7 +377,9 @@ function ChatEmoteMessageCount(message) {
         stepClass = ' x5'
     if (!message._combo)
         console.error('no combo', message._combo)
-    message.ui.setState({ comboClass: stepClass });
+    if (message.ui) {
+        message.ui.setState({ comboClass: stepClass });        
+    }
 }
 const ChatEmoteMessageCountThrottle = throttle(63, ChatEmoteMessageCount)
 
@@ -388,7 +392,7 @@ class ChatEmoteMessage extends ChatMessage {
 
     html(chat = null) {
         this._text = formatters.get('emote').format(chat, this.message, this);
-        const emote = <Emote name={this._text} />;
+        const emote = <Emote name={this._text[0].emote} />;
         this.classes.unshift(styles[`msg-${this.type.toLowerCase()}`]);
         this.classes.unshift(styles[`msg-chat`]);
         this.uiElem = <MobileChatEmoteMessage 
@@ -400,12 +404,16 @@ class ChatEmoteMessage extends ChatMessage {
     }
 
     afterRender(chat = null) {
-        this.ui.setState({ combo: this.emotecount });
+        if (this.ui) {
+            this.ui.setState({ combo: this.emotecount });            
+        }
     }
 
     incEmoteCount() {
         ++this.emotecount
-        this.ui.setState({ combo: this.emotecount });        
+        if (this.ui) {
+            this.ui.setState({ combo: this.emotecount });                    
+        }
         ChatEmoteMessageCountThrottle(this)
     }
 

@@ -49,7 +49,6 @@ export class MobileChatView extends Component {
                     style={styles.ChatViewList}
                     extraData={this.state.extraData}
                     renderItem={item => {
-                        console.log(item)
                         return item.item;
                     }}
                     ref={(ref) => this.messageList = ref}
@@ -113,7 +112,9 @@ export default class MobileWindow extends EventEmitter {
 
     destroy() {
         this.lines = [];
-        this.ui.sync();
+        if (this.ui) {
+            this.ui.sync();            
+        }
         return this;
     }
 
@@ -123,7 +124,7 @@ export default class MobileWindow extends EventEmitter {
         this.tag = chat.taggednicks.get(normalized) || tagcolors[Math.floor(Math.random() * tagcolors.length)]
         chat.addWindow(normalized, this)
         this.chat = chat;
-        this.uiElem = <MobileChatView chat={this.chat} ref={(ref) => this.ui = ref} />;         
+        this.uiElem = <MobileChatView chat={this.chat} ref={(ref) => this.ui = ref} />;   
         return this
     }
 
@@ -134,8 +135,9 @@ export default class MobileWindow extends EventEmitter {
     lock() {
         this.locks++;
         if (this.locks === 1) {
-            console.dir(this.ui);
-            this.waspinned = this.ui.isPinned();
+            if (this.ui) {            
+                this.waspinned = this.ui.isPinned();
+            }
         }
     }
 
@@ -148,10 +150,12 @@ export default class MobileWindow extends EventEmitter {
 
     addMessage(chat, message) {
         message.ui = message.html(chat)
-        message.afterRender(chat)
         this.lastmessage = message
         this.lines.push(message.ui);
-        this.ui.sync();
+        if (this.ui) {            
+            this.ui.sync();
+            message.afterRender(chat);
+        }
         this.cleanup()
     }
 
@@ -167,28 +171,34 @@ export default class MobileWindow extends EventEmitter {
                 this.lines.splice(i, 1);
             }
         }
-        this.ui.sync();
+        if (this.ui) {            
+            this.ui.sync();
+        }
     }
 
     // Rid excess chat lines if the chat is pinned
     // Get the scroll position before adding the new line / removing old lines
     cleanup() {
-        if (this.ui.isPinned() || this.waspinned) {
+        if (this.ui && (this.ui.isPinned() || this.waspinned)) {
             if (this.lines.length >= this.maxlines) {
-                this.lines.slice(0, lines.length - this.maxlines);
+                this.lines.slice(0, this.lines.length - this.maxlines);
                 this.ui.sync();
             }
         }
     }
 
     updateAndPin(pin = true) {
-        if (pin) {this.ui.pin();}
+        if (this.ui) {            
+            if (pin) {this.ui.pin();}
+        }
     }
 
 }
 
 export class ChatViewWrapper extends Component {
     render() {
-        return this.props.screenProps.chat.mainwindow.uiElem;
+        return (
+            <View style={[styles.View, styles.ChatWrapper]}>{this.props.screenProps.chat.mainwindow.uiElem}</View>
+        )
     }
 }

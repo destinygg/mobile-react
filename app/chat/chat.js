@@ -13,6 +13,7 @@ export class MobileChat extends Chat {
     constructor() {
         super();
         this.mainwindow = new MobileWindow('main').into(this);
+        this.connect("wss://destiny.gg/ws");
     }
 
     censor(nick) {

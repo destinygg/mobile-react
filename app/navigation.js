@@ -22,7 +22,8 @@ const InitNav = StackNavigator({
     //AuthView: { screen: AuthView },
     MainNav: { screen: MainNav }
 }, {
-    initialRouteName: "MainNav"
+    initialRouteName: "MainNav",
+    headerMode: 'none'
 });
 
 export default InitNav;
