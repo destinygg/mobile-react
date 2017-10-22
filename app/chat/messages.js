@@ -113,7 +113,7 @@ class UserFlair extends Component {
 class Time extends Component {
     render() {
         return (
-            <Text style={styles.Time}>{this.props.children}</Text>
+            <Text style={styles.Time}>{this.props.children} </Text>
         )
     }
 }

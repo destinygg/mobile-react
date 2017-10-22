@@ -64,8 +64,8 @@ const styles = StyleSheet.create({
     },
     Time: {
         fontSize: 10,
-        color: '#414141',
-        fontWeight: '200'
+        color: '#888',
+        fontWeight: '200',
     }
 });
 

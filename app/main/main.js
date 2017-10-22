@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, WebView, Dimensions } from 'react-native';
 import { MobileChatView } from '../chat/chat';
 import styles from './styles';
 
@@ -16,17 +16,10 @@ class TwitchView extends Component {
 
         return (
             <WebView
-              source={{html: `
-                <iframe
-                    src="http://player.twitch.tv/?destiny"
-                    height="<height>"
-                    width="<width>"
-                    frameborder="<frameborder>"
-                    scrolling="<scrolling>"
-                    allowfullscreen="<allowfullscreen>">
-                </iframe>
-              `}}
-              style={style}
+                source={{uri: `https://player.twitch.tv/?channel=destiny"`}}
+                style={style}
+                scrollEnabled={false}
+                allowsInlineMediaPlayback={true}
             />
         );
     }
@@ -36,7 +29,7 @@ class TwitchView extends Component {
     }
 }
 
-export class MainView extends Component {
+export default class MainView extends Component {
     constructor(props) {
         super(props);
         this.chat = props.screenProps.chat;
@@ -44,9 +37,9 @@ export class MainView extends Component {
 
     render() {
         return (
-            <View style={styles.MainView}>
+            <View style={[styles.MainView]}>
                 <TwitchView />
-                <MobileChatView screenProps={{ chat: this.chat }} />
+                {this.props.screenProps.chat.mainwindow.uiElem}
             </View>
         );
     }

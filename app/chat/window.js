@@ -196,6 +196,9 @@ export default class MobileWindow extends EventEmitter {
 }
 
 export class ChatViewWrapper extends Component {
+    static navigationOptions = {
+        title: 'Chat',
+    };
     render() {
         return (
             <View style={[styles.View, styles.ChatWrapper]}>{this.props.screenProps.chat.mainwindow.uiElem}</View>

@@ -6,12 +6,12 @@ import ProfileNav from './profile/profile';
 import MessageView from './messages/messages';
 
 const MainNav = DrawerNavigator({
-    //MainView: { screen: MainView },
+    MainView: { screen: MainView },
     ChatView: { screen: ChatViewWrapper },
     //MessageView: { screen: MessageView },
     ProfileView: { screen: ProfileNav }
 }, {
-    initialRouteName: "ChatView"
+    initialRouteName: "MainView"
 });
 
 // may have to add an intermediate view between InitNav and MainNav
