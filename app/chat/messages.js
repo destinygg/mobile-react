@@ -404,14 +404,14 @@ class ChatEmoteMessage extends ChatMessage {
     }
 
     afterRender(chat = null) {
-        if (this.ui) {
+        if (this.ui && this.ui.setState) {
             this.ui.setState({ combo: this.emotecount });            
         }
     }
 
     incEmoteCount() {
         ++this.emotecount
-        if (this.ui) {
+        if (this.ui && this.ui.setState) {
             this.ui.setState({ combo: this.emotecount });                    
         }
         ChatEmoteMessageCountThrottle(this)

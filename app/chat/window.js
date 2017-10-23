@@ -34,7 +34,7 @@ export class MobileChatView extends Component {
         super(props);
         this.state = {
             messages: [],
-            extraData: false
+            extraData: true
         }
         this.pinned = true;
         this.input = null;
@@ -43,7 +43,10 @@ export class MobileChatView extends Component {
 
     render() {
         return (
-            <KeyboardAvoidingView behavior='padding' style={[styles.View, styles.ChatView]}>
+            <KeyboardAvoidingView
+                behavior='padding'
+                style={[styles.View, styles.ChatView]}
+            >
                 <FlatList
                     data={this.state.messages}
                     style={styles.ChatViewList}
@@ -52,10 +55,12 @@ export class MobileChatView extends Component {
                         return item.item;
                     }}
                     ref={(ref) => this.messageList = ref}
-                    onScrollBeginDrag={(e) => this.pinned = true}
+                    onScrollBeginDrag={(e) => this.pinned = false}
                     onMomentumScrollEnd={(e) => this._onScrollEnd(e)}
                     onContentSizeChange={(width, height) => this.contentHeight = height}
-                    onLayout={(e) => this.height = e.nativeEvent.layout.height}
+                    onLayout={(e) => {
+                        this.height = e.nativeEvent.layout.height;
+                    }}
                     keyExtractor={(item, index) => index}
                 // should use getitemlayout here too for perf
                 />
@@ -69,11 +74,12 @@ export class MobileChatView extends Component {
     }
 
     _onScrollEnd(e) {
-        /*if (this.contentHeight - e.nativeEvent.contentOffset - this.height < 100) {
+        console.log(e.nativeEvent);
+        if (this.contentHeight - e.nativeEvent.contentOffset.y - this.height < 30) {
             this.pinned = true;
         } else {
             this.pinned = false;
-        }*/
+        }
     }
 
     isPinned() {
@@ -203,5 +209,9 @@ export class ChatViewWrapper extends Component {
         return (
             <View style={[styles.View, styles.ChatWrapper]}>{this.props.screenProps.chat.mainwindow.uiElem}</View>
         )
+    }
+
+    componentDidMount() {
+        this.props.screenProps.chat.mainwindow.ui.sync();
     }
 }

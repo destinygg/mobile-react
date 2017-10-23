@@ -43,4 +43,8 @@ export default class MainView extends Component {
             </View>
         );
     }
+
+    componentDidMount() {
+        this.props.screenProps.chat.mainwindow.ui.sync();
+    }
 }
