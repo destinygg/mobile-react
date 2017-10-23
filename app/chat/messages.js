@@ -177,7 +177,6 @@ export class MobileChatMessage extends PureComponent {
         }
     }
     render() {
-        console.log("render")
         return (
             <Text style={this.props.msg.classes} ref={(ref) => this.text = ref}>
                 {this.props.time}
