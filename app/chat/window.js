@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, TextInput, FlatList, KeyboardAvoidingView } from 'react-native';
+import { View, TextInput, FlatList, KeyboardAvoidingView, Text } from 'react-native';
 import styles from './styles';
 import EventEmitter from '../../lib/assets/chat/js/emitter';
 
@@ -57,7 +57,8 @@ export class MobileChatView extends Component {
                     }}
                     ref={(ref) => this.messageList = ref}
                     onScrollBeginDrag={(e) => this.pinned = false}
-                    onScrollEndDrag={(e) => this._onScrollEnd(e)}
+                    onEndReached={(e) => this.pinned = true}
+                    onEndReachedThreshold={.1}
                     onContentSizeChange={(width, height) => {
                         this.contentHeight = height;
                         this.maybeScroll();
@@ -66,6 +67,11 @@ export class MobileChatView extends Component {
                         this.height = e.nativeEvent.layout.height;
                     }}
                     keyExtractor={(item, index) => index}
+                    ListFooterComponent={() => {
+                        if (this.contentHeight > this.height) {
+                            return <Text style={styles.PinnedFooter}>Chat Pinned</Text>
+                        } else { return null }
+                    }}
                 />
                 <MobileChatInput 
                     ref={(ref) => this.inputElem = ref}
@@ -74,15 +80,6 @@ export class MobileChatView extends Component {
                 />
             </KeyboardAvoidingView>
         );
-    }
-
-    _onScrollEnd(e) {
-        console.log(e.nativeEvent);
-        if (this.contentHeight - e.nativeEvent.contentOffset.y - this.height < 30) {
-            this.pinned = true;
-        } else {
-            this.pinned = false;
-        }
     }
 
     isPinned() {
@@ -95,7 +92,14 @@ export class MobileChatView extends Component {
     }
 
     maybeScroll() {
-        if (this.pinned) { this.messageList.scrollToEnd(); }
+        /* scrollToEnd works like dogshit because we can't deterministically calculate
+           item height for getItemOffset.  keeping track of Message onLayout() and reduce()ing
+           doesn't work consistently.  */
+        if (this.pinned && this.contentHeight > this.height) { 
+            this.messageList.scrollToOffset(
+                { offset: this.contentHeight - this.height, animated: true }
+            ); 
+        }
     }
 
     send() {
@@ -164,11 +168,11 @@ export default class MobileWindow extends EventEmitter {
         this.lastmessage = message        
         message.ui = message.html(chat)
         this.lines.push(message.ui);
+        this.cleanup();        
         if (this.ui) {            
             this.ui.sync();
             message.afterRender(chat);
         }
-        this.cleanup()
     }
 
     getlines(sel) {
@@ -193,7 +197,7 @@ export default class MobileWindow extends EventEmitter {
     cleanup() {
         if (this.ui && (this.ui.isPinned() || this.waspinned)) {
             if (this.lines.length >= this.maxlines) {
-                this.lines = this.lines.slice(0, this.lines.length - this.maxlines);
+                this.lines.splice(0, this.lines.length - this.maxlines);
                 this.ui.sync();
             }
         }

@@ -1,5 +1,5 @@
 import React, { Component, PureComponent } from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, findNodeHandle } from 'react-native';
 import styles from './styles';
 import { emoteImgs, icons } from './images';
 import { UrlFormatter, GreenTextFormatter, EmoteFormatter, MentionedUserFormatter } from './formatters'
@@ -178,7 +178,7 @@ export class MobileChatMessage extends PureComponent {
     }
     render() {
         return (
-            <Text style={this.props.msg.classes} ref={(ref) => this.text = ref}>
+            <Text style={this.props.msg.classes} onLayout={(e) => this.props.msg.height = e.nativeEvent.layout.height}>
                 {this.props.time}
                 {this.props.user}
                 <Text>{this.props.ctrl}</Text>
@@ -202,7 +202,7 @@ export class MobileChatEmoteMessage extends PureComponent {
             combo.push(<Text key='ComboCombo' style={styles.ComboCombo}> C-C-C-COMBO</Text>);
         }
         return (
-            <Text>{this.props.time}{this.props.emote}{combo}</Text>
+            <Text onLayout={(e) => this.props.msg.height = e.nativeEvent.layout.height}>{this.props.time}{this.props.emote}{combo}</Text>
         )
     }
 }
@@ -402,6 +402,7 @@ class ChatEmoteMessage extends ChatMessage {
         this.classes.unshift(styles[`msg-chat`]);
         this.uiElem = <MobileChatEmoteMessage 
                             time={buildTime(this)} 
+                            msg={this}
                             emote={emote} 
                             ref={ref => this.ui = ref}
                         />

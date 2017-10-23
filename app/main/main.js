@@ -6,22 +6,65 @@ import styles from './styles';
 class TwitchView extends Component {
     constructor() {
         super();
-        this.state = {"hidden": false};
+        this.state = {height: null, resizing: false};
     }
 
     render() {
         let style = [styles.TwitchView];
+        let dividerStyle = [styles.TwitchViewDivider];
         
-        if (this.state.hidden) { style.push(styles.TwitchViewHidden); }
+        if (this.state.height) { style.push({height: this.state.height}); }
+        if (this.state.resizing) { dividerStyle.push(style.DividerResizing); }
 
         return (
-            <WebView
-                source={{uri: `https://player.twitch.tv/?channel=destiny"`}}
-                style={style}
-                scrollEnabled={false}
-                allowsInlineMediaPlayback={true}
-            />
+            <View style={style}>
+                <WebView
+                    source={{uri: `https://player.twitch.tv/?channel=destiny"`}}
+                    scrollEnabled={false}
+                    allowsInlineMediaPlayback={true}
+                />
+                <View style={dividerStyle}>
+                    <View style={styles.TwitchViewDividerHandle} />
+                </View>
+            </View>
         );
+    }
+
+    _beginResize() {
+        this.setState({ resizing: true });
+    }
+
+    _resize(gestureState) {
+        this.setState({ height: gestureState.moveY });
+    }
+
+    _endResize(gestureState) {
+        this.setState({
+            resizing: false,
+            height: gestureState.moveY
+        });
+    }
+
+    componentWillMount() {
+        this._panResponder = PanResponder.create({ 
+            onStartShouldSetPanResponder: (evt, gestureState) => true, 
+            onStartShouldSetPanResponderCapture: (evt, gestureState) => true, 
+            onMoveShouldSetPanResponder: (evt, gestureState) => true, 
+            onMoveShouldSetPanResponderCapture: (evt, gestureState) => true, 
+            onPanResponderGrant: (evt, gestureState) => {  
+                this._beginResize();
+            }, 
+            onPanResponderMove: (evt, gestureState) => {  
+                this._resize(gestureState);
+            }, 
+            onPanResponderTerminationRequest: (evt, gestureState) => true, 
+            onPanResponderRelease: (evt, gestureState) => {  
+                this._endResize(gestureState);
+            }, 
+            onPanResponderTerminate: (evt, gestureState) => {
+                this._endResize(gestureState);
+            }
+        });
     }
 
     shouldComponentUpdate() {

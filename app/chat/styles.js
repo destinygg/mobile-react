@@ -57,9 +57,9 @@ const styles = StyleSheet.create({
     Emote: {
         marginTop: 3,
         height: 15,
-        width: 10,
-        marginLeft: 5,
-        marginRight: 10,
+        width: 15,
+        paddingLeft: 5,
+        paddingRight: 5,
         resizeMode: 'cover',
         overflow: 'visible'
     },
@@ -72,6 +72,12 @@ const styles = StyleSheet.create({
         fontSize: 10,
         color: '#888',
         fontWeight: '200',
+    },
+    PinnedFooter: {
+        color: '#444', 
+        bottom: -25, 
+        position: 'absolute',
+        alignSelf: 'center'
     }
 });
 
