@@ -39,6 +39,7 @@ export class MobileChatView extends Component {
         this.pinned = true;
         this.input = null;
         this.inputElem = null;
+        this.lastRender = 0;
     }
 
     render() {
@@ -57,12 +58,14 @@ export class MobileChatView extends Component {
                     ref={(ref) => this.messageList = ref}
                     onScrollBeginDrag={(e) => this.pinned = false}
                     onScrollEndDrag={(e) => this._onScrollEnd(e)}
-                    onContentSizeChange={(width, height) => this.contentHeight = height}
+                    onContentSizeChange={(width, height) => {
+                        this.contentHeight = height;
+                        this.maybeScroll();
+                    }}
                     onLayout={(e) => {
                         this.height = e.nativeEvent.layout.height;
                     }}
                     keyExtractor={(item, index) => index}
-                // should use getitemlayout here too for perf
                 />
                 <MobileChatInput 
                     ref={(ref) => this.inputElem = ref}
@@ -91,6 +94,10 @@ export class MobileChatView extends Component {
         this.pinned = true;
     }
 
+    maybeScroll() {
+        if (this.pinned) { this.messageList.scrollToEnd(); }
+    }
+
     send() {
         this.props.chat.control.emit('SEND', this.input.trim());
         this.inputElem.clear();
@@ -98,7 +105,6 @@ export class MobileChatView extends Component {
 
     sync() {
         this.setState({ messages: this.props.chat.mainwindow.lines });
-        if (this.pinned) { this.messageList.scrollToEnd(); }
     }
 }
 
@@ -155,8 +161,8 @@ export default class MobileWindow extends EventEmitter {
     }
 
     addMessage(chat, message) {
+        this.lastmessage = message        
         message.ui = message.html(chat)
-        this.lastmessage = message
         this.lines.push(message.ui);
         if (this.ui) {            
             this.ui.sync();
@@ -187,7 +193,7 @@ export default class MobileWindow extends EventEmitter {
     cleanup() {
         if (this.ui && (this.ui.isPinned() || this.waspinned)) {
             if (this.lines.length >= this.maxlines) {
-                this.lines.slice(0, this.lines.length - this.maxlines);
+                this.lines = this.lines.slice(0, this.lines.length - this.maxlines);
                 this.ui.sync();
             }
         }

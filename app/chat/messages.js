@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import { View, Text, Image } from 'react-native';
 import styles from './styles';
 import { emoteImgs, icons } from './images';
@@ -90,6 +90,10 @@ function buildTime(message) {
     return <Time title={datetime}>{label}</Time>;
 }
 
+/* Chat elements do not use Views so as to use Text's inline-block-style layout.
+   This means that elements may have spaces hard-coded, as Text does not allow
+   for much layout control. */
+
 class UserFlair extends Component {
     getFeature() {
         if (this.props.name in icons) {
@@ -152,7 +156,7 @@ class MsgText extends Component {
     }
 }
 
-export class MobileChatMessage extends Component {
+export class MobileChatMessage extends PureComponent {
     constructor(props) {
         super(props);
         this.formatted = [];
@@ -173,8 +177,9 @@ export class MobileChatMessage extends Component {
         }
     }
     render() {
+        console.log("render")
         return (
-            <Text style={this.props.msg.classes}>
+            <Text style={this.props.msg.classes} ref={(ref) => this.text = ref}>
                 {this.props.time}
                 {this.props.user}
                 <Text>{this.props.ctrl}</Text>
@@ -184,7 +189,7 @@ export class MobileChatMessage extends Component {
     }
 }
 
-export class MobileChatEmoteMessage extends Component {
+export class MobileChatEmoteMessage extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {};
@@ -198,7 +203,7 @@ export class MobileChatEmoteMessage extends Component {
             combo.push(<Text key='ComboCombo' style={styles.ComboCombo}> C-C-C-COMBO</Text>);
         }
         return (
-            <Text>{this.props.emote}{combo}</Text>
+            <Text>{this.props.time}{this.props.emote}{combo}</Text>
         )
     }
 }
@@ -266,6 +271,7 @@ class ChatUIMessage {
     }
 
     into(chat, window = null) {
+        this.window = chat.mainwindow;
         chat.addMessage(this, window);
         return this;
     }

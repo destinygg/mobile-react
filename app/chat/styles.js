@@ -40,7 +40,8 @@ const styles = StyleSheet.create({
     UserBadge: {
        fontWeight: '600',
        color: '#cacaca',
-       fontSize: 12
+       fontSize: 12,
+       marginLeft: 10
     },
     Subscriber: {
         color: '#488ce7'
@@ -51,16 +52,21 @@ const styles = StyleSheet.create({
         borderRadius: 3,
         borderColor: '#222',
         borderWidth: StyleSheet.hairlineWidth,
-        padding: 8,
+        padding: 8
     },
     Emote: {
         marginTop: 3,
         height: 15,
-        resizeMode: 'contain',
+        width: 10,
+        marginLeft: 5,
+        marginRight: 10,
+        resizeMode: 'cover',
         overflow: 'visible'
     },
     Flair: {
-        height: 8
+        height: 10,
+        width: 10,
+        resizeMode: 'contain'
     },
     Time: {
         fontSize: 10,
