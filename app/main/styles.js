@@ -11,9 +11,23 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#000',
         overflow: 'hidden',
-        paddingLeft: 0,
-        marginLeft: 0,
-        borderLeftWidth: 0
+    },
+    TwitchViewDivider: {
+        height: 2,
+        zIndex: 1000,        
+        backgroundColor: 'transparent',
+    },
+    DividerResizing: {
+        backgroundColor: '#444',
+        opacity: .5
+    },
+    TwitchViewDividerHandle: {
+        height: 8,
+        width: 8,
+        top: -2,        
+        borderRadius: 4,
+        backgroundColor: '#222',
+        alignSelf: 'center',
     }
 });
 
