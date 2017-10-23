@@ -56,7 +56,7 @@ export class MobileChatView extends Component {
                     }}
                     ref={(ref) => this.messageList = ref}
                     onScrollBeginDrag={(e) => this.pinned = false}
-                    onMomentumScrollEnd={(e) => this._onScrollEnd(e)}
+                    onScrollEndDrag={(e) => this._onScrollEnd(e)}
                     onContentSizeChange={(width, height) => this.contentHeight = height}
                     onLayout={(e) => {
                         this.height = e.nativeEvent.layout.height;
