@@ -12,8 +12,6 @@ class TwitchView extends Component {
     render() {
         let style = [styles.MainView];
 
-        console.log(this.state.height);
-        
         if (this.state.height) { style.push({ flex: 0, height: this.state.height}); }
 
         return (
