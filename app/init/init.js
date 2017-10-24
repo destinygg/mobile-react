@@ -16,13 +16,17 @@ export default class InitView extends Component {
         });
         fetch(req).then(r => {
             if (r.ok) {
-                screenProps.chat.connect("wss://www.destiny.gg/ws");
-                navigation.dispatch(NavigationActions.reset({
-                    index: 0,
-                    actions: [
-                        NavigationActions.navigate({ routeName: 'MainNav' })
-                    ]
-                }));
+                r.json().then(me => {
+                    screenProps.chat
+                        .withUserAndSettings(me)
+                        .connect("wss://www.destiny.gg/ws");
+                    navigation.dispatch(NavigationActions.reset({
+                        index: 0,
+                        actions: [
+                            NavigationActions.navigate({ routeName: 'MainNav' })
+                        ]
+                    }));
+                })
             } else {
                 navigation.dispatch(NavigationActions.reset({
                     index: 0,
