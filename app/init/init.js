@@ -1,34 +1,33 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, AsyncStorage } from 'react-native';
+import { NavigationActions } from 'react-navigation';
+import CookieManager from 'react-native-cookies';
 //import styles from './styles';
 
-class InitView extends Component {
+export default class InitView extends Component {
     constructor(props) {
         super(props);
 
         const { navigation, screenProps } = props;
 
-        let me = fetch('/api/chat/me', { method: "GET" })
-        let history = fetch('/api/chat/history', { method: "GET" });
-
-        Promise.all([me, history]).then(values => {
-            let me = values[0];
-            let history = values[1];
-
-            screenProps.chat.withHistory(history);
-
-            if (me) {
-                navigation.dispatch(NavigationActions.Reset({
+        const req = new Request('https://www.destiny.gg/api/chat/me', { 
+            method: "GET", 
+            credentials: 'include'
+        });
+        fetch(req).then(r => {
+            if (r.ok) {
+                screenProps.chat.connect("wss://www.destiny.gg/ws");
+                navigation.dispatch(NavigationActions.reset({
                     index: 0,
                     actions: [
                         NavigationActions.navigate({ routeName: 'MainNav' })
                     ]
                 }));
             } else {
-                navigation.dispatch(NavigationActions.Reset({
+                navigation.dispatch(NavigationActions.reset({
                     index: 0,
                     actions: [
-                        NavigationActions.navigate({ routeName: 'AuthNav' })
+                        NavigationActions.navigate({ routeName: 'AuthView' })
                     ]
                 }));
             }

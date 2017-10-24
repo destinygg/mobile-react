@@ -1,5 +1,6 @@
 import { StackNavigator, DrawerNavigator } from 'react-navigation';
 import AuthView from './auth/auth.js'
+import InitView from './init/init.js'
 import MainView from './main/main';
 import { ChatViewWrapper } from './chat/window';
 import ProfileNav from './profile/profile';
@@ -18,11 +19,11 @@ const MainNav = DrawerNavigator({
 // to pass screenProps correctly
 
 const InitNav = StackNavigator({
-    //InitView: { screen: InitView },
-    //AuthView: { screen: AuthView },
+    InitView: { screen: InitView },
+    AuthView: { screen: AuthView },
     MainNav: { screen: MainNav }
 }, {
-    initialRouteName: "MainNav",
+    initialRouteName: 'InitView',
     headerMode: 'none'
 });
 

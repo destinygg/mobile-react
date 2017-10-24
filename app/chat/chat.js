@@ -13,9 +13,8 @@ export class MobileChat extends Chat {
     constructor() {
         super();
         this.mainwindow = new MobileWindow('main').into(this);
-        this.connect("wss://destiny.gg/ws");
     }
-
+    
     censor(nick) {
         const c = this.mainwindow.getlines(nick.toLowerCase());
 
@@ -171,6 +170,46 @@ export class MobileChat extends Chat {
         MessageBuilder.info(`Un-tagged ${n}`).into(this);
         this.settings.set('taggednicks', [...this.taggednicks]);
         this.applySettings();
+    }
+
+    cmdSEND(str) {
+        if(str !== ''){
+            const win = this.getActiveWindow(),
+                 isme = str.substring(0, 4).toLowerCase() === '/me ',
+            iscommand = !isme && str.substring(0, 1) === '/' && str.substring(0, 2) !== '//'
+            // COMMAND
+            if (iscommand) {
+                const command = iscommand ? str.split(' ', 1)[0] : '',
+                   normalized = command.substring(1).toUpperCase()
+                if(win !== this.mainwindow && normalized !== 'EXIT'){
+                    MessageBuilder.error(`No commands in private windows. Try /exit`).into(this, win)
+                } else if(this.control.listeners.has(normalized)) {
+                    const parts = (str.substring(command.length+1) || '').match(/([^ ]+)/g)
+                    this.control.emit(normalized, parts || [])
+                } else {
+                    MessageBuilder.error(`Unknown command. Try /help`).into(this, win)
+                }
+            }
+            // WHISPER
+            else if(win !== this.mainwindow) {
+                MessageBuilder.message(str, this.user).into(this, win)
+                this.source.send('PRIVMSG', {nick: win.name, data: str})
+            }
+            // MESSAGE
+            else {
+                const textonly = (isme ? str.substring(4) : str).trim()
+                if (this.connected && !this.emoticons.has(textonly) && !this.twitchemotes.has(textonly)){
+                    // We add the message to the gui immediately
+                    // But we will also get the MSG event, so we need to make sure we dont add the message to the gui again.
+                    // We do this by storing the message in the unresolved array
+                    // The onMSG then looks in the unresolved array for the message using the nick + message
+                    // If found, the message is not added to the gui, its removed from the unresolved array and the message.resolve method is run on the message
+                    const message = MessageBuilder.message(str, this.user).into(this)
+                    this.unresolved.unshift(message)
+                }
+                this.source.send('MSG', {data: str})
+            }
+        }
     }
 
     cmdMENTIONS() {

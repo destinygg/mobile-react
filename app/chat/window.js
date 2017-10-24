@@ -23,6 +23,7 @@ class MobileChatInput extends Component {
                 style={styles.ChatInput}
                 placeholder={'Write something...'}
                 placeholderTextColor="#888"
+                onChangeText={this.props.onChangeText}
                 onSubmitEditing={this.props.onSubmit}
             />
         )
