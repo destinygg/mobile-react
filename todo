@@ -4,3 +4,4 @@ loots webview
 d.gg auth
 chat history (maybe?)
 profile update api
+move sync() into window so that Chat doesn't have to reach into ChatView

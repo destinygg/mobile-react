@@ -41,6 +41,7 @@ export class MobileChatView extends Component {
         this.pinned = true;
         this.input = null;
         this.inputElem = null;
+        this.messageList = null;
         this.lastRender = 0;
     }
 
@@ -110,7 +111,7 @@ export class MobileChatView extends Component {
     }
 
     sync() {
-        this.setState({ messages: this.props.chat.mainwindow.lines });
+        this.setState({ messages: this.props.window.lines });
     }
 }
 
@@ -142,7 +143,7 @@ export default class MobileWindow extends EventEmitter {
         this.tag = chat.taggednicks.get(normalized) || tagcolors[Math.floor(Math.random() * tagcolors.length)]
         chat.addWindow(normalized, this)
         this.chat = chat;
-        this.uiElem = <MobileChatView chat={this.chat} ref={(ref) => this.ui = ref} />;   
+        this.uiElem = <MobileChatView chat={this.chat} window={this} ref={(ref) => this.ui = ref} />;   
         return this
     }
 
