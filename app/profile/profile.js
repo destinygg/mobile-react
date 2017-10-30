@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, ScrollView, Button } from 'react-native';
+import { View, Text, FlatList, ScrollView, Button, Platform } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import { NavList, NavListItem, FormItem } from '../components';
 import styles from './styles';
@@ -50,6 +50,7 @@ class FormSaveBtn extends Component {
 class FormView extends Component {
     constructor() {
         super();
+        this.state = PROFILEDATA;
     }
     _onChange(name, value) {
         let updatedState = [];
@@ -114,13 +115,13 @@ class AccountView extends FormView {
         this.formItems = [
             [
                 { 
-                    value: PROFILEDATA.username,
+                    value: this.state.username,
                     placeholder: "Username", 
                     name: "username",
                     type: "text"
                 },
                 {
-                    value: PROFILEDATA.email,
+                    value: this.state.email,
                     placeholder: "Email",
                     name: "email",
                     type: "text",
@@ -128,7 +129,7 @@ class AccountView extends FormView {
             ],
             [
                 {
-                    value: PROFILEDATA.country,
+                    value: this.state.country,
                     placeholder: "Nationality",
                     name: "country",
                     type: "select",
@@ -137,7 +138,7 @@ class AccountView extends FormView {
             ],
             [
                 {
-                    value: PROFILEDATA.allowGifting,
+                    value: this.state.allowGifting,
                     placeholder: "Accept Gifts",
                     name: "allowGifting",
                     type: "select",
@@ -325,8 +326,10 @@ const ProfileNav = StackNavigator({
     initialRouteName: 'Profile',
     navigationOptions: {
         headerStyle: styles.Navigation,
-        headerTitleStyle: styles.NavigationHeaderTitle
-    }
+        headerTitleStyle: styles.NavigationHeaderTitle,
+        headerTintColor: (Platform.OS === 'android') ? '#fff' : undefined
+    },
+    cardStyle: styles.View
 });
 
 export default ProfileNav;

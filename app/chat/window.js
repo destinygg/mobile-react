@@ -26,6 +26,7 @@ class MobileChatInput extends Component {
                 onChangeText={this.props.onChangeText}
                 onSubmitEditing={this.props.onSubmit}
                 ref={ref => this.input = ref}
+                underlineColorAndroid='#222'
             />
         )
     }
@@ -50,6 +51,7 @@ export class MobileChatView extends Component {
             <KeyboardAvoidingView
                 behavior='padding'
                 style={[styles.View, styles.ChatView]}
+                keyboardVerticalOffset={(Platform.OS ==='android') ? -400 : 0}
             >
                 { 
                     (() => {

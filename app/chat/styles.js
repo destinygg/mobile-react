@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
         paddingTop: (Platform.OS === 'ios' ? 20 : 0)        
     },
     ChatViewList: {
-        flex: 1
+        flex: 1,
     },
     ChatMessage: {
         flexDirection: 'row',
@@ -51,8 +51,8 @@ const styles = StyleSheet.create({
         color: "#ccc",
         borderRadius: 3,
         borderColor: '#222',
-        borderWidth: StyleSheet.hairlineWidth,
-        padding: 8
+        borderWidth: (Platform.OS === 'ios') ? StyleSheet.hairlineWidth : 0,
+        padding: 8,
     },
     Emote: {
         marginTop: 3,

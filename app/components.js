@@ -57,6 +57,7 @@ export class TextInputListItem extends Component {
                         this.setState({ value: value });
                         this.props.onChange(this.props.name, value);
                     }}
+                    underlineColorAndroid='#222'
                 />
             </View>
         )
@@ -131,6 +132,7 @@ export class SelectModal extends Component {
                             onValueChange={(itemValue, itemIndex) => {
                                 this.setState({ value: itemValue })
                             }}
+                            style={{color: '#fff'}}
                             itemStyle={styles.text}
                         >
                             {selectOptions}

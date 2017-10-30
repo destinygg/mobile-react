@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 
 export const inheritedStyles = {
     title: {
@@ -22,7 +22,7 @@ export const inheritedStyles = {
         paddingBottom: 10,
         paddingRight: 15, 
         borderColor: "#222",
-        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderBottomWidth: (Platform.OS === 'ios') ? StyleSheet.hairlineWidth : 0,
     },
     ListItemText: {
         color: "#FFF",
