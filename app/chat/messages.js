@@ -177,6 +177,9 @@ export class MobileChatMessage extends PureComponent {
         }
     }
     render() {
+        if (this.props.msg == this.props.msg.window.lastmessage) {
+            this.props.msg.window.debounced = true;
+        }
         return (
             <Text style={this.props.msg.classes} onLayout={(e) => this.props.msg.height = e.nativeEvent.layout.height}>
                 {this.props.time}
@@ -285,6 +288,7 @@ class ChatUIMessage {
                         ctrl={ctrl} 
                         text={text}
                         ref={ref => this.ui = ref}
+                        key={this.window.getMessageKey()}
                     />;
         return this.uiElem;
     }
@@ -405,6 +409,7 @@ class ChatEmoteMessage extends ChatMessage {
                             msg={this}
                             emote={emote} 
                             ref={ref => this.ui = ref}
+                            key={this.window.getMessageKey()}                            
                         />
         return this.uiElem;
     }

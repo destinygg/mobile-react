@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, TextInput, FlatList, KeyboardAvoidingView, Text } from 'react-native';
+import { View, TextInput, FlatList, KeyboardAvoidingView, Text, ActivityIndicator } from 'react-native';
 import styles from './styles';
 import EventEmitter from '../../lib/assets/chat/js/emitter';
 
@@ -41,6 +41,8 @@ export class MobileChatView extends Component {
         this.input = null;
         this.inputElem = null;
         this.lastRender = 0;
+        this.contentHeight = 0;
+        this.props.window.debounced = false;
     }
 
     render() {
@@ -49,9 +51,17 @@ export class MobileChatView extends Component {
                 behavior='padding'
                 style={[styles.View, styles.ChatView]}
             >
+                { 
+                    (() => {
+                        if (!this.props.window.debounced) {
+                            return <ActivityIndicator size='large' />;
+                        }
+                    })()
+                }
+
                 <FlatList
                     data={this.state.messages}
-                    style={styles.ChatViewList}
+                    style={(this.props.window.debounced) ? styles.ChatViewList : {opacity: 0}}
                     extraData={this.state.extraData}
                     renderItem={item => {
                         return item.item;
@@ -67,7 +77,6 @@ export class MobileChatView extends Component {
                     onLayout={(e) => {
                         this.height = e.nativeEvent.layout.height;
                     }}
-                    keyExtractor={(item, index) => index}
                     ListFooterComponent={() => {
                         if (this.contentHeight > this.height) {
                             return <Text style={styles.PinnedFooter}>Chat Pinned</Text>
@@ -88,18 +97,12 @@ export class MobileChatView extends Component {
     }
 
     pin() {
-        this.messageList.scrollToEnd();
         this.pinned = true;
     }
 
     maybeScroll() {
-        /* scrollToEnd works like dogshit because we can't deterministically calculate
-           item height for getItemOffset.  keeping track of Message onLayout() and reduce()ing
-           doesn't work consistently.  */
         if (this.pinned && this.contentHeight > this.height) { 
-            this.messageList.scrollToOffset(
-                { offset: this.contentHeight - this.height, animated: true }
-            ); 
+            this.messageList.scrollToEnd();
         }
     }
 
@@ -118,13 +121,21 @@ export default class MobileWindow extends EventEmitter {
         super()
         this.name = name
         this.label = label
-        this.maxlines = 0
+        this.maxlines = 100;
         this.tag = null
         this.lastmessage = null
         this.chat = null;
         this.locks = 0
         this.visible = true;
         this.lines = [];
+        this.debounced = false;
+        this.messageKey = 0;
+    }
+
+    getMessageKey() {
+        const key = this.messageKey;
+        this.messageKey++;
+        return key;
     }
 
     destroy() {
@@ -137,11 +148,10 @@ export default class MobileWindow extends EventEmitter {
 
     into(chat) {
         const normalized = this.name.toLowerCase()
-        this.maxlines = chat.settings.get('maxlines')
         this.tag = chat.taggednicks.get(normalized) || tagcolors[Math.floor(Math.random() * tagcolors.length)]
         chat.addWindow(normalized, this)
         this.chat = chat;
-        this.uiElem = <MobileChatView chat={this.chat} ref={(ref) => this.ui = ref} />;   
+        this.uiElem = <MobileChatView chat={this.chat} window={this} ref={(ref) => this.ui = ref} />;   
         return this
     }
 
@@ -160,9 +170,6 @@ export default class MobileWindow extends EventEmitter {
 
     unlock() {
         this.locks--;
-        if (this.locks === 0) {
-            this.updateAndPin(this.waspinned);
-        }
     }
 
     addMessage(chat, message) {
@@ -199,7 +206,6 @@ export default class MobileWindow extends EventEmitter {
         if (this.ui && (this.ui.isPinned() || this.waspinned)) {
             if (this.lines.length >= this.maxlines) {
                 this.lines.splice(0, this.lines.length - this.maxlines);
-                this.ui.sync();
             }
         }
     }

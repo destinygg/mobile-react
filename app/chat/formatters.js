@@ -110,9 +110,9 @@ export class EmoteFormatter {
 
             msg = msg.substring(result.index + result[0].length);
         }
-
-        if (!match) {
-            formatted.push({ "string": msg, "greenText": msg.greenText });
+        
+        if (msg.length > 0) {
+            formatted.push({ "string": msg, "greenText": msg.greenText });            
         }
 
         return formatted;
