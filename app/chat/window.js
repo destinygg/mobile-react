@@ -25,6 +25,7 @@ class MobileChatInput extends Component {
                 placeholderTextColor="#888"
                 onChangeText={this.props.onChangeText}
                 onSubmitEditing={this.props.onSubmit}
+                ref={ref => this.input = ref}
             />
         )
     }
@@ -40,6 +41,7 @@ export class MobileChatView extends Component {
         this.pinned = true;
         this.input = null;
         this.inputElem = null;
+        this.messageList = null;
         this.lastRender = 0;
         this.contentHeight = 0;
         this.props.window.debounced = false;
@@ -108,11 +110,11 @@ export class MobileChatView extends Component {
 
     send() {
         this.props.chat.control.emit('SEND', this.input.trim());
-        this.inputElem.clear();
+        this.inputElem.input.clear();
     }
 
     sync() {
-        this.setState({ messages: this.props.chat.mainwindow.lines });
+        this.setState({ messages: this.props.window.lines });
     }
 }
 
