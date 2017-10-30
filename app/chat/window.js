@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, TextInput, FlatList, KeyboardAvoidingView, Text, ActivityIndicator } from 'react-native';
+import { View, TextInput, FlatList, KeyboardAvoidingView, Text, ActivityIndicator, Platform, RefreshControl } from 'react-native';
 import styles from './styles';
 import EventEmitter from '../../lib/assets/chat/js/emitter';
 
@@ -42,8 +42,6 @@ export class MobileChatView extends Component {
         this.input = null;
         this.inputElem = null;
         this.messageList = null;
-        this.lastRender = 0;
-        this.contentHeight = 0;
         this.props.window.debounced = false;
     }
 
@@ -56,7 +54,7 @@ export class MobileChatView extends Component {
                 { 
                     (() => {
                         if (!this.props.window.debounced) {
-                            return <ActivityIndicator size='large' />;
+                            return <ActivityIndicator size='large' style={{marginTop:25}}/>;
                         }
                     })()
                 }
@@ -69,20 +67,14 @@ export class MobileChatView extends Component {
                         return item.item;
                     }}
                     ref={(ref) => this.messageList = ref}
-                    onScrollBeginDrag={(e) => this.pinned = false}
-                    onEndReached={(e) => this.pinned = true}
-                    onEndReachedThreshold={.1}
-                    onContentSizeChange={(width, height) => {
-                        this.contentHeight = height;
-                        this.maybeScroll();
+                    onScrollBeginDrag={(e) => {
+                        this.pinned = false;
                     }}
+                    onMomentumScrollEnd={(e) => this._onScrollEnd(e)}
+                    onScrollEndDrag={(e) => this._onScrollEnd(e)}
+                    inverted={true}
                     onLayout={(e) => {
                         this.height = e.nativeEvent.layout.height;
-                    }}
-                    ListFooterComponent={() => {
-                        if (this.contentHeight > this.height) {
-                            return <Text style={styles.PinnedFooter}>Chat Pinned</Text>
-                        } else { return null }
                     }}
                 />
                 <MobileChatInput 
@@ -94,6 +86,15 @@ export class MobileChatView extends Component {
         );
     }
 
+    _onScrollEnd(e) {
+        if (e.nativeEvent.contentOffset.y < 50) {
+            this.pinned = true;
+            this.messageList.scrollToOffset(
+                { offset: 0, animated: true }
+            );
+        }
+    }
+
     isPinned() {
         return this.pinned;
     }
@@ -102,19 +103,13 @@ export class MobileChatView extends Component {
         this.pinned = true;
     }
 
-    maybeScroll() {
-        if (this.pinned && this.contentHeight > this.height) { 
-            this.messageList.scrollToEnd();
-        }
-    }
-
     send() {
         this.props.chat.control.emit('SEND', this.input.trim());
         this.inputElem.input.clear();
     }
 
     sync() {
-        this.setState({ messages: this.props.window.lines });
+        this.setState({ messages: [].concat(this.props.window.lines).reverse() });
     }
 }
 
@@ -178,10 +173,10 @@ export default class MobileWindow extends EventEmitter {
         this.lastmessage = message        
         message.ui = message.html(chat)
         this.lines.push(message.ui);
-        this.cleanup();        
-        if (this.ui) {            
+        message.afterRender(chat);        
+        this.cleanup();                
+        if (this.ui && this.ui.isPinned()) {            
             this.ui.sync();
-            message.afterRender(chat);
         }
     }
 

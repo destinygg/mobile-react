@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { View, AsyncStorage } from 'react-native';
 import { NavigationActions } from 'react-navigation';
-import CookieManager from 'react-native-cookies';
 //import styles from './styles';
 
 export default class InitView extends Component {

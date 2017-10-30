@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import { inheritedStyles } from '../styles';
 
 const styles = StyleSheet.create({
@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
         paddingLeft: 2,
     },
     ChatWrapper: {
-        paddingTop: 20
+        paddingTop: (Platform.OS === 'ios' ? 20 : 0)        
     },
     ChatViewList: {
         flex: 1

@@ -1,11 +1,12 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import { inheritedStyles } from '../styles';
 
 const styles = StyleSheet.create({
     ...inheritedStyles,
     MainView: {
         flex: 1,
-        backgroundColor: '#000'
+        backgroundColor: '#000',
+        paddingTop: (Platform.OS === 'ios' ? 20 : 0)
     },
     TwitchView: {
         flex: 1,
