@@ -53,6 +53,7 @@ export class TextInputListItem extends Component {
                     value={this.state.value}
                     placeholder={this.props.placeholder}
                     placeholderTextColor={'#888'}
+                    editable={(this.props.readOnly) === true ? true : false}
                     onChangeText={(value) => {
                         this.setState({ value: value });
                         this.props.onChange(this.props.name, value);
@@ -170,7 +171,7 @@ export class FormItem extends Component {
     constructor(props) {
         super(props);
         this.state = { 
-            value: this.props.item.value 
+            value: this.props.value 
         };
     }
     render() {
@@ -181,6 +182,7 @@ export class FormItem extends Component {
                 <TextInputListItem
                     name={this.props.item.name}                
                     value={this.state.value}
+                    readOnly={this.props.item.readOnly}
                     placeholder={this.props.item.placeholder}
                     onChange={(name, value) => this.props.onChange(name, value)}
                     key={this.props.item.name}

@@ -9,19 +9,12 @@ const countryOptions = countries.map((item) => {
     return ({ name: item['name'], value: item['alpha-2'] })
 });
 
-let PROFILEDATA = {
-    username: "Destiny",
-    creationDate: "03 June, 2015",
-    email: "steven.bonnell.ii@gmail.com",
-    allowGifting: "1",
-    country: "US"
-};
-
 class ProfileForm extends Component {
     render() {
         const children = this.props.formItems.map((item, index, array) =>
             <FormItem
                 item={item}
+                value={this.props.formState[item.name]}
                 key={item.name}
                 first={index === 0}
                 last={index === (array.length - 1)}
@@ -112,50 +105,45 @@ class AccountView extends FormView {
     constructor() {
         super();
         this.endpoint = '/profile/account/update';
+        this.state = {
+            username: this.props.screenProps.chat.user.username,
+            email: this.props.screenProps.chat.user.email,
+            country: this.props.screenProps.chat.user.country
+        }
         this.formItems = [
-            [
-                { 
-                    value: this.state.username,
-                    placeholder: "Username", 
-                    name: "username",
-                    type: "text"
-                },
-                {
-                    value: this.state.email,
-                    placeholder: "Email",
-                    name: "email",
-                    type: "text",
-                }
-            ],
-            [
-                {
-                    value: this.state.country,
-                    placeholder: "Nationality",
-                    name: "country",
-                    type: "select",
-                    selectOptions: countryOptions,
-                }
-            ],
-            [
-                {
-                    value: this.state.allowGifting,
-                    placeholder: "Accept Gifts",
-                    name: "allowGifting",
-                    type: "select",
-                    selectOptions: [
-                        { name: "Yes, I accept gifts", value: "1" },
-                        { name: "No, I do not accept gifts", value: "0" }
-                    ]
-                },
-            ]
+            { 
+                placeholder: "Username", 
+                name: "username",
+                type: "text",
+                readOnly: true      // need 'changes available' added to /api/me
+            },
+            {
+                placeholder: "Email",
+                name: "email",
+                type: "text",
+            },
+            {
+                placeholder: "Nationality",
+                name: "country",
+                type: "select",
+                selectOptions: countryOptions,
+            },
+            /* need this added to /api/me
+            {
+                placeholder: "Accept Gifts",
+                name: "allowGifting",
+                type: "select",
+                selectOptions: [
+                    { name: "Yes, I accept gifts", value: "1" },
+                    { name: "No, I do not accept gifts", value: "0" }
+                ]
+            },*/
         ]; 
     }
     render() {
         return (
             <ScrollView style={styles.View}>
-                <ProfileForm formItems={this.formItems[0]} onChange={(name, value) => this._onChange(name, value)} />
-                <ProfileForm formItems={this.formItems[1]} onChange={(name, value) => this._onChange(name, value)} />
-                <ProfileForm formItems={this.formItems[2]} onChange={(name, value) => this._onChange(name, value)} />
+                <ProfileForm formItems={this.formItems} formState={this.state} onChange={(name, value) => this._onChange(name, value)} />
             </ScrollView>
         )
     }
@@ -166,62 +154,6 @@ class SubscriptionView extends Component {
         return (
             <View />
         )
-    }
-}
-
-class AddressView extends FormView {
-    static navigationOptions = {
-        title: 'Address',
-    };
-    constructor() {
-        super();
-        this.endpoint = '/profile/address/update';        
-        this.formItems = [
-            {
-                value: PROFILEDATA.fullName,
-                placeholder: "Full Name",
-                name: "fullName",
-                type: "text"
-            },
-            {
-                value: PROFILEDATA.line1,
-                placeholder: "Address Line 1",
-                name: "line1",
-                type: "text"
-            },
-            {
-                value: PROFILEDATA.line2,
-                placeholder: "Address Line 2",
-                name: "line2",
-                type: "text"
-            },
-            {
-                value: PROFILEDATA.city,
-                placeholder: "City",
-                name: "city",
-                type: "text"
-            },
-            {
-                value: PROFILEDATA.region,
-                placeholder: "Region",
-                name: "region",
-                type: "text"
-            },
-            {
-                value: PROFILEDATA.zip,
-                placeholder: "Postal Code",
-                name: "zip",
-                type: "text",
-                spacer: true
-            },
-            {
-                value: PROFILEDATA.country,
-                placeholder: "Country",
-                name: "country",
-                type: "select",
-                selectOptions: countryOptions
-            }
-        ];
     }
 }
 
@@ -243,71 +175,20 @@ class DiscordView extends FormView {
     }
 }
 
-class MinecraftView extends FormView {
-    static navigationOptions = {
-        title: 'Minecraft',
-    };
-    constructor() {
-        super();
-        this.endpoint = '/profile/minecraft/update';        
-        this.formItems = [
-            {
-                value: PROFILEDATA.minecraftname,
-                placeholder: "Minecraft name",
-                name: "minecraftname",
-                type: "text"
-            }
-        ]
-    }
-}
-
 class ProfileView extends Component {
     static navigationOptions = {
         title: 'Profile',
     };
-    constructor() {
-        super();
-        this.state = {
-            loaded: false,
-            profileName: PROFILEDATA.username,
-            creationDate: PROFILEDATA.creationDate
-        };
-        /*
-        fetch("https://www.destiny.gg/api/profile").then((result) => {
-            if (response.status !== 200) {
-                this.error = true;
-            }
-            response.json().then((payload) => {
-                PROFILEDATA = payload;
-                this.setState({ 
-                    loaded: true,
-                    profileName: payload.profileName,
-                    creationDate: payload.creationDate
-                });
-            })
-        }, (error) => {
-            this.error = true;
-        });*/
-    }
     render() {
-        /*if (!this.state.loaded) {
-            return ( <LoadingView /> );
-        }
-        if (this.error) {
-            return ( <ErrorView /> );
-        }*/
         this.listItems = [
             { itemText: 'Account', itemTarget: 'Account' },
             { itemText: 'Subscription', itemTarget: 'Subscription' },
-            { itemText: 'Address', itemTarget: 'Address' },
-            { itemText: 'Minecraft', itemTarget: 'Minecraft' },
             { itemText: 'Discord', itemTarget: 'Discord' }
         ];
         return (
             <ScrollView style={styles.View}>
                 <View style={styles.ProfileHeader}>
-                    <Text style={styles.title}>{this.state.profileName}</Text>
-                    <Text style={styles.subtitle}>{'Created: ' + this.state.creationDate}</Text>
+                    <Text style={styles.title}>{this.props.screenProps.chat.user.username}</Text>
                 </View>
                 <NavList listItems={this.listItems} navigation={this.props.navigation}/>
             </ScrollView>
@@ -319,9 +200,7 @@ const ProfileNav = StackNavigator({
     Profile: { screen: ProfileView },
     Account: { screen: AccountView },
     Subscription: { screen: SubscriptionView },
-    Address: { screen: AddressView },
     Discord: { screen: DiscordView },
-    Minecraft: { screen: MinecraftView }
 }, {
     initialRouteName: 'Profile',
     navigationOptions: {
