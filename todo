@@ -1,7 +1,28 @@
 textinput will need to have manipulatable state for emote insertion.
 donate api access
 loots webview
-d.gg auth
 chat history (maybe?)
-profile update api
 move sync() into window so that Chat doesn't have to reach into ChatView
+
+subscribe:
+
+/subscription/create
+{
+    subscription: {1:3}-MONTH-SUB{"":2-4},
+    gift: "",
+    sub-message: ""...250,
+    renew: checkbox
+}
+By clicking the "Continue" button, you are confirming that this purchase is what you wanted and that you have read the user agreement.
+destiny.gg/agreement
+
+messages:
+/donate
+{
+    amount: float,
+    message: ""...200
+}
+
+/api/messages/inbox{?s=25}
+
+https://www.destiny.gg/api/messages/usr/{username}/inbox
