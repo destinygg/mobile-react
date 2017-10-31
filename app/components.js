@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, TextInput, Picker, Modal, Button, TouchableHighlight, StyleSheet } from 'react-native';
 import styles from './styles';
 
-export class NavListItem extends Component {
+export class ListButton extends Component {
     render() {
         let outerStyle = [styles.ListItemOuter];
         let innerStyle = [styles.ListItemInner];
@@ -64,7 +64,29 @@ export class TextInputListItem extends Component {
     }
 }
 
-export class NavList extends Component {
+export class ButtonList extends Component {
+    render() {
+        const children = this.props.listItems.map((item, index, array) => {
+            return (
+                <NavListItem
+                    text={item.itemText}
+                    onPress={() => item.itemTarget()}
+                    key={index}
+                    first={index === 0}
+                    last={index === (array.length - 1)}
+                />
+            );
+        });
+
+        return (
+            <View style={styles.List}>
+                {children}
+            </View>
+        )
+    }
+}
+
+export class NavList extends ButtonList {
     _onPressItem(itemTarget) {
         this.props.navigation.navigate(itemTarget);
     }

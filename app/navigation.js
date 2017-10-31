@@ -1,5 +1,5 @@
 import { StackNavigator, DrawerNavigator } from 'react-navigation';
-import AuthView from './auth/auth.js'
+import { AuthView, AuthWebView } from './auth/auth.js'
 import InitView from './init/init.js'
 import MainView from './main/main';
 import { ChatViewWrapper } from './chat/window';
@@ -15,12 +15,12 @@ const MainNav = DrawerNavigator({
     initialRouteName: "MainView"
 });
 
-// may have to add an intermediate view between InitNav and MainNav
-// to pass screenProps correctly
+let authProvider = { name: null };
 
 const InitNav = StackNavigator({
     InitView: { screen: InitView },
-    AuthView: { screen: AuthView },
+    AuthView: { screen: (props) => <AuthView {...props} authProvider={authProvider} /> },
+    AuthWebView: { screen: (props) => <AuthWebView {...props} authProvider={authProvider} /> },
     MainNav: { screen: MainNav }
 }, {
     initialRouteName: 'InitView',
