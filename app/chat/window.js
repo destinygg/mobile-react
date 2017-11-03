@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { View, TextInput, FlatList, KeyboardAvoidingView, Text, ActivityIndicator, Platform, RefreshControl } from 'react-native';
+import { View, TextInput, FlatList, KeyboardAvoidingView, Text, ActivityIndicator, TouchableHighlight, Platform, RefreshControl } from 'react-native';
 import styles from './styles';
 import EventEmitter from '../../lib/assets/chat/js/emitter';
+import { emoteImgs } from './images';
+import { Emote } from './messages';
 
 const tagcolors = [
     "green",
@@ -16,18 +18,48 @@ const tagcolors = [
     "black"
 ];
 
-class MobileChatInput extends Component {
+class EmoteDirectory extends Component {
+    constructor(props) {
+        super(props);
+        this.emotes = Array.from(emoteImgs.keys()).sort();
+        this.children = this.emotes.map((emote) => {
+            return (
+                <TouchableHighlight key={emote}>
+                    <Emote name={emote} />
+                </TouchableHighlight>
+            );
+        })
+    }
+
     render() {
         return (
-            <TextInput
-                style={styles.ChatInput}
-                placeholder={'Write something...'}
-                placeholderTextColor="#888"
-                onChangeText={this.props.onChangeText}
-                onSubmitEditing={this.props.onSubmit}
-                ref={ref => this.input = ref}
-                underlineColorAndroid='#222'
-            />
+            <View style={{position: 'absolute', top: -200, width: 200, flexDirection: 'row', flexWrap: 'wrap'}}>
+                {this.children}
+            </View>
+        )
+    }
+}
+
+class MobileChatInput extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {value: ""};
+    }
+    render() {
+        return (
+            <View>
+                <EmoteDirectory />
+                <TextInput
+                    style={styles.ChatInput}
+                    placeholder={'Write something...'}
+                    placeholderTextColor="#888"
+                    onChangeText={this.props.onChangeText}
+                    onSubmitEditing={this.props.onSubmit}
+                    ref={ref => this.input = ref}
+                    underlineColorAndroid='#222'
+                    value={this.state.value}
+                />
+            </View>
         )
     }
 }
@@ -40,10 +72,19 @@ export class MobileChatView extends Component {
             extraData: true
         }
         this.pinned = true;
-        this.input = null;
+        this.input = "";
         this.inputElem = null;
         this.messageList = null;
-        this.props.window.debounced = false;
+    }
+
+    changeInputText(text) {
+        this.input = text;
+        this.inputElem.setState({value: this.input});            
+    }
+
+    insertMention(username) {
+        this.input = this.input + ((this.input.slice(-1) == " ") ? "" : " ") + username;
+        this.inputElem.setState({value: this.input});                    
     }
 
     render() {
@@ -53,17 +94,9 @@ export class MobileChatView extends Component {
                 style={[styles.View, styles.ChatView]}
                 keyboardVerticalOffset={(Platform.OS ==='android') ? -400 : 0}
             >
-                { 
-                    (() => {
-                        if (!this.props.window.debounced) {
-                            return <ActivityIndicator size='large' style={{marginTop:25}}/>;
-                        }
-                    })()
-                }
-
                 <FlatList
                     data={this.state.messages}
-                    style={(this.props.window.debounced) ? styles.ChatViewList : {opacity: 0}}
+                    style={styles.ChatViewList}
                     extraData={this.state.extraData}
                     renderItem={item => {
                         return item.item;
@@ -80,8 +113,9 @@ export class MobileChatView extends Component {
                 />
                 <MobileChatInput 
                     ref={(ref) => this.inputElem = ref}
-                    onChangeText={(text) => this.input = text}
+                    onChangeText={(text) => this.changeInputText(text)}
                     onSubmit={() => this.send()}
+                    value={this.input}
                 />
             </KeyboardAvoidingView>
         );
@@ -126,7 +160,6 @@ export default class MobileWindow extends EventEmitter {
         this.locks = 0
         this.visible = true;
         this.lines = [];
-        this.debounced = false;
         this.messageKey = 0;
     }
 

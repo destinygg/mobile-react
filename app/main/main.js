@@ -28,6 +28,10 @@ class TwitchView extends Component {
 }
 
 export default class MainView extends Component {
+    static navigationOptions = {
+        title: 'Stream'
+    };
+
     constructor(props) {
         super(props);
         this.chat = props.screenProps.chat;

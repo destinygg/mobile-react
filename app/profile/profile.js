@@ -163,22 +163,38 @@ class SubscriptionItem extends Component {
     static navigationOptions = {
         title: 'Subscription',
     };
+
+    constructor(props) {
+        super(props);
+        this.state = {press: false};
+    }
+
     render() {
-        const tierStyle = 
+        const tierColor = 
             (this.props.displayName === "Tier IV") ?
-                styles.Tier4Sub :
+                '#a427d6' :
             (this.props.displayName === "Tier III") ?
-                styles.Tier3Sub :
+                '#0060ff' :
             (this.props.displayName === "Tier II") ?
-                styles.Tier2Sub :
+                '#488ce7' :
             (this.props.displayName === "Tier I") ?
-                styles.Tier1Sub :
+                '#488ce7' :
                 null;
         return (
-            <TouchableHighlight onPress={this.props.onSelect(this.props.subId)} style={[styles.SubscriptionItem, tierStyle]}>
-                <View style={{alignItems: 'flex-start'}}>
-                    <Text style={styles.SubscriptionTitle}>{this.props.displayName}</Text>
-                    <Text style={[styles.SubscriptionSubtitle, (this.props.duration === '3mo') ? styles.ThreeMonth : null]}>{this.props.duration}</Text>
+            <TouchableHighlight
+                onPress={() => this.props.onSelect(this.props.subId)}
+                style={[styles.SubscriptionItem, {borderColor: tierColor}]}
+                onPressIn={() => this.setState({press: true})} 
+                onPressOut={() => this.setState({press: false})} 
+                delayPressOut={100}
+                underlayColor={tierColor}
+            >
+                <View style={{alignItems: 'flex-start', justifyContent:'space-between', flex: 1}}>
+                    <View style={{alignItems: 'flex-start'}}>
+                        <Text style={[styles.SubscriptionTitle, (this.state.press) ? {color: '#000'} : null]}>{this.props.displayName}</Text>
+                        <Text style={[styles.SubscriptionSubtitle, (this.props.duration === '3mo') ? styles.ThreeMonth : null, (this.state.press) ? {color: '#000', borderColor: '#000'} : null ]}>{this.props.duration}</Text>
+                    </View>
+                    <Text style={[styles.SubscriptionPrice, (this.state.press) ? {color: '#000'} : null]}>{this.props.price}</Text>
                 </View>
             </TouchableHighlight>
         )
@@ -194,20 +210,20 @@ class SubscriptionView extends Component {
             <ScrollView style={styles.SubscriptionView}>
                 <Text style={styles.selectTitle}>Choose subscription.</Text>
                 <View style={styles.SubscriptionRow}>
-                    <SubscriptionItem subId="" displayName="Tier IV" duration="1mo" onSelect={()=> console.log('pressed')} />
-                    <SubscriptionItem subId="" displayName="Tier IV" duration="3mo" onSelect={()=> console.log('pressed')} />
+                    <SubscriptionItem subId="" displayName="Tier IV" duration="1mo" price="$40" onSelect={()=> console.log('pressed')} />
+                    <SubscriptionItem subId="" displayName="Tier IV" duration="3mo" price="$96" onSelect={()=> console.log('pressed')} />
                 </View>
                 <View style={styles.SubscriptionRow}>
-                    <SubscriptionItem subId="" displayName="Tier III" duration="1mo" onSelect={()=> console.log('pressed')} />
-                    <SubscriptionItem subId="" displayName="Tier III" duration="3mo" onSelect={()=> console.log('pressed')} />
+                    <SubscriptionItem subId="" displayName="Tier III" duration="1mo" price="$20" onSelect={()=> console.log('pressed')} />
+                    <SubscriptionItem subId="" displayName="Tier III" duration="3mo" price="$48" onSelect={()=> console.log('pressed')} />
                 </View>
                 <View style={styles.SubscriptionRow}>
-                    <SubscriptionItem subId="" displayName="Tier II" duration="1mo" onSelect={()=> console.log('pressed')} />
-                    <SubscriptionItem subId="" displayName="Tier II" duration="3mo" onSelect={()=> console.log('pressed')} />
+                    <SubscriptionItem subId="" displayName="Tier II" duration="1mo" price="$10" onSelect={()=> console.log('pressed')} />
+                    <SubscriptionItem subId="" displayName="Tier II" duration="3mo" price="$24" onSelect={()=> console.log('pressed')} />
                 </View>
                 <View style={styles.SubscriptionRow}>
-                    <SubscriptionItem subId="" displayName="Tier I" duration="1mo" onSelect={()=> console.log('pressed')} />
-                    <SubscriptionItem subId="" displayName="Tier I" duration="3mo" onSelect={()=> console.log('pressed')} />
+                    <SubscriptionItem subId="" displayName="Tier I" duration="1mo" price="$5" onSelect={()=> console.log('pressed')} />
+                    <SubscriptionItem subId="" displayName="Tier I" duration="3mo" price="$12" onSelect={()=> console.log('pressed')} />
                 </View>
             </ScrollView>
         )
@@ -244,7 +260,7 @@ class ProfileView extends Component {
         return (
             <ScrollView style={styles.View}>
                 <View style={styles.ProfileHeader}>
-                    <Text style={styles.title}>{this.props.screenProps.chat.user.username}</Text>
+                    <Text style={styles.ProfileName}>{this.props.screenProps.chat.user.username}</Text>
                 </View>
                 <NavList listItems={this.listItems} navigation={this.props.navigation}/>
             </ScrollView>

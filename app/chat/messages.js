@@ -1,5 +1,5 @@
 import React, { Component, PureComponent } from 'react';
-import { View, Text, Image, findNodeHandle } from 'react-native';
+import { View, Text, Image, findNodeHandle, TouchableHighlight } from 'react-native';
 import styles from './styles';
 import { emoteImgs, icons } from './images';
 import { UrlFormatter, GreenTextFormatter, EmoteFormatter, MentionedUserFormatter } from './formatters'
@@ -132,7 +132,7 @@ class UserBadge extends Component {
     }
     render() {
         return (
-            <Text>
+            <Text onPress={() => this.props.onPress(this.props.user.username)}>
                 {this.props.children}
                 <Text key='userBadgeText' style={this.style}>{this.props.user.username}</Text>
             </Text>
@@ -140,10 +140,13 @@ class UserBadge extends Component {
     }
 }
 
-class Emote extends Component {
+export class Emote extends Component {
+    setNativeProps = (nativeProps) => {
+        this.image.setNativeProps(nativeProps);
+    }
     render() {
         return (
-            <Image style={styles.Emote} source={emoteImgs.get(this.props.name)} />
+            <Image style={styles.Emote} source={emoteImgs.get(this.props.name)} ref={ref => this.image = ref}/>
         );
     }
 }
@@ -177,9 +180,6 @@ export class MobileChatMessage extends PureComponent {
         }
     }
     render() {
-        if (this.props.msg == this.props.msg.window.lastmessage) {
-            this.props.msg.window.debounced = true;
-        }
         return (
             <Text style={this.props.msg.classes} onLayout={(e) => this.props.msg.height = e.nativeEvent.layout.height}>
                 {this.props.time}
@@ -362,7 +362,7 @@ class ChatUserMessage extends ChatMessage {
 
         const user = (this.continued) ?
                     null : 
-                    <UserBadge user={this.user}>{buildFeatures(this.user)}</UserBadge>;
+                    <UserBadge user={this.user} onPress={(username) => this.window.ui.insertMention(username)}>{buildFeatures(this.user)}</UserBadge>;
         return this.wrap(
             buildTime(this), user, ctrl, buildMessageTxt(chat, this)
         );

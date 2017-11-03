@@ -1,15 +1,15 @@
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet, Platform, Dimensions } from 'react-native';
+
+export const shortDimension = (() => {
+    const dim = Dimensions.get('window');
+    return ((dim.height > dim.width ? dim.width : dim.height));
+})();
+
+export const h1 = (shortDimension > 320) ? 36 : 30;
+export const h2 = (shortDimension > 320) ? 24 : 20;
+export const h3 = (shortDimension > 320) ? 16 : 14;
 
 export const inheritedStyles = {
-    title: {
-        color: "#FFF",
-        fontSize: 36,
-        fontWeight: "300"
-    },
-    subtitle: {
-        color: "#888",
-        fontSize: 16
-    },
     text: {
         color: "#888"
     },
@@ -20,7 +20,7 @@ export const inheritedStyles = {
         paddingTop: (Platform.OS === 'ios' ? 20 : 0)                
     },
     selectTitle: {
-        fontSize: 24,
+        fontSize: h2,
         fontWeight: '700',
         color: "#fff",
         marginTop: 25,
@@ -34,13 +34,14 @@ export const inheritedStyles = {
         paddingRight: 15, 
         borderColor: "#222",
         borderBottomWidth: (Platform.OS === 'ios') ? StyleSheet.hairlineWidth : 0,
+        fontSize: h3
     },
     FormItemDisabled: {
         color: '#888'
     },
     ListItemText: {
         color: "#FFF",
-        fontSize: 16
+        fontSize: h3
     },
     Navigation: {
         backgroundColor: "#181818",

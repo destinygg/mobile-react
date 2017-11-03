@@ -1,8 +1,7 @@
-textinput will need to have manipulatable state for emote insertion.
+emote action-bar
 donate api access
 loots webview
 chat history (maybe?)
-move sync() into window so that Chat doesn't have to reach into ChatView
 
 subscribe:
 

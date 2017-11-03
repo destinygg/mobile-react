@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { inheritedStyles } from '../styles';
+import { inheritedStyles, shortDimension, h1, h2, h3 } from '../styles';
 
 const styles = StyleSheet.create({
     ...inheritedStyles,
@@ -8,14 +8,17 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         marginTop: 10
     },
+    ProfileName: {
+        color: "#fff",
+        fontSize: h1,
+        fontWeight: "300"
+    },
     SubscriptionItem: {
         flex: 1,
-        flexDirection: 'column',
-        alignItems: 'flex-start',
         borderRadius: 5,
         borderWidth: 2,
-        height: 150,
-        margin: 8,
+        height: (shortDimension-48)/2*.9,  // logical width - surrounding margins
+        margin: 8,                        // divided by half, adjusted for perception
         padding: 10
     },
     SubscriptionRow: {
@@ -27,27 +30,21 @@ const styles = StyleSheet.create({
         marginBottom: 0,
     },
     SubscriptionTitle: {
-        fontSize: 36,
+        fontSize: h1,
         fontWeight: '700',
         color: '#fff'
     },
     SubscriptionSubtitle: {
-        fontSize: 18,
+        fontSize: h3,
         marginTop: 5,
         fontWeight: '300',
         color: '#fff'
     },
-    Tier4Sub: {
-        borderColor: '#a427d6'
-    },
-    Tier3Sub: {
-        borderColor: '#0060ff'
-    },
-    Tier2Sub: {
-        borderColor: '#488ce7'
-    },
-    Tier1Sub: {
-        borderColor: '#488ce7'
+    SubscriptionPrice: {
+        fontSize: h2,
+        fontWeight: '700',
+        color: '#fff',
+        alignSelf: 'flex-end'
     },
     ThreeMonth: {
         color: '#FB952B',

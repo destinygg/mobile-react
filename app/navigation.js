@@ -13,7 +13,12 @@ const MainNav = DrawerNavigator({
     //MessageView: { screen: MessageView },
     ProfileView: { screen: ProfileNav }
 }, {
-    initialRouteName: "MainView"
+    initialRouteName: "MainView",
+    drawerBackgroundColor: '#111',
+    contentOptions: {
+        activeBackgroundColor: '#181818',
+        inactiveTintColor: '#fff'
+    }
 });
 
 const InitNav = StackNavigator({
