@@ -10,7 +10,7 @@ class TwitchView extends Component {
     }
 
     render() {
-        let style = [styles.MainView];
+        let style = [styles.TwitchViewOuter, styles.iosPad];
 
         if (this.state.height) { style.push({ flex: 0, height: this.state.height}); }
 
@@ -19,7 +19,7 @@ class TwitchView extends Component {
                 <WebView
                     source={{uri: `https://player.twitch.tv/?channel=vainglory`}}
                     scrollEnabled={false}
-                    style={styles.TwitchView}
+                    style={styles.TwitchViewInner}
                     allowsInlineMediaPlayback={true}
                 />
             </View> 

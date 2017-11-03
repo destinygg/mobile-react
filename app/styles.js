@@ -16,6 +16,17 @@ export const inheritedStyles = {
     highlight: {
         color: "#B5B69C"
     },
+    iosPad: {
+        paddingTop: (Platform.OS === 'ios' ? 20 : 0)                
+    },
+    selectTitle: {
+        fontSize: 24,
+        fontWeight: '700',
+        color: "#fff",
+        marginTop: 25,
+        marginBottom: 10,        
+        marginLeft: 15        
+    },
     FormItem: {
         color: "#FFF",
         paddingTop: 10,
@@ -23,6 +34,9 @@ export const inheritedStyles = {
         paddingRight: 15, 
         borderColor: "#222",
         borderBottomWidth: (Platform.OS === 'ios') ? StyleSheet.hairlineWidth : 0,
+    },
+    FormItemDisabled: {
+        color: '#888'
     },
     ListItemText: {
         color: "#FFF",

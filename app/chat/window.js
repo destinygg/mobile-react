@@ -73,7 +73,6 @@ export class MobileChatView extends Component {
                         this.pinned = false;
                     }}
                     onMomentumScrollEnd={(e) => this._onScrollEnd(e)}
-                    onScrollEndDrag={(e) => this._onScrollEnd(e)}
                     inverted={true}
                     onLayout={(e) => {
                         this.height = e.nativeEvent.layout.height;
@@ -131,6 +130,21 @@ export default class MobileWindow extends EventEmitter {
         this.messageKey = 0;
     }
 
+    censor(nick) {
+        const c = this.getlines(nick.toLowerCase());
+        
+        for (let i = 0; i < c.length; i++) {
+            if (this.settings.get('showremoved')) {                
+                c[i].addClass('msg-censored');
+            } else {
+                this.lines.splice(this.lines.indexOf(c[i]), 1);
+            }
+        }
+        if (this.ui) {
+            this.ui.sync();            
+        }
+    }
+
     getMessageKey() {
         const key = this.messageKey;
         this.messageKey++;
@@ -184,7 +198,9 @@ export default class MobileWindow extends EventEmitter {
 
     getlines(sel) {
         return this.lines.filter((line) => {
-            line.props.msg.user === sel;
+            if (line.props.msg.user !== null) {
+                line.props.msg.user.nick === sel;
+            }
         });
     }
 
@@ -223,7 +239,7 @@ export class ChatViewWrapper extends Component {
     };
     render() {
         return (
-            <View style={[styles.View, styles.ChatWrapper]}>{this.props.screenProps.chat.mainwindow.uiElem}</View>
+            <View style={[styles.View, styles.iosPad]}>{this.props.screenProps.chat.mainwindow.uiElem}</View>
         )
     }
 

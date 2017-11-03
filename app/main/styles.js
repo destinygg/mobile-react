@@ -5,10 +5,13 @@ const styles = StyleSheet.create({
     ...inheritedStyles,
     MainView: {
         flex: 1,
-        backgroundColor: '#000',
-        paddingTop: (Platform.OS === 'ios' ? 20 : 0)
+        backgroundColor: '#000'
     },
-    TwitchView: {
+    TwitchViewOuter: {
+        flex: 0,
+        height: 250
+    },
+    TwitchViewInner: {
         flex: 1,
         backgroundColor: '#000',
         overflow: 'hidden',

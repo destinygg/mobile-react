@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, ScrollView, Button, Platform } from 'react-native';
+import { View, Text, FlatList, ScrollView, Button, Platform, ActivityIndicator, Alert, TouchableHighlight } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import { NavList, NavListItem, FormItem } from '../components';
 import styles from './styles';
@@ -41,53 +41,67 @@ class FormSaveBtn extends Component {
 }
 
 class FormView extends Component {
-    constructor() {
-        super();
-        this.state = PROFILEDATA;
+    static navigationOptions = ({ navigation }) => {
+        const { params = {} } = navigation.state;
+
+        return {
+            headerRight: (params.isSaving) ? 
+                <ActivityIndicator /> :
+                <FormSaveBtn onSave={params.saveHandler ? params.saveHandler : () => null} />   
+        }
+    };
+
+    constructor(props) {
+        super(props);
+        this.me = JSON.parse(JSON.stringify(this.props.screenProps.chat.me)); // deep clone
     }
     _onChange(name, value) {
-        let updatedState = [];
+        let updatedState = {};
 
         updatedState[name] = value;
 
         this.setState(updatedState);
     }
-    _extractState(item) {
-        let extracted = {};
-        
-        if (Array.isArray(item)) {
-            for (var i = 0; i < item.length; i++) {
-                Object.assign(extracted, this._extractState(item[i]));
-            }
-        } else {
-            extracted[item.name] = item.value;
-        }
-        return extracted;
-    }
     save() {
-        this.showActiveIndicator();
-        fetch(`https://destiny.gg/${this.endpoint}`).then((response) => {
-            if (response.status === 200) {
+        const formData = new FormData();
+        for (let key in this.state) {
+            formData.append(key, this.state[key]);
+        }
+        this.props.navigation.setParams({ isSaving: true });
+
+        const req = new Request(`https://www.destiny.gg/${this.endpoint}`, {
+            method: 'POST',
+            body: formData,
+            credentials: 'include'
+        });
+
+        fetch(req).then((response) => {
+            if (response.ok) {
                 this.props.navigation.goBack();
-                // re-initialize user data here
             } else {
+                console.log(response);
                 this.showFailAlert();
             }
-            this.hideActiveIndicator();
+            this.props.navigation.setParams({ isSaving: false });
         }).catch((error) => {
             this.showFailAlert();
-            this.hideActiveIndicator();
+            this.props.navigation.setParams({ isSaving: false });
         });
     }
-    componentWillMount() {
-        let initState = {};
 
-        Object.assign(initState, this._extractState(this.formItems));
-
-        this.initState = initState;
-
-        this.setState(initState);
+    showFailAlert() {
+        Alert.alert(
+            'Account update failed.',
+            'Please try again later.',
+            [ {text: 'OK', onPress: () => this.props.navigation.goBack()} ],
+            { cancelable: false }
+        );
     }
+
+    componentDidMount() {
+        this.props.navigation.setParams({ saveHandler: () => this.save() });
+    }
+
     render() {
         return (
             <ScrollView style={styles.View}>
@@ -98,17 +112,13 @@ class FormView extends Component {
 }
 
 class AccountView extends FormView {
-    static navigationOptions = {
-        title: 'Account',
-        headerRight: <FormSaveBtn onSave={() => this.save()} />
-    };
-    constructor() {
-        super();
-        this.endpoint = '/profile/account/update';
+    constructor(props) {
+        super(props);
+        this.endpoint = 'profile/update';
         this.state = {
-            username: this.props.screenProps.chat.user.username,
-            email: this.props.screenProps.chat.user.email,
-            country: this.props.screenProps.chat.user.country
+            username: this.me.username,
+            email: this.me.email,
+            country: this.me.country
         }
         this.formItems = [
             { 
@@ -149,10 +159,57 @@ class AccountView extends FormView {
     }
 }
 
+class SubscriptionItem extends Component {
+    static navigationOptions = {
+        title: 'Subscription',
+    };
+    render() {
+        const tierStyle = 
+            (this.props.displayName === "Tier IV") ?
+                styles.Tier4Sub :
+            (this.props.displayName === "Tier III") ?
+                styles.Tier3Sub :
+            (this.props.displayName === "Tier II") ?
+                styles.Tier2Sub :
+            (this.props.displayName === "Tier I") ?
+                styles.Tier1Sub :
+                null;
+        return (
+            <TouchableHighlight onPress={this.props.onSelect(this.props.subId)} style={[styles.SubscriptionItem, tierStyle]}>
+                <View style={{alignItems: 'flex-start'}}>
+                    <Text style={styles.SubscriptionTitle}>{this.props.displayName}</Text>
+                    <Text style={[styles.SubscriptionSubtitle, (this.props.duration === '3mo') ? styles.ThreeMonth : null]}>{this.props.duration}</Text>
+                </View>
+            </TouchableHighlight>
+        )
+    }
+}
+
 class SubscriptionView extends Component {
+    static navigationOptions = {
+        title: 'Subscription',
+    };
     render() {
         return (
-            <View />
+            <ScrollView style={styles.SubscriptionView}>
+                <Text style={styles.selectTitle}>Choose subscription.</Text>
+                <View style={styles.SubscriptionRow}>
+                    <SubscriptionItem subId="" displayName="Tier IV" duration="1mo" onSelect={()=> console.log('pressed')} />
+                    <SubscriptionItem subId="" displayName="Tier IV" duration="3mo" onSelect={()=> console.log('pressed')} />
+                </View>
+                <View style={styles.SubscriptionRow}>
+                    <SubscriptionItem subId="" displayName="Tier III" duration="1mo" onSelect={()=> console.log('pressed')} />
+                    <SubscriptionItem subId="" displayName="Tier III" duration="3mo" onSelect={()=> console.log('pressed')} />
+                </View>
+                <View style={styles.SubscriptionRow}>
+                    <SubscriptionItem subId="" displayName="Tier II" duration="1mo" onSelect={()=> console.log('pressed')} />
+                    <SubscriptionItem subId="" displayName="Tier II" duration="3mo" onSelect={()=> console.log('pressed')} />
+                </View>
+                <View style={styles.SubscriptionRow}>
+                    <SubscriptionItem subId="" displayName="Tier I" duration="1mo" onSelect={()=> console.log('pressed')} />
+                    <SubscriptionItem subId="" displayName="Tier I" duration="3mo" onSelect={()=> console.log('pressed')} />
+                </View>
+            </ScrollView>
         )
     }
 }
@@ -161,12 +218,11 @@ class DiscordView extends FormView {
     static navigationOptions = {
         title: 'Discord',
     };
-    constructor() {
-        super();
-        this.endpoint = '/profile/discord/update';        
+    constructor(props) {
+        super(props);
+        this.endpoint = 'profile/discord/update';        
         this.formItems = [
             {
-                value: PROFILEDATA.discordname,
                 placeholder: "Discord name and ID (e.g., Destiny#123)",
                 name: "discordname",
                 type: "text"

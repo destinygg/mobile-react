@@ -19,6 +19,7 @@ export default class InitView extends Component {
                     screenProps.chat
                         .withUserAndSettings(me)
                         .connect("wss://www.destiny.gg/ws");
+                    screenProps.chat.me = me;
                     navigation.dispatch(NavigationActions.reset({
                         index: 0,
                         actions: [

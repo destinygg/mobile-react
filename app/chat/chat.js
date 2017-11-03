@@ -13,19 +13,11 @@ export class MobileChat extends Chat {
     constructor() {
         super();
         this.mainwindow = new MobileWindow('main').into(this);
+        this.me = null;
     }
-    
-    censor(nick) {
-        const c = this.mainwindow.getlines(nick.toLowerCase());
 
-        for (let i = 0; i < c.length; i++) {
-            if (this.settings.get('showremoved')) {                
-                c[i].addClass('msg-censored');
-            } else {
-                this.mainwindow.lines.splice(this.mainwindow.lines.indexOf(c[i]), 1);
-            }
-        }
-        this.mainwindow.ui.sync();
+    censor(nick) {
+        this.mainwindow.censor(nick);
     }
 
     saveSettings() {

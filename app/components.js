@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, Picker, Modal, Button, TouchableHighlight, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Picker, Modal, Button, TouchableHighlight, StyleSheet, Platform } from 'react-native';
 import styles from './styles';
 
 export class ListButton extends Component {
@@ -46,6 +46,10 @@ export class TextInputListItem extends Component {
             innerStyle.push(styles.innerLastInList);
         }
 
+        if (this.props.readOnly) {
+            innerStyle.push(styles.FormItemDisabled);
+        }
+
         return (
             <View style={outerStyle}>
                 <TextInput
@@ -53,7 +57,7 @@ export class TextInputListItem extends Component {
                     value={this.state.value}
                     placeholder={this.props.placeholder}
                     placeholderTextColor={'#888'}
-                    editable={(this.props.readOnly) === true ? true : false}
+                    editable={(this.props.readOnly) === true ? false : true}
                     onChangeText={(value) => {
                         this.setState({ value: value });
                         this.props.onChange(this.props.name, value);
@@ -69,7 +73,7 @@ export class ButtonList extends Component {
     render() {
         const children = this.props.listItems.map((item, index, array) => {
             return (
-                <NavListItem
+                <ListButton
                     text={item.itemText}
                     onPress={() => item.itemTarget()}
                     key={index}
@@ -94,7 +98,7 @@ export class NavList extends ButtonList {
     render() {
         const children = this.props.listItems.map((item, index, array) => {
             return (
-                <NavListItem
+                <ListButton
                     text={item.itemText}
                     onPress={() => this._onPressItem(item.itemTarget)}
                     key={index}
@@ -146,16 +150,16 @@ export class SelectModal extends Component {
                     <View style={ styles.SelectModalInner }>
                         <View style={ styles.SelectModalHeader }>
                             <Button
-                                onPress={()=> this._onSelect(this.props.value)}
+                                onPress={()=> this._onSelect(this.props.name, this.state.value)}
                                 title='Done'
                             />
                         </View>
                         <Picker
                             selectedValue={this.state.value}
                             onValueChange={(itemValue, itemIndex) => {
-                                this.setState({ value: itemValue })
+                                this.setState({ value: itemValue });
                             }}
-                            style={{color: '#fff'}}
+                            style={(Platform.OS == 'android') ? {color: '#fff'} : null}
                             itemStyle={styles.text}
                         >
                             {selectOptions}
@@ -170,9 +174,6 @@ export class SelectModal extends Component {
 export class FormItem extends Component {
     constructor(props) {
         super(props);
-        this.state = { 
-            value: this.props.value 
-        };
     }
     render() {
         let children = [];
@@ -181,7 +182,7 @@ export class FormItem extends Component {
             children.push(
                 <TextInputListItem
                     name={this.props.item.name}                
-                    value={this.state.value}
+                    value={this.props.value}
                     readOnly={this.props.item.readOnly}
                     placeholder={this.props.item.placeholder}
                     onChange={(name, value) => this.props.onChange(name, value)}
@@ -192,10 +193,10 @@ export class FormItem extends Component {
             )
         } else if (this.props.item.type === "select") {
             const displayText = this.props.item.selectOptions.filter((item) => {
-                return item.value === this.state.value;
+                return item.value === this.props.value;
             });
             children.push(
-                <NavListItem
+                <ListButton
                     text={displayText[0].name}
                     onPress={() => this.selectModal.show()}
                     key={this.props.item.name}
@@ -209,7 +210,7 @@ export class FormItem extends Component {
                     ref={(component) => this.selectModal = component}
                     selectOptions={this.props.item.selectOptions}
                     onSelect={this.props.onChange}
-                    value={this.state.value}
+                    value={this.props.value}
                     key={this.props.item.name + "Modal"}                    
                 />
             );

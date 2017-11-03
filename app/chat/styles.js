@@ -10,9 +10,6 @@ const styles = StyleSheet.create({
         paddingRight: 2,
         paddingLeft: 2,
     },
-    ChatWrapper: {
-        paddingTop: (Platform.OS === 'ios' ? 20 : 0)        
-    },
     ChatViewList: {
         flex: 1,
     },
