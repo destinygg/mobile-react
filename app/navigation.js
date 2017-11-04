@@ -28,7 +28,8 @@ const InitNav = StackNavigator({
     MainNav: { screen: MainNav }
 }, {
     initialRouteName: 'InitView',
-    headerMode: 'none'
+    headerMode: 'none',
+    cardStyle: {flex: 1, backgroundColor: '#000'}
 });
 
 export default InitNav;

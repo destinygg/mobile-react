@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, AsyncStorage } from 'react-native';
 import { NavigationActions } from 'react-navigation';
-//import styles from './styles';
+import styles from '../styles';
 
 export default class InitView extends Component {
     constructor(props) {
@@ -13,6 +13,7 @@ export default class InitView extends Component {
             method: "GET", 
             credentials: 'include'
         });
+        
         fetch(req).then(r => {
             if (r.ok) {
                 r.json().then(me => {
@@ -40,9 +41,7 @@ export default class InitView extends Component {
 
     render() {
         return(
-            <View>
-
-            </View>
+            <View style={styles.View} />
         )
     }
 }

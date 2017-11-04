@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, TextInput, FlatList, KeyboardAvoidingView, Text, ActivityIndicator, TouchableHighlight, Platform, RefreshControl } from 'react-native';
+import { View, SafeAreaView, TextInput, FlatList, KeyboardAvoidingView, Text, ActivityIndicator, TouchableHighlight, Platform, RefreshControl } from 'react-native';
 import styles from './styles';
 import EventEmitter from '../../lib/assets/chat/js/emitter';
 import { emoteImgs } from './images';
@@ -272,7 +272,7 @@ export class ChatViewWrapper extends Component {
     };
     render() {
         return (
-            <View style={[styles.View, styles.iosPad]}>{this.props.screenProps.chat.mainwindow.uiElem}</View>
+            <SafeAreaView style={[styles.View]}>{this.props.screenProps.chat.mainwindow.uiElem}</SafeAreaView>
         )
     }
 

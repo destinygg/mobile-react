@@ -23,7 +23,7 @@ export const inheritedStyles = {
         fontSize: h2,
         fontWeight: '700',
         color: "#fff",
-        marginTop: 25,
+        marginTop: 100,
         marginBottom: 10,        
         marginLeft: 15        
     },

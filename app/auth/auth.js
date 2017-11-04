@@ -7,6 +7,9 @@ import styles from './styles';
 export class AuthView extends Component {
     constructor(props) {
         super(props);
+
+        const { navigation, screenProps } = props;
+
         this.listItems = [
             { itemText: 'Twitch', itemTarget: () => this._onProviderSelect('twitch') },
             /* Google is no-go right now.  They don't allow embedded useragents to
@@ -32,8 +35,8 @@ export class AuthView extends Component {
             <ScrollView style={[styles.View, styles.iosPad]}>
                 <View>
                     <Text style={styles.selectTitle}>{'Choose auth provider.'}</Text>
+                    <ButtonList listItems={this.listItems} />                    
                 </View>
-                <ButtonList listItems={this.listItems} />
             </ScrollView>
         )
     }

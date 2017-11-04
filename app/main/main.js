@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, WebView, Dimensions, PanResponder } from 'react-native';
+import { View, SafeAreaView, WebView, Dimensions, PanResponder } from 'react-native';
 import { MobileChatView } from '../chat/chat';
 import styles from './styles';
 
@@ -10,7 +10,7 @@ class TwitchView extends Component {
     }
 
     render() {
-        let style = [styles.TwitchViewOuter, styles.iosPad];
+        let style = [styles.TwitchViewOuter];
 
         if (this.state.height) { style.push({ flex: 0, height: this.state.height}); }
 
@@ -45,13 +45,13 @@ export default class MainView extends Component {
             dividerStyle.push({top: this.state.height});
         }
         return (
-            <View style={[styles.MainView]}>
+            <SafeAreaView style={[styles.MainView]}>
                 <TwitchView ref={(ref) => this.twitchView = ref}/>
                 <View style={dividerStyle}>
                     <View style={styles.TwitchViewDividerHandle} {...this._panResponder.panHandlers} />
                 </View>
                 {this.props.screenProps.chat.mainwindow.uiElem}
-            </View>
+            </SafeAreaView>
         );
     }
 
