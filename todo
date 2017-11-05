@@ -3,18 +3,6 @@ donate api access
 loots webview
 chat history (maybe?)
 
-subscribe:
-
-/subscription/create
-{
-    subscription: {1:3}-MONTH-SUB{"":2-4},
-    gift: "",
-    sub-message: ""...250,
-    renew: checkbox
-}
-By clicking the "Continue" button, you are confirming that this purchase is what you wanted and that you have read the user agreement.
-destiny.gg/agreement
-
 messages:
 /donate
 {

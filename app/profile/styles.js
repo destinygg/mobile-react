@@ -21,6 +21,14 @@ const styles = StyleSheet.create({
         margin: 8,                        // divided by half, adjusted for perception
         padding: 10
     },
+    ChooseTitle: {
+        fontSize: h2,
+        fontWeight: '700',
+        color: "#fff",
+        marginTop: 25,
+        marginBottom: 10,        
+        marginLeft: 15     
+    },
     SubscriptionRow: {
         flex: 1,
         flexDirection: 'row',

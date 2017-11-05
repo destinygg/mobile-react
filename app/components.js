@@ -63,6 +63,7 @@ export class TextInputListItem extends Component {
                         this.props.onChange(this.props.name, value);
                     }}
                     underlineColorAndroid='#222'
+                    multiline={this.props.multiline}
                 />
             </View>
         )
@@ -171,6 +172,34 @@ export class SelectModal extends Component {
     }
 }
 
+class ListSwitch extends Component {
+    constructor(props) {
+        super(props);
+    }
+    render() {
+        let outerStyle = [styles.ListItemOuter];
+        let innerStyle = [styles.ListItemInner];
+
+        if (this.props.first) { 
+            outerStyle.push(styles.firstInList); 
+        }
+
+        if (this.props.last) { 
+            outerStyle.push(styles.lastInList); 
+            innerStyle.push(styles.innerLastInList); 
+        }
+
+        return (
+            <View style={outerStyle}>
+                <View style={[innerStyle, styles.ListSwitch]}>
+                    <Text style={styles.ListItemText}>{this.props.text}</Text>
+                    <Switch onValueChange={this.props.onChange} value={this.props.value} />
+                </View>
+            </View>
+        )
+    }
+}
+
 export class FormItem extends Component {
     constructor(props) {
         super(props);
@@ -189,6 +218,7 @@ export class FormItem extends Component {
                     key={this.props.item.name}
                     first={this.props.first}
                     last={this.props.last}  
+                    multiline={this.props.item.multiline}
                 />
             )
         } else if (this.props.item.type === "select") {
@@ -214,6 +244,18 @@ export class FormItem extends Component {
                     key={this.props.item.name + "Modal"}                    
                 />
             );
+        } else if (this.props.item.type == "switch") {
+            children.push(
+                <ListSwitch
+                    text={this.props.item.tag}
+                    name={this.props.item.name}
+                    value={this.props.value}
+                    onChange={this.props.onChange}
+                    key={this.props.item.name}
+                    first={this.props.first}
+                    last={this.props.last}
+                />
+            )
         }
 
         if (this.props.item.spacer == true) { 

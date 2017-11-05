@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, ScrollView, Button, Platform, ActivityIndicator, Alert, TouchableHighlight } from 'react-native';
-import { StackNavigator } from 'react-navigation';
+import { View, Text, FlatList, SafeAreaView, ScrollView, Button, Platform, ActivityIndicator, Alert, TouchableHighlight } from 'react-native';
+import { StackNavigator, NavigationActions } from 'react-navigation';
 import { NavList, NavListItem, FormItem } from '../components';
 import styles from './styles';
 
@@ -205,28 +205,182 @@ class SubscriptionView extends Component {
     static navigationOptions = {
         title: 'Subscription',
     };
+
+    _onSelect(subId) {
+        this.props.navigation.dispatch(NavigationActions.navigate('SubscriptionMessageView', {subId: subId}));
+    }
+
     render() {
         return (
-            <ScrollView style={styles.SubscriptionView}>
-                <Text style={styles.selectTitle}>Choose subscription.</Text>
-                <View style={styles.SubscriptionRow}>
-                    <SubscriptionItem subId="" displayName="Tier IV" duration="1mo" price="$40" onSelect={()=> console.log('pressed')} />
-                    <SubscriptionItem subId="" displayName="Tier IV" duration="3mo" price="$96" onSelect={()=> console.log('pressed')} />
-                </View>
-                <View style={styles.SubscriptionRow}>
-                    <SubscriptionItem subId="" displayName="Tier III" duration="1mo" price="$20" onSelect={()=> console.log('pressed')} />
-                    <SubscriptionItem subId="" displayName="Tier III" duration="3mo" price="$48" onSelect={()=> console.log('pressed')} />
-                </View>
-                <View style={styles.SubscriptionRow}>
-                    <SubscriptionItem subId="" displayName="Tier II" duration="1mo" price="$10" onSelect={()=> console.log('pressed')} />
-                    <SubscriptionItem subId="" displayName="Tier II" duration="3mo" price="$24" onSelect={()=> console.log('pressed')} />
-                </View>
-                <View style={styles.SubscriptionRow}>
-                    <SubscriptionItem subId="" displayName="Tier I" duration="1mo" price="$5" onSelect={()=> console.log('pressed')} />
-                    <SubscriptionItem subId="" displayName="Tier I" duration="3mo" price="$12" onSelect={()=> console.log('pressed')} />
-                </View>
-            </ScrollView>
+            <SafeAreaView>
+                <ScrollView style={styles.SubscriptionView}>
+                    <Text style={styles.ChooseTitle}>Choose subscription.</Text>
+                    <View style={styles.SubscriptionRow}>
+                        <SubscriptionItem subId="1-MONTH-SUB4" displayName="Tier IV" duration="1mo" price="$40" onSelect={this._onSelect} />
+                        <SubscriptionItem subId="3-MONTH-SUB4" displayName="Tier IV" duration="3mo" price="$96" onSelect={this._onSelect} />
+                    </View>
+                    <View style={styles.SubscriptionRow}>
+                        <SubscriptionItem subId="1-MONTH-SUB3" displayName="Tier III" duration="1mo" price="$20" onSelect={this._onSelect} />
+                        <SubscriptionItem subId="3-MONTH-SUB3" displayName="Tier III" duration="3mo" price="$48" onSelect={this._onSelect} />
+                    </View>
+                    <View style={styles.SubscriptionRow}>
+                        <SubscriptionItem subId="1-MONTH-SUB2" displayName="Tier II" duration="1mo" price="$10" onSelect={this._onSelect} />
+                        <SubscriptionItem subId="3-MONTH-SUB2" displayName="Tier II" duration="3mo" price="$24" onSelect={this._onSelect} />
+                    </View>
+                    <View style={styles.SubscriptionRow}>
+                        <SubscriptionItem subId="1-MONTH-SUB" displayName="Tier I" duration="1mo" price="$5" onSelect={this._onSelect} />
+                        <SubscriptionItem subId="3-MONTH-SUB" displayName="Tier I" duration="3mo" price="$12" onSelect={this._onSelect} />
+                    </View>
+                </ScrollView>
+            </SafeAreaView>
         )
+    }
+}
+
+class SubscriptionMessageView extends Component {
+    static navigationOptions = ({ navigation }) => {
+        const { params = {} } = navigation.state;
+
+        return {
+            headerRight: <View style={{ marginRight: 10 }}>
+                            <Button title='Continue' onPress={params.saveHandler ? params.saveHandler : () => null} />
+                        </View>   
+        }
+    };
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            message: "",
+            gift: "",
+            giftBool: false,
+            renew: false
+        }
+    }
+
+    _onChange(name, value) {
+        let updatedState = {};
+
+        updatedState[name] = value;
+
+        if (name === 'giftBool' && value === false && this.state.gift !== "") {
+            updatedState['gift'] = "";
+        } else if (name === 'giftBool' && value === true) {
+            Alert.alert('Warning', 'If the giftee has a subscription by the time this payment\
+                is completed the subscription will be marked as failed, but your payment will\
+                still go through.');
+        }
+
+        this.setState(updatedState);
+    }
+
+    save() {
+        let params = {
+            subId: this.props.navigation.state.params.subId,
+            message: this.state.message
+        }
+
+        if (this.state.giftBool) {
+            params['gift'] = this.state.gift;
+        } else {
+            params['gift'] = "";
+        }
+
+        this.props.navigation.dispatch(
+            NavigationActions.navigate('SubscriptionWebView', params)
+        )
+    }
+
+    render() {
+        this.formItems = [
+            { 
+                placeholder: "Subscription message", 
+                name: "message",
+                type: "text",
+                multiline: true,
+                spacer: true
+            },
+            {
+                tag: 'Renew',
+                name: 'renew',
+                type: 'switch',
+                spacer: true
+            },
+            {
+                tag: 'Gift',
+                name: 'giftBool',
+                type: 'switch'
+            }
+        ];
+
+        if (this.state.giftBool) {
+            this.formItems.splice(2, 0, {
+                placeholder: "Username",
+                name: "gift",
+                type: "text"
+            });
+        }
+
+        return (
+            <SafeAreaView>
+                <ScrollView>
+                    <ProfileForm formItems={this.formItems} formState={this.state} onChange={(name, value) => this._onChange(name, value)} />
+                    <Text style={styles.SubscriptionTerms}>
+                        By clicking the "Continue" button, you are confirming that this purchase is 
+                        what you wanted and that you have read the <Text onPress={_showUserAgreement}>user agreement.</Text> 
+                    </Text>
+                </ScrollView>
+            </SafeAreaView>
+        )
+    }
+
+    componentDidMount() {
+        this.props.navigation.setParams({ saveHandler: () => this.save() });
+    }
+}
+
+class SubscriptionWebView extends Component {
+    constructor(props) {
+        super(props);
+    }
+    render() {
+        const { navigation } = this.props;        
+        const formData = new FormData();
+        formData.append('subscription', navigation.state.params.subId);
+        formData.append('gift', navigation.state.params.gift);
+        formData.append('sub-message', navigation.state.params.message);
+        formData.append('renew', navigation.state.params.renew);
+
+        return (
+            <WebView
+                source={{
+                    uri: `https://www.destiny.gg/subscription/create`,
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                }}
+                style={{ backgroundColor: '#000' }}
+                onNavigationStateChange={e => {
+                    console.log(e);
+                    if (e.loading == false && e.url.indexOf('destiny.gg') != -1) {
+                        if (e.url.indexOf('error') != -1) {
+                            Alert.alert('Error', 'Could not complete subscription. \
+                                                  Try again later.');
+                            this.props.navigation.dispatch(NavigationActions.back());                                                                                
+                        } else if (e.url.indexOf('complete') != -1) {
+                            Alert.alert('Success', 'Subscription complete.');
+                            this.props.navigation.dispatch(NavigationActions.reset({
+                                index: 0,
+                                actions: [
+                                    NavigationActions.navigate({ routeName: 'ProfileView'}),
+                                ]
+                            }));                                                    
+                        }
+                    }
+                }}
+            />
+        );
     }
 }
 
@@ -272,6 +426,8 @@ const ProfileNav = StackNavigator({
     Profile: { screen: ProfileView },
     Account: { screen: AccountView },
     Subscription: { screen: SubscriptionView },
+    SubscriptionMessageView: { screen: SubscriptionMessageView },
+    SubscriptionWebView: { screen: SubscriptionWebView },
     Discord: { screen: DiscordView },
 }, {
     initialRouteName: 'Profile',

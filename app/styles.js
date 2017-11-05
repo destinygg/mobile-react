@@ -43,6 +43,9 @@ export const inheritedStyles = {
         color: "#FFF",
         fontSize: h3
     },
+    ListSwitch: {
+        justifyContent: 'space-between',
+    },
     Navigation: {
         backgroundColor: "#181818",
         borderColor: "#303030",
