@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, Picker, Modal, Button, TouchableHighlight, StyleSheet, Platform } from 'react-native';
+import { View, Text, TextInput, Picker, Modal, Button, TouchableHighlight, StyleSheet, Platform, Switch } from 'react-native';
 import styles from './styles';
 
 export class ListButton extends Component {
@@ -48,6 +48,10 @@ export class TextInputListItem extends Component {
 
         if (this.props.readOnly) {
             innerStyle.push(styles.FormItemDisabled);
+        }
+
+        if (this.props.multiline) {
+            innerStyle.push({minHeight: 100});
         }
 
         return (
@@ -188,12 +192,11 @@ class ListSwitch extends Component {
             outerStyle.push(styles.lastInList); 
             innerStyle.push(styles.innerLastInList); 
         }
-
         return (
             <View style={outerStyle}>
                 <View style={[innerStyle, styles.ListSwitch]}>
                     <Text style={styles.ListItemText}>{this.props.text}</Text>
-                    <Switch onValueChange={this.props.onChange} value={this.props.value} />
+                    <Switch onValueChange={(value) => this.props.onChange(this.props.name, value)} value={this.props.value} />
                 </View>
             </View>
         )

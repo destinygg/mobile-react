@@ -52,7 +52,6 @@ export class AuthWebView extends Component {
                 }}
                 style={{ backgroundColor: '#000' }}
                 onNavigationStateChange={e => {
-                    console.log(e);
                     if (e.loading == false && e.url.indexOf('destiny.gg/profile') != -1) {
                         this.props.navigation.dispatch(NavigationActions.reset({
                             index: 0,

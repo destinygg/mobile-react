@@ -44,7 +44,9 @@ export const inheritedStyles = {
         fontSize: h3
     },
     ListSwitch: {
+        flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center'
     },
     Navigation: {
         backgroundColor: "#181818",

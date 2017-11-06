@@ -5,13 +5,12 @@ const styles = StyleSheet.create({
     ...inheritedStyles,
     ProfileHeader: {
         marginLeft: 15,
-        marginBottom: 20,
-        marginTop: 10
+        marginBottom: 25,
+        marginTop: 25
     },
     ProfileName: {
         color: "#fff",
         fontSize: h1,
-        fontWeight: "300"
     },
     SubscriptionItem: {
         flex: 1,
@@ -53,6 +52,10 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         color: '#fff',
         alignSelf: 'flex-end'
+    },
+    ProfileCreated: {
+        fontSize: h3,
+        color: '#888'
     },
     ThreeMonth: {
         color: '#FB952B',

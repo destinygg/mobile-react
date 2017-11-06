@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, SafeAreaView, ScrollView, Button, Platform, ActivityIndicator, Alert, TouchableHighlight } from 'react-native';
+import { View, Text, FlatList, SafeAreaView, ScrollView, WebView, Button, Platform, ActivityIndicator, Alert, TouchableHighlight } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import { NavList, NavListItem, FormItem } from '../components';
 import styles from './styles';
@@ -42,12 +42,14 @@ class FormSaveBtn extends Component {
 
 class FormView extends Component {
     static navigationOptions = ({ navigation }) => {
-        const { params = {} } = navigation.state;
+        const { params = {}, routeName } = navigation.state;
 
         return {
+            title: routeName,
             headerRight: (params.isSaving) ? 
                 <ActivityIndicator /> :
-                <FormSaveBtn onSave={params.saveHandler ? params.saveHandler : () => null} />   
+                <FormSaveBtn onSave={params.saveHandler ? params.saveHandler : () => null} />   ,
+            drawerLockMode: 'locked-closed'
         }
     };
 
@@ -59,6 +61,8 @@ class FormView extends Component {
         let updatedState = {};
 
         updatedState[name] = value;
+
+        console.log(updatedState);
 
         this.setState(updatedState);
     }
@@ -182,7 +186,7 @@ class SubscriptionItem extends Component {
                 null;
         return (
             <TouchableHighlight
-                onPress={() => this.props.onSelect(this.props.subId)}
+                onPress={() => this.props.onSelect(this.props.subId, this.props.displayName, this.props.duration)}
                 style={[styles.SubscriptionItem, {borderColor: tierColor}]}
                 onPressIn={() => this.setState({press: true})} 
                 onPressOut={() => this.setState({press: false})} 
@@ -204,10 +208,11 @@ class SubscriptionItem extends Component {
 class SubscriptionView extends Component {
     static navigationOptions = {
         title: 'Subscription',
+        drawerLockMode: 'locked-closed'        
     };
 
-    _onSelect(subId) {
-        this.props.navigation.dispatch(NavigationActions.navigate('SubscriptionMessageView', {subId: subId}));
+    _onSelect(subId, subName, subDuration) {
+        this.props.navigation.navigate('SubscriptionMessageView', {subId: subId, subName: subName, subDuration: subDuration});
     }
 
     render() {
@@ -216,20 +221,20 @@ class SubscriptionView extends Component {
                 <ScrollView style={styles.SubscriptionView}>
                     <Text style={styles.ChooseTitle}>Choose subscription.</Text>
                     <View style={styles.SubscriptionRow}>
-                        <SubscriptionItem subId="1-MONTH-SUB4" displayName="Tier IV" duration="1mo" price="$40" onSelect={this._onSelect} />
-                        <SubscriptionItem subId="3-MONTH-SUB4" displayName="Tier IV" duration="3mo" price="$96" onSelect={this._onSelect} />
+                        <SubscriptionItem subId="1-MONTH-SUB4" displayName="Tier IV" duration="1mo" price="$40" onSelect={(id, name, duration) => this._onSelect(id, name, duration)} />
+                        <SubscriptionItem subId="3-MONTH-SUB4" displayName="Tier IV" duration="3mo" price="$96" onSelect={(id, name, duration) => this._onSelect(id, name, duration)} />
                     </View>
                     <View style={styles.SubscriptionRow}>
-                        <SubscriptionItem subId="1-MONTH-SUB3" displayName="Tier III" duration="1mo" price="$20" onSelect={this._onSelect} />
-                        <SubscriptionItem subId="3-MONTH-SUB3" displayName="Tier III" duration="3mo" price="$48" onSelect={this._onSelect} />
+                        <SubscriptionItem subId="1-MONTH-SUB3" displayName="Tier III" duration="1mo" price="$20" onSelect={(id, name, duration) => this._onSelect(id, name, duration)} />
+                        <SubscriptionItem subId="3-MONTH-SUB3" displayName="Tier III" duration="3mo" price="$48" onSelect={(id, name, duration) => this._onSelect(id, name, duration)} />
                     </View>
                     <View style={styles.SubscriptionRow}>
-                        <SubscriptionItem subId="1-MONTH-SUB2" displayName="Tier II" duration="1mo" price="$10" onSelect={this._onSelect} />
-                        <SubscriptionItem subId="3-MONTH-SUB2" displayName="Tier II" duration="3mo" price="$24" onSelect={this._onSelect} />
+                        <SubscriptionItem subId="1-MONTH-SUB2" displayName="Tier II" duration="1mo" price="$10" onSelect={(id, name, duration) => this._onSelect(id, name, duration)} />
+                        <SubscriptionItem subId="3-MONTH-SUB2" displayName="Tier II" duration="3mo" price="$24" onSelect={(id, name, duration) => this._onSelect(id, name, duration)} />
                     </View>
                     <View style={styles.SubscriptionRow}>
-                        <SubscriptionItem subId="1-MONTH-SUB" displayName="Tier I" duration="1mo" price="$5" onSelect={this._onSelect} />
-                        <SubscriptionItem subId="3-MONTH-SUB" displayName="Tier I" duration="3mo" price="$12" onSelect={this._onSelect} />
+                        <SubscriptionItem subId="1-MONTH-SUB" displayName="Tier I" duration="1mo" price="$5" onSelect={(id, name, duration) => this._onSelect(id, name, duration)} />
+                        <SubscriptionItem subId="3-MONTH-SUB" displayName="Tier I" duration="3mo" price="$12" onSelect={(id, name, duration) => this._onSelect(id, name, duration)} />
                     </View>
                 </ScrollView>
             </SafeAreaView>
@@ -244,7 +249,8 @@ class SubscriptionMessageView extends Component {
         return {
             headerRight: <View style={{ marginRight: 10 }}>
                             <Button title='Continue' onPress={params.saveHandler ? params.saveHandler : () => null} />
-                        </View>   
+                        </View>,
+            drawerLockMode: 'locked-closed'            
         }
     };
 
@@ -257,6 +263,9 @@ class SubscriptionMessageView extends Component {
             giftBool: false,
             renew: false
         }
+
+        this.subDisplayName = this.props.navigation.state.params.subName;
+        this.subDuration = this.props.navigation.state.params.subDuration;
     }
 
     _onChange(name, value) {
@@ -264,21 +273,28 @@ class SubscriptionMessageView extends Component {
 
         updatedState[name] = value;
 
+        console.log(updatedState);
+
         if (name === 'giftBool' && value === false && this.state.gift !== "") {
             updatedState['gift'] = "";
         } else if (name === 'giftBool' && value === true) {
-            Alert.alert('Warning', 'If the giftee has a subscription by the time this payment\
-                is completed the subscription will be marked as failed, but your payment will\
-                still go through.');
+            Alert.alert('Warning', `If the giftee has a subscription by the time this payment\
+ is completed the subscription will be marked as failed, but your payment will\
+ still go through.`);
         }
 
         this.setState(updatedState);
     }
 
+    _showUserAgreement() {
+        this.props.navigation.navigate('UserAgreement');
+    }
+
     save() {
         let params = {
             subId: this.props.navigation.state.params.subId,
-            message: this.state.message
+            message: this.state.message,
+            renew: this.state.renew
         }
 
         if (this.state.giftBool) {
@@ -287,9 +303,11 @@ class SubscriptionMessageView extends Component {
             params['gift'] = "";
         }
 
-        this.props.navigation.dispatch(
-            NavigationActions.navigate('SubscriptionWebView', params)
-        )
+        if (this.state.giftBool && this.state.gift === "") {
+            Alert.alert('Missing field data.', 'No gift recipient specified.');
+        } else {
+            this.props.navigation.navigate('SubscriptionWebView', params);            
+        }
     }
 
     render() {
@@ -315,7 +333,7 @@ class SubscriptionMessageView extends Component {
         ];
 
         if (this.state.giftBool) {
-            this.formItems.splice(2, 0, {
+            this.formItems.push({
                 placeholder: "Username",
                 name: "gift",
                 type: "text"
@@ -323,12 +341,16 @@ class SubscriptionMessageView extends Component {
         }
 
         return (
-            <SafeAreaView>
-                <ScrollView>
+            <SafeAreaView style={styles.View}>
+                <ScrollView style={[styles.View, {paddingTop: 25}]}>
+                    <View style={{marginLeft: 15}}>
+                        <Text style={styles.SubscriptionTitle}>{this.subDisplayName}</Text>
+                        <Text style={styles.SubscriptionSubtitle}>{this.subDuration}</Text>
+                    </View>
                     <ProfileForm formItems={this.formItems} formState={this.state} onChange={(name, value) => this._onChange(name, value)} />
                     <Text style={styles.SubscriptionTerms}>
                         By clicking the "Continue" button, you are confirming that this purchase is 
-                        what you wanted and that you have read the <Text onPress={_showUserAgreement}>user agreement.</Text> 
+                        what you wanted and that you have read the <Text onPress={() => this._showUserAgreement()}>user agreement.</Text> 
                     </Text>
                 </ScrollView>
             </SafeAreaView>
@@ -341,33 +363,42 @@ class SubscriptionMessageView extends Component {
 }
 
 class SubscriptionWebView extends Component {
+    static navigationOptions = {
+        drawerLockMode: 'locked-closed'        
+    };
     constructor(props) {
         super(props);
-    }
-    render() {
-        const { navigation } = this.props;        
+        this.state = {webViewHtml: null};
+        const { navigation } = this.props;          
         const formData = new FormData();
         formData.append('subscription', navigation.state.params.subId);
         formData.append('gift', navigation.state.params.gift);
         formData.append('sub-message', navigation.state.params.message);
         formData.append('renew', navigation.state.params.renew);
 
+        fetch(`https://www.destiny.gg/subscription/create`, {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            method: 'POST',
+            credentials: 'include',
+            body: formData
+        }).then((response) => {
+            response.text().then((html) => {
+                this.setState({webViewHtml: html});                
+            })
+        })
+    }
+    render() {
+        console.log(this.state.webViewHtml);
         return (
             <WebView
-                source={{
-                    uri: `https://www.destiny.gg/subscription/create`,
-                    method: 'POST',
-                    credentials: 'include',
-                    body: formData
-                }}
+                source={(this.state.webViewHtml === null) ? {uri: ''} : {html: this.state.webViewHtml}}
                 style={{ backgroundColor: '#000' }}
                 onNavigationStateChange={e => {
-                    console.log(e);
                     if (e.loading == false && e.url.indexOf('destiny.gg') != -1) {
                         if (e.url.indexOf('error') != -1) {
                             Alert.alert('Error', 'Could not complete subscription. \
                                                   Try again later.');
-                            this.props.navigation.dispatch(NavigationActions.back());                                                                                
+                            this.props.navigation.goBack();                                                                                
                         } else if (e.url.indexOf('complete') != -1) {
                             Alert.alert('Success', 'Subscription complete.');
                             this.props.navigation.dispatch(NavigationActions.reset({
@@ -381,6 +412,14 @@ class SubscriptionWebView extends Component {
                 }}
             />
         );
+    }
+}
+
+class UserAgreement extends Component {
+    render() {
+        return (
+            <WebView source={{url: 'https://www.destiny.gg/agreement'}} />
+        )
     }
 }
 
@@ -411,10 +450,13 @@ class ProfileView extends Component {
             { itemText: 'Subscription', itemTarget: 'Subscription' },
             { itemText: 'Discord', itemTarget: 'Discord' }
         ];
+        const created = new Date(this.props.screenProps.chat.me.createdDate);
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         return (
             <ScrollView style={styles.View}>
                 <View style={styles.ProfileHeader}>
                     <Text style={styles.ProfileName}>{this.props.screenProps.chat.user.username}</Text>
+                    <Text style={styles.ProfileCreated}>{'Created: ' + created.toLocaleDateString('en-GB', options)}</Text>
                 </View>
                 <NavList listItems={this.listItems} navigation={this.props.navigation}/>
             </ScrollView>
@@ -429,6 +471,7 @@ const ProfileNav = StackNavigator({
     SubscriptionMessageView: { screen: SubscriptionMessageView },
     SubscriptionWebView: { screen: SubscriptionWebView },
     Discord: { screen: DiscordView },
+    UserAgreement: { screen: UserAgreement }
 }, {
     initialRouteName: 'Profile',
     navigationOptions: {

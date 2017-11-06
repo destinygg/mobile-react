@@ -125,7 +125,7 @@ export class MobileChatView extends Component {
         if (e.nativeEvent.contentOffset.y < 50) {
             this.pinned = true;
             this.messageList.scrollToOffset(
-                { offset: 0, animated: true }
+                { offset: 0, animated: false }
             );
         }
     }

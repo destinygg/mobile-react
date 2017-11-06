@@ -10,7 +10,7 @@ import MessageView from './messages/messages';
 const MainNav = DrawerNavigator({
     MainView: { screen: MainView },
     ChatView: { screen: ChatViewWrapper },
-    //MessageView: { screen: MessageView },
+    MessageView: { screen: MessageView },
     ProfileView: { screen: ProfileNav }
 }, {
     initialRouteName: "MainView",
