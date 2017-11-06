@@ -1,29 +1,47 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { SafeAreaView, View, FlatList, Text, TouchableHighlight, TextInput, StyleSheet } from 'react-native';
+import { SafeAreaView, View, FlatList, Text, TouchableHighlight, TextInput, StyleSheet, Alert, Platform, TouchableOpacity } from 'react-native';
+import { StackNavigator, NavigationActions } from 'react-navigation';
 import styles from './styles';
 
+const MOMENT_FORMAT = {
+    sameDay: '[Today]',
+    nextDay: '[Tomorrow]',
+    nextWeek: 'dddd',
+    lastDay: '[Yesterday]',
+    lastWeek: '[Last] dddd',
+    sameElse: 'DD/MM/YYYY'
+};
+
 class UserMessage extends Component {
-    constructor() {
-        super();
-        this.isSelf = (this.props.item.from === this.props.screenProps.chat.me.user);
+    constructor(props) {
+        super(props);
+        this.isSelf = (this.props.item.from === this.props.screenProps.chat.me.username);
     }
     render() {
         return (
-            <View style={styles.UserMessage}>
-                <Text style={[styles.UserMessageText, (this.isSelf) ? styles.OurMessage : styles.TheirMessage]}>
-                    {item.message}
-                </Text>
+            <View style={[styles.UserMessage, (this.isSelf) ? styles.OurMessage : null]}>
+                <View style={[styles.UserMessageInner, (this.isSelf) ? styles.OurMessageInner : null]}>
+                    <Text style={styles.UserMessageText}>
+                        {this.props.item.message}
+                    </Text>
+                </View>
             </View>
         );
     }
 }
 
 class UserView extends Component {
+    static navigationOptions = ({ navigation }) => {
+        return({
+            title: navigation.state.params.user,
+            drawerLockMode: 'locked-closed'
+        });
+    }
     constructor(props) {
         super(props);
         this.user = this.props.navigation.state.params.user;
-        this.state = { messages: [], extraData: false, nextIndex: 10};
+        this.state = { messages: [], extraData: false, nextIndex: 10, allMessagesReceived: false, input: ""};
         fetch(`https://www.destiny.gg/api/messages/usr/${this.user}/inbox`).then((messages) => {
             messages.json().then((json) => {
                 this.setState({messages: json, extraData: !this.state.extraData});
@@ -32,24 +50,53 @@ class UserView extends Component {
     }
 
     _addOurMessage(text) {
-        this.textInput.clear();
         this.setState({
             messages: [
-                ...this.state.messages,
                 {
                     message: text,
-                    from: this.props.screenProps.chat.me.user,
-                    to: this.user
-                }
+                    from: this.props.screenProps.chat.me.username,
+                    to: this.user,
+                    id: Date.now()
+                },
+                ...this.state.messages
             ],
-            nextIndex: this.state.nextIndex + 1
+            nextIndex: this.state.nextIndex + 1,
+            input: ""
         });        
     }
 
-    sendMessage(text) {
+    loadMoreItems() {
+        if (this.state.allMessagesReceived === false) {
+            this.setState({
+                nextIndex: this.state.nextIndex + 10
+            });
+            fetch(`https://www.destiny.gg/api/messages/usr/${this.user}/inbox?s=${this.state.nextIndex}`).then((inbox) => {
+                inbox.json().then((json) => {
+                    if (json.length < 1) {
+                        this.setState({allMessagesReceived: true});
+                    } else {
+                        this.setState({
+                            messages: [...this.state.messages, ...json],
+                            extraData: !this.state.extraData,
+                        });
+                    }
+                });
+            });
+        }
+    }
+
+    sendMessage() {
+        const text = this.state.input;
+
+        const formData = new FormData();
+
+        formData.append('message', text);
+        formData.append('recipients[]', this.user);
+
         fetch(`https://www.destiny.gg/profile/messages/send`, {
-            message: text,
-            'recipients[]': this.user 
+            credentials: 'include',
+            method: 'POST',
+            body: formData
         }).then((response) => {
             if (response.ok) {
                 this._addOurMessage(text);
@@ -61,20 +108,25 @@ class UserView extends Component {
     
     render() {
         return (
-            <SafeAreaView>
+            <SafeAreaView style={styles.View}>
                 <FlatList 
                     data={this.state.messages}
                     extraData={this.state.extraData}
                     keyExtractor={(item) => item.id}
-                    renderItem={(item) => <UserMessage item={item} />}
-                    getItemLayout={(data, index) => (
-                        {length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index}
-                    )}
+                    renderItem={({ item }) => <UserMessage item={item} screenProps={this.props.screenProps} />}
                     onEndReached={(info) => this.loadMoreItems()}
-                    onEndReachedThreshold={500}
+                    onEndReachedThreshold={.1}
                     inverted={true}
                 />
-                <TextInput />
+                <TextInput
+                    style={styles.TextInput}
+                    placeholder={'Direct message'}
+                    placeholderTextColor="#888"
+                    onChangeText={(text) => this.setState({input: text})}
+                    onSubmitEditing={() => this.sendMessage()}
+                    underlineColorAndroid='#222'
+                    value={this.state.input}
+                />
             </SafeAreaView>
         )
     }
@@ -91,13 +143,26 @@ class MessageListItem extends Component {
                     <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                         <Text style={styles.username}>{this.props.item.user}</Text>
                         <View>
-                            <Text style={styles.messagePreview}>{moment(this.props.item.timestamp).calendar()}</Text>
-                            <Text style={styles.arrow}>></Text>
+                            <Text style={styles.messagePreview}>{moment(this.props.item.timestamp).calendar(null, MOMENT_FORMAT)}</Text>
                         </View>
                     </View>
                     <Text numberOfLines={1} style={styles.messagePreview}>{this.props.item.message}</Text>
                 </View>
             </TouchableHighlight>
+        )
+    }
+}
+
+class ComposeButton extends Component {
+    render() {
+        return (
+            <TouchableOpacity
+                onPress={this.props.onPress}
+                underlayColor={'#fff'}
+                style={{marginRight: 10}}
+            >
+                <Text style={{ fontFamily: 'ionicons', color: '#037aff', fontSize: 28 }}>&#xf417;</Text>
+            </TouchableOpacity>
         )
     }
 }
@@ -110,7 +175,14 @@ class Separator extends Component {
     }
 }
 
-export default class MessageView extends Component {
+class MessageView extends Component {
+    static navigationOptions = ({ navigation }) => {
+        const { params = {}, routeName } = navigation.state;
+        return ({
+            title: 'Messages',
+            headerRight: <ComposeButton onPress={params.composeHandler ? params.composeHandler : () => null} />
+        });
+    }
     constructor() {
         super();
         this.state = { inbox: [], extraData: false, nextIndex: 25};
@@ -122,8 +194,12 @@ export default class MessageView extends Component {
         this.itemHeight = 75 + StyleSheet.hairlineWidth;
     }
 
+    compose() {
+        console.log('ayy')
+    }
+
     loadMoreItems() {
-        /*fetch(`https://www.destiny.gg/api/messages/inbox?s=${this.state.nextIndex}`).then((inbox) => {
+        fetch(`https://www.destiny.gg/api/messages/inbox?s=${this.state.nextIndex}`).then((inbox) => {
             inbox.json().then((json) => {
                 this.setState({
                     inbox: [...this.state.inbox, ...json], 
@@ -131,11 +207,15 @@ export default class MessageView extends Component {
                     nextIndex: this.state.nextIndex + 25
                 });
             });
-        });*/
+        });
     }
 
     openItem(item) {
-        this.props.navigation.dispatch(NavigationActions.navigate('UserView', {user: item.user}));
+        this.props.navigation.navigate('UserView', {user: item.user});
+    }
+
+    componentDidMount() {
+        this.props.navigation.setParams({ composeHandler: () => this.compose() });
     }
 
     render() {
@@ -151,9 +231,24 @@ export default class MessageView extends Component {
                         {length: this.itemHeight, offset: this.itemHeight * index, index}
                     )}
                     onEndReached={(info) => this.loadMoreItems()}
-                    onEndReachedThreshold={500}
+                    onEndReachedThreshold={0.3}
                 />
             </SafeAreaView>
         )
     }
 }
+
+const MessageNav = StackNavigator({
+    MessageView: { screen: MessageView },
+    UserView: { screen: UserView }
+}, {
+    initialRouteName: 'MessageView',
+    navigationOptions: {
+        headerStyle: styles.Navigation,
+        headerTitleStyle: styles.NavigationHeaderTitle,
+        headerTintColor: (Platform.OS === 'android') ? '#fff' : undefined
+    },
+    cardStyle: styles.View
+});
+
+export default MessageNav;

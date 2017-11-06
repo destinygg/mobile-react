@@ -44,12 +44,17 @@ const styles = StyleSheet.create({
         color: '#488ce7'
     },
     ChatInput: {
+        flex: 1,
         fontSize: 12,
         color: "#ccc",
-        borderRadius: 3,
+        borderRadius: 15,
         borderColor: '#222',
         borderWidth: (Platform.OS === 'ios') ? StyleSheet.hairlineWidth : 0,
-        padding: 8,
+        paddingTop: 8,
+        paddingBottom: 8,
+        paddingLeft: 12,
+        paddingRight: 12,
+        marginLeft: 5,
     },
     Emote: {
         marginTop: 3,
@@ -59,6 +64,22 @@ const styles = StyleSheet.create({
         paddingRight: 5,
         resizeMode: 'cover',
         overflow: 'visible'
+    },
+    EmoteDirectory: {
+        position: 'absolute',
+        bottom: 60,
+        left: 10,
+        width: '75%',
+        height: '50%',
+        zIndex: 1000,
+        backgroundColor: '#111',
+        borderRadius: 10,
+        borderColor: '#888',
+        borderWidth: StyleSheet.hairlineWidth
+    },
+    EmoteMenuItem: {
+        height: 25,
+        width: 25
     },
     Flair: {
         height: 10,

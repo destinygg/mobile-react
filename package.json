@@ -10,7 +10,6 @@
 		"moment": "~2.19",
 		"react": "^16.0.0",
 		"react-native": "^0.50.1",
-		"react-native-cookies": "^3.2.0",
 		"react-navigation": "^1.0.0-beta.17",
 		"throttle-debounce": "~1.0.1"
 	},
@@ -22,5 +21,10 @@
 	},
 	"jest": {
 		"preset": "react-native"
+	},
+	"rnpm": {
+		"assets": [
+			"app/assets/fonts"
+		]
 	}
 }

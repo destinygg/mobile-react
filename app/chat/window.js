@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, SafeAreaView, TextInput, FlatList, KeyboardAvoidingView, Text, ActivityIndicator, TouchableHighlight, Platform, RefreshControl } from 'react-native';
+import { View, SafeAreaView, TextInput, FlatList, KeyboardAvoidingView, Text, ScrollView, TouchableOpacity, ActivityIndicator, TouchableHighlight, Platform, RefreshControl } from 'react-native';
 import styles from './styles';
 import EventEmitter from '../../lib/assets/chat/js/emitter';
 import { emoteImgs } from './images';
@@ -24,8 +24,8 @@ class EmoteDirectory extends Component {
         this.emotes = Array.from(emoteImgs.keys()).sort();
         this.children = this.emotes.map((emote) => {
             return (
-                <TouchableHighlight key={emote}>
-                    <Emote name={emote} />
+                <TouchableHighlight style={{margin: 5}} key={emote} onPress={() => this.props.onSelect(emote)}>
+                    <Emote name={emote} emoteMenu={true}/>
                 </TouchableHighlight>
             );
         })
@@ -33,8 +33,12 @@ class EmoteDirectory extends Component {
 
     render() {
         return (
-            <View style={{position: 'absolute', top: -200, width: 200, flexDirection: 'row', flexWrap: 'wrap'}}>
-                {this.children}
+            <View style={styles.EmoteDirectory}>
+                <ScrollView>
+                    <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center'}}>
+                        {this.children}
+                    </View>
+                </ScrollView>
             </View>
         )
     }
@@ -45,10 +49,28 @@ class MobileChatInput extends Component {
         super(props);
         this.state = {value: ""};
     }
+
+    insertEmote(emote) {
+        this.props.onChangeText(this.state.value + ((this.state.value.slice(-1) == " ") ? "" : " ") + emote);
+    }
+
     render() {
         return (
-            <View>
-                <EmoteDirectory />
+            <View style={{flexDirection: 'row', marginLeft: 5, marginRight: 5, marginTop: 5, marginBottom: 5}}>
+                <View style={{ justifyContent: 'center' }}>
+                    <TouchableOpacity>
+                        <Text style={{
+                            fontFamily: 'ionicons',
+                            color: '#888',
+                            fontSize: 20,
+                            marginLeft: 5,
+                            marginRight: 5,
+                            marginTop: 2
+                        }}>
+                            &#xf38e;
+                    </Text>
+                    </TouchableOpacity>
+                </View>
                 <TextInput
                     style={styles.ChatInput}
                     placeholder={'Write something...'}
@@ -117,6 +139,7 @@ export class MobileChatView extends Component {
                     onSubmit={() => this.send()}
                     value={this.input}
                 />
+                <EmoteDirectory onSelect={(emote) => this.insertEmote(emote)} />                                
             </KeyboardAvoidingView>
         );
     }

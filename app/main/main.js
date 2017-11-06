@@ -17,7 +17,7 @@ class TwitchView extends Component {
         return (
             <View style={style}>
                 <WebView
-                    source={{uri: `https://player.twitch.tv/?channel=vainglory`}}
+                    source={{uri: `https://player.twitch.tv/?channel=destiny`}}
                     scrollEnabled={false}
                     style={styles.TwitchViewInner}
                     allowsInlineMediaPlayback={true}

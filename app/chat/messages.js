@@ -146,7 +146,7 @@ export class Emote extends Component {
     }
     render() {
         return (
-            <Image style={styles.Emote} source={emoteImgs.get(this.props.name)} ref={ref => this.image = ref}/>
+            <Image style={[styles.Emote, (this.props.emoteMenu) ? styles.EmoteMenuItem : null]} source={emoteImgs.get(this.props.name)} ref={ref => this.image = ref}/>
         );
     }
 }

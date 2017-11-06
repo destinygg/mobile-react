@@ -3,7 +3,8 @@ donate api access
 loots webview
 chat history (maybe?)
 
-messages:
+emotes in message view
+
 /donate
 {
     amount: float,

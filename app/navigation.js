@@ -5,12 +5,17 @@ import InitView from './init/init.js'
 import MainView from './main/main';
 import { ChatViewWrapper } from './chat/window';
 import ProfileNav from './profile/profile';
-import MessageView from './messages/messages';
+import MessageNav from './messages/messages';
 
 const MainNav = DrawerNavigator({
     MainView: { screen: MainView },
     ChatView: { screen: ChatViewWrapper },
-    MessageView: { screen: MessageView },
+    MessageView: { 
+        screen: MessageNav,
+        navigationOptions: {
+            title: 'Messages'
+        }
+    },
     ProfileView: { screen: ProfileNav }
 }, {
     initialRouteName: "MainView",
