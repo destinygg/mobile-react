@@ -49,13 +49,26 @@ class MobileChatInput extends Component {
     constructor(props) {
         super(props);
         this.state = {value: ""};
+        this.input = null;
+    }
+
+    focus() {
+        if (!this.input.isFocused()) {
+            this.input.requestAnimationFrame(this.input.focus);
+        }
+    }
+
+    blur() {
+        if (this.input.isFocused()) {
+            this.input.blur();
+        }
     }
 
     render() {
         return (
             <View style={styles.ChatInputOuter}>
                 <View style={{ justifyContent: 'center' }}>
-                    <TouchableOpacity onPress={() => this.props.showEmoteDir()}>
+                    <TouchableOpacity onPress={() => this.props.toggleEmoteDir()}>
                         <Text style={{
                             fontFamily: 'ionicons',
                             color: '#888',
@@ -77,6 +90,8 @@ class MobileChatInput extends Component {
                     ref={ref => this.input = ref}
                     underlineColorAndroid='#222'
                     value={this.state.value}
+                    keyboardAppearance='dark'
+                    onFocus={() => this.props.hideEmoteDir()}
                 />
             </View>
         )
@@ -103,11 +118,24 @@ export class MobileChatView extends Component {
     }
 
     appendText(text) {
-        this.input = this.input + ((this.input.length === 0 || this.input.slice(-1) == " ") ? "" : " ") + text;
-        this.inputElem.setState({value: this.input});                    
+        this.input = this.input + ((this.input.length === 0 || this.input.slice(-1) == " ") ? "" : " ") + text + " ";
+        this.inputElem.setState({value: this.input});     
+        this.inputElem.focus();               
     }
 
-    showEmoteDir() {
+    hideEmoteDir() {
+        if (this.state.emoteDirShown) {
+            Animated.timing(
+                this.emoteDir.flex,
+                {
+                    duration: 300,
+                    toValue: 0.0001
+                }
+            ).start(() => this.setState({ emoteDirShown: false }));
+        }
+    }
+
+    toggleEmoteDir() {
         if (this.state.emoteDirShown) {
             Animated.timing(
                 this.emoteDir.flex,
@@ -124,6 +152,7 @@ export class MobileChatView extends Component {
                     toValue: 1
                 }
             ).start(() => this.setState({ emoteDirShown: true }));
+            this.inputElem.blur();
         }
     }
 
@@ -159,7 +188,8 @@ export class MobileChatView extends Component {
                     onChangeText={(text) => this.changeInputText(text)}
                     onSubmit={() => this.send()}
                     value={this.input}
-                    showEmoteDir={() => this.showEmoteDir()}
+                    toggleEmoteDir={() => this.toggleEmoteDir()}
+                    hideEmoteDir={() => this.hideEmoteDir()}
                 />
             </KeyboardAvoidingView>
         );

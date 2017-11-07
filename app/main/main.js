@@ -10,17 +10,18 @@ class TwitchView extends Component {
     }
 
     render() {
-        let style = [styles.TwitchViewOuter];
+        let twitchViewStyle = [styles.TwitchViewOuter];
 
-        if (this.state.height) { style.push({ flex: 0, height: this.state.height}); }
+        if (this.state.height) { twitchViewStyle.push({ flex: 0, height: this.state.height}); }
 
         return (
-            <View style={style}>
+            <View style={twitchViewStyle}>
                 <WebView
                     source={{uri: `https://player.twitch.tv/?channel=destiny&playsinline=true`}}
                     scrollEnabled={false}
                     style={styles.TwitchViewInner}
                     allowsInlineMediaPlayback={true}
+                    mediaPlaybackRequiresUserAction={false}
                 />
             </View> 
         );
@@ -80,7 +81,7 @@ export default class MainView extends Component {
 
     _beginResize(gestureState) {
         this.setState({ resizing: true });
-        this.twitchView.setState({ height: gestureState.moveY, resizing: true });
+        this.twitchView.setState({ resizing: true });
     }
 
     _resize(gestureState) {

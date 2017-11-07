@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { SafeAreaView, View, FlatList, Text, TouchableHighlight, ActivityIndicator, TextInput, StyleSheet, Alert, Platform, TouchableOpacity } from 'react-native';
+import { SafeAreaView, View, FlatList, Text, TouchableHighlight, KeyboardAvoidingView, ActivityIndicator, TextInput, StyleSheet, Alert, Platform, TouchableOpacity } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import styles from './styles';
 
@@ -125,24 +125,31 @@ class UserView extends Component {
     render() {
         return (
             <SafeAreaView style={styles.View}>
-                <FlatList 
-                    data={this.state.messages}
-                    extraData={this.state.extraData}
-                    keyExtractor={(item) => item.id}
-                    renderItem={({ item }) => <UserMessage item={item} screenProps={this.props.screenProps} />}
-                    onEndReached={(info) => this.loadMoreItems()}
-                    onEndReachedThreshold={.1}
-                    inverted={true}
-                />
-                <TextInput
-                    style={styles.TextInput}
-                    placeholder={'Direct message'}
-                    placeholderTextColor="#888"
-                    onChangeText={(text) => this.setState({input: text})}
-                    onSubmitEditing={() => this.sendMessage()}
-                    underlineColorAndroid='#222'
-                    value={this.state.input}
-                />
+                <KeyboardAvoidingView
+                    behavior='padding'
+                    style={styles.View}
+                    keyboardVerticalOffset={(Platform.OS === 'android') ? -400 : 65}
+                >
+                    <FlatList 
+                        data={this.state.messages}
+                        extraData={this.state.extraData}
+                        keyExtractor={(item) => item.id}
+                        renderItem={({ item }) => <UserMessage item={item} screenProps={this.props.screenProps} />}
+                        onEndReached={(info) => this.loadMoreItems()}
+                        onEndReachedThreshold={.1}
+                        inverted={true}
+                    />
+                    <TextInput
+                        style={styles.TextInput}
+                        placeholder={'Direct message'}
+                        placeholderTextColor="#888"
+                        onChangeText={(text) => this.setState({input: text})}
+                        onSubmitEditing={() => this.sendMessage()}
+                        underlineColorAndroid='#222'
+                        value={this.state.input}
+                        keyboardAppearance='dark'
+                    />
+                </KeyboardAvoidingView>
             </SafeAreaView>
         )
     }

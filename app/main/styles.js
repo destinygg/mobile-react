@@ -9,7 +9,8 @@ const styles = StyleSheet.create({
     },
     TwitchViewOuter: {
         flex: 0,
-        height: 250
+        height: 250,
+        backgroundColor: '#000'
     },
     TwitchViewInner: {
         flex: 1,

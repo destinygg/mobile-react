@@ -108,9 +108,15 @@ class FormView extends Component {
 
     render() {
         return (
-            <ScrollView style={styles.View}>
-                <ProfileForm formItems={this.formItems} onChange={(name, value) => this._onChange} />
-            </ScrollView>
+            <KeyboardAvoidingView
+                behavior='padding'
+                style={styles.View}
+                keyboardVerticalOffset={(Platform.OS === 'android') ? -400 : 65}
+            >
+                <ScrollView style={styles.View}>
+                    <ProfileForm formItems={this.formItems} onChange={(name, value) => this._onChange} />
+                </ScrollView>
+            </KeyboardAvoidingView>
         )
     }
 }

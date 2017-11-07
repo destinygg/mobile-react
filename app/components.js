@@ -68,6 +68,7 @@ export class TextInputListItem extends Component {
                     }}
                     underlineColorAndroid='#222'
                     multiline={this.props.multiline}
+                    keyboardAppearance='dark'
                 />
             </View>
         )

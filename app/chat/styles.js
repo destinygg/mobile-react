@@ -31,8 +31,23 @@ const styles = StyleSheet.create({
     subscriber: {
         color: '#488ce7'
     },
-    'flair-3': {
+    flair3: {
         color: '#0060ff'
+    },
+    flair8: {
+        color: '#a427d6'
+    },
+    flair12: {
+        color: '#00e5ff'
+    },
+    vip: {
+        color: '#4db524'
+    },
+    admin: {
+        color: '#b91010'
+    },
+    bot: {
+        color: '#e79015'
     },
     UserBadge: {
        fontWeight: '600',

@@ -49,12 +49,18 @@ const styles = StyleSheet.create({
         color: "#fff",
     },
     TextInput: {
+        borderRadius: 15,
+        paddingTop: 8,
+        paddingBottom: 8,
+        paddingLeft: 12,
+        paddingRight: 12,
+        marginLeft: 5,
+        marginRight: 5,
+        marginBottom: 5,
         fontSize: 12,
         color: "#ccc",
-        borderRadius: 3,
         borderColor: '#222',
         borderWidth: (Platform.OS === 'ios') ? StyleSheet.hairlineWidth : 0,
-        padding: 8,
     },
 });
 
