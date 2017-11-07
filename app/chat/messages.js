@@ -195,14 +195,13 @@ export class MobileChatMessage extends PureComponent {
 export class MobileChatEmoteMessage extends PureComponent {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {combo: this.props.count};
     }
     render() {
         let combo = [];
         if (this.state.combo > 1) {
             combo.push(<Text key='ComboCount' style={[this.state.comboClass, styles.ComboCount]}>{this.state.combo}</Text>);
-            combo.push(<Text key='ComboX' style={[this.state.comboClass, styles.ComboX]}> X</Text>);
-            combo.push(<Text key='Hits' style={this.state.comboClass}> Hits</Text>);
+            combo.push(<Text key='ComboX' style={[this.state.comboClass, styles.ComboX]}>x</Text>);
             combo.push(<Text key='ComboCombo' style={styles.ComboCombo}> C-C-C-COMBO</Text>);
         }
         return (
@@ -410,7 +409,8 @@ class ChatEmoteMessage extends ChatMessage {
                             msg={this}
                             emote={emote} 
                             ref={ref => this.ui = ref}
-                            key={this.window.getMessageKey()}                            
+                            key={this.window.getMessageKey()}  
+                            count={this.emotecount}                          
                         />
         return this.uiElem;
     }

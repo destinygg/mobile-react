@@ -113,6 +113,19 @@ const styles = StyleSheet.create({
         bottom: -25, 
         position: 'absolute',
         alignSelf: 'center'
+    },
+    ComboCount: {
+        color: '#fff',
+        fontWeight: '700',
+        marginLeft: 5
+    },
+    ComboX: {
+        color: '#fff',
+        fontWeight: '500'
+    },
+    ComboCombo: {
+        color: '#ccc',
+        fontSize: 10
     }
 });
 

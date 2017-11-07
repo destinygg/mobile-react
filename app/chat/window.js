@@ -107,6 +107,7 @@ export class MobileChatView extends Component {
             emoteDirShown: false
         }
         this.pinned = true;
+        this.maybePin = false;
         this.input = "";
         this.inputElem = null;
         this.messageList = null;
@@ -175,7 +176,13 @@ export class MobileChatView extends Component {
                         onScrollBeginDrag={(e) => {
                             this.pinned = false;
                         }}
-                        onMomentumScrollEnd={(e) => this._onScrollEnd(e)}
+                        onScrollEndDrag={(e) => {
+                            this.maybePin = true;
+                        }}
+                        onScroll={(e) => this._onScroll(e)}
+                        onMomentumScrollEnd={(e) => {
+                            this.maybePin = false;
+                        }}
                         inverted={true}
                         onLayout={(e) => {
                             this.height = e.nativeEvent.layout.height;
@@ -195,12 +202,13 @@ export class MobileChatView extends Component {
         );
     }
 
-    _onScrollEnd(e) {
-        if (e.nativeEvent.contentOffset.y < 50) {
+    _onScroll(e) {
+        if (!this.maybePin) {
+            return;
+        }
+        if (e.nativeEvent.contentOffset.y < 100) {
             this.pinned = true;
-            this.messageList.scrollToOffset(
-                { offset: 0, animated: false }
-            );
+            this.maybePin = false;
         }
     }
 
