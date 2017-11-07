@@ -13,6 +13,7 @@ export class MobileChat extends Chat {
     constructor() {
         super();
         this.mainwindow = new MobileWindow('main').into(this);
+        this.mobilePmWindow = null;
         this.me = null;
     }
 
@@ -24,7 +25,7 @@ export class MobileChat extends Chat {
 
     }
 
-    onPRIVMSG() {
+    onPRIVMSG(data) {
         const normalized = data.nick.toLowerCase()
         if (!this.ignored(normalized, data.data)) {
             if (!this.whispers.has(normalized))
@@ -33,6 +34,11 @@ export class MobileChat extends Chat {
                 const conv = this.whispers.get(normalized),
                 user = this.users.get(normalized) || new ChatUser(data.nick),
                 messageid = data.hasOwnProperty('messageid') ? data['messageid'] : null
+
+                if (this.mobilePmWindow !== null && 
+                        this.mobilePmWindow.user.toLowerCase() === normalized) {
+                    this.mobilePmWindow.addTheirMessage(data.data);
+                }
 
                 if (this.settings.get('showhispersinchat'))
                     this.messageBuilder.whisper(data.data, user, this.user.username, data.timestamp, messageid).into(this)
@@ -61,7 +67,7 @@ export class MobileChat extends Chat {
         this.mainwindow.removelines(nick.toLowerCase);
     }
 
-    cmdSTALK() {
+    cmdSTALK(parts) {
         if (parts[0] && /^\d+$/.test(parts[0])) {
             parts[1] = parts[0];
             parts[0] = this.user.username;
@@ -204,7 +210,7 @@ export class MobileChat extends Chat {
         }
     }
 
-    cmdMENTIONS() {
+    cmdMENTIONS(parts) {
         if (parts[0] && /^\d+$/.test(parts[0])) {
             parts[1] = parts[0];
             parts[0] = this.user.username;

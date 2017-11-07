@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { SafeAreaView, View, FlatList, Text, TouchableHighlight, TextInput, StyleSheet, Alert, Platform, TouchableOpacity } from 'react-native';
+import { SafeAreaView, View, FlatList, Text, TouchableHighlight, ActivityIndicator, TextInput, StyleSheet, Alert, Platform, TouchableOpacity } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import styles from './styles';
 
@@ -63,6 +63,22 @@ class UserView extends Component {
             nextIndex: this.state.nextIndex + 1,
             input: ""
         });        
+    }
+
+    addTheirMessage(text) {
+        this.setState({
+            messages: [
+                {
+                    message: text,
+                    from: this.user,
+                    to: this.props.screenProps.chat.me.username,
+                    id: Date.now()
+                },
+                ...this.state.messages
+            ],
+            nextIndex: this.state.nextIndex + 1,
+            input: ""
+        }); 
     }
 
     loadMoreItems() {
@@ -130,6 +146,14 @@ class UserView extends Component {
             </SafeAreaView>
         )
     }
+
+    componentDidMount() {
+        this.props.screenProps.chat.mobilePmWindow = this;
+    }
+
+    componentWillUnmount() {
+        this.props.screenProps.chat.mobilePmWindow = null;
+    }
 }
 
 class MessageListItem extends Component {
@@ -185,7 +209,7 @@ class MessageView extends Component {
     }
     constructor() {
         super();
-        this.state = { inbox: [], extraData: false, nextIndex: 25};
+        this.state = { inbox: [], extraData: false, nextIndex: 25, loading: false};
         fetch("https://www.destiny.gg/api/messages/inbox").then((inbox) => {
             inbox.json().then((json) => {
                 this.setState({inbox: json, extraData: !this.state.extraData});
@@ -210,8 +234,22 @@ class MessageView extends Component {
         });
     }
 
+    refreshInbox() {
+        this.setState({loading: true})
+        fetch(`https://www.destiny.gg/api/messages/inbox`).then((inbox) => {
+            inbox.json().then((json) => {
+                this.setState({
+                    inbox: json,
+                    extraData: !this.state.extraData,
+                    nextIndex: 25,
+                    loading: false
+                });
+            });
+        });
+    }
+
     openItem(item) {
-        this.props.navigation.navigate('UserView', {user: item.user});
+        this.props.navigation.navigate('UserView', {user: item.user, inbox: this});
     }
 
     componentDidMount() {
@@ -232,6 +270,8 @@ class MessageView extends Component {
                     )}
                     onEndReached={(info) => this.loadMoreItems()}
                     onEndReachedThreshold={0.3}
+                    onRefresh={() => this.refreshInbox()}
+                    refreshing={this.state.loading}
                 />
             </SafeAreaView>
         )

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, SafeAreaView, TextInput, FlatList, KeyboardAvoidingView, Text, ScrollView, TouchableOpacity, ActivityIndicator, TouchableHighlight, Platform, RefreshControl } from 'react-native';
+import { View, SafeAreaView, TextInput, Animated, FlatList, KeyboardAvoidingView, Text, ScrollView, TouchableOpacity, ActivityIndicator, TouchableHighlight, Platform, RefreshControl, Dimensions } from 'react-native';
 import styles from './styles';
 import EventEmitter from '../../lib/assets/chat/js/emitter';
 import { emoteImgs } from './images';
@@ -28,18 +28,19 @@ class EmoteDirectory extends Component {
                     <Emote name={emote} emoteMenu={true}/>
                 </TouchableHighlight>
             );
-        })
+        });
+        this.flex = new Animated.Value(0.0001);
     }
 
     render() {
         return (
-            <View style={styles.EmoteDirectory}>
+            <Animated.View style={[styles.EmoteDirectory, {flex: this.flex}]}>
                 <ScrollView>
                     <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center'}}>
                         {this.children}
                     </View>
                 </ScrollView>
-            </View>
+            </Animated.View>
         )
     }
 }
@@ -50,15 +51,11 @@ class MobileChatInput extends Component {
         this.state = {value: ""};
     }
 
-    insertEmote(emote) {
-        this.props.onChangeText(this.state.value + ((this.state.value.slice(-1) == " ") ? "" : " ") + emote);
-    }
-
     render() {
         return (
-            <View style={{flexDirection: 'row', marginLeft: 5, marginRight: 5, marginTop: 5, marginBottom: 5}}>
+            <View style={styles.ChatInputOuter}>
                 <View style={{ justifyContent: 'center' }}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.props.showEmoteDir()}>
                         <Text style={{
                             fontFamily: 'ionicons',
                             color: '#888',
@@ -91,7 +88,8 @@ export class MobileChatView extends Component {
         super(props);
         this.state = {
             messages: [],
-            extraData: true
+            extraData: true,
+            emoteDirShown: false
         }
         this.pinned = true;
         this.input = "";
@@ -104,9 +102,29 @@ export class MobileChatView extends Component {
         this.inputElem.setState({value: this.input});            
     }
 
-    insertMention(username) {
-        this.input = this.input + ((this.input.slice(-1) == " ") ? "" : " ") + username;
+    appendText(text) {
+        this.input = this.input + ((this.input.length === 0 || this.input.slice(-1) == " ") ? "" : " ") + text;
         this.inputElem.setState({value: this.input});                    
+    }
+
+    showEmoteDir() {
+        if (this.state.emoteDirShown) {
+            Animated.timing(
+                this.emoteDir.flex,
+                {
+                    duration: 300,
+                    toValue: 0.0001
+                }
+            ).start(() => this.setState({ emoteDirShown: false }));
+        } else {
+            Animated.timing(
+                this.emoteDir.flex,
+                {
+                    duration: 300,
+                    toValue: 1
+                }
+            ).start(() => this.setState({ emoteDirShown: true }));
+        }
     }
 
     render() {
@@ -116,30 +134,33 @@ export class MobileChatView extends Component {
                 style={[styles.View, styles.ChatView]}
                 keyboardVerticalOffset={(Platform.OS ==='android') ? -400 : 0}
             >
-                <FlatList
-                    data={this.state.messages}
-                    style={styles.ChatViewList}
-                    extraData={this.state.extraData}
-                    renderItem={item => {
-                        return item.item;
-                    }}
-                    ref={(ref) => this.messageList = ref}
-                    onScrollBeginDrag={(e) => {
-                        this.pinned = false;
-                    }}
-                    onMomentumScrollEnd={(e) => this._onScrollEnd(e)}
-                    inverted={true}
-                    onLayout={(e) => {
-                        this.height = e.nativeEvent.layout.height;
-                    }}
-                />
+                <View style={[styles.View]}>
+                    <FlatList
+                        data={this.state.messages}
+                        style={styles.ChatViewList}
+                        extraData={this.state.extraData}
+                        renderItem={item => {
+                            return item.item;
+                        }}
+                        ref={(ref) => this.messageList = ref}
+                        onScrollBeginDrag={(e) => {
+                            this.pinned = false;
+                        }}
+                        onMomentumScrollEnd={(e) => this._onScrollEnd(e)}
+                        inverted={true}
+                        onLayout={(e) => {
+                            this.height = e.nativeEvent.layout.height;
+                        }}
+                    />
+                    <EmoteDirectory onSelect={(emote) => this.appendText(emote)} ref={(ref) => this.emoteDir = ref} />                                                                            
+                </View>
                 <MobileChatInput 
                     ref={(ref) => this.inputElem = ref}
                     onChangeText={(text) => this.changeInputText(text)}
                     onSubmit={() => this.send()}
                     value={this.input}
+                    showEmoteDir={() => this.showEmoteDir()}
                 />
-                <EmoteDirectory onSelect={(emote) => this.insertEmote(emote)} />                                
             </KeyboardAvoidingView>
         );
     }

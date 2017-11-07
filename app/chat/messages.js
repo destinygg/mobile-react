@@ -145,8 +145,9 @@ export class Emote extends Component {
         this.image.setNativeProps(nativeProps);
     }
     render() {
+        const emoteStyle = (this.props.emoteMenu) ? styles.EmoteMenuItem : styles.Emote
         return (
-            <Image style={[styles.Emote, (this.props.emoteMenu) ? styles.EmoteMenuItem : null]} source={emoteImgs.get(this.props.name)} ref={ref => this.image = ref}/>
+            <Image style={emoteStyle} source={emoteImgs.get(this.props.name)} ref={ref => this.image = ref}/>
         );
     }
 }
@@ -362,7 +363,7 @@ class ChatUserMessage extends ChatMessage {
 
         const user = (this.continued) ?
                     null : 
-                    <UserBadge user={this.user} onPress={(username) => this.window.ui.insertMention(username)}>{buildFeatures(this.user)}</UserBadge>;
+                    <UserBadge user={this.user} onPress={(username) => this.window.ui.appendText(username)}>{buildFeatures(this.user)}</UserBadge>;
         return this.wrap(
             buildTime(this), user, ctrl, buildMessageTxt(chat, this)
         );

@@ -56,30 +56,32 @@ const styles = StyleSheet.create({
         paddingRight: 12,
         marginLeft: 5,
     },
+    ChatInputOuter: { 
+        flexDirection: 'row', 
+        paddingLeft: 5, 
+        paddingRight: 5, 
+        paddingTop: 5, 
+        paddingBottom: 5, 
+        backgroundColor: '#0D0D0D',
+        zIndex: 2000
+    },
     Emote: {
-        marginTop: 3,
+        marginTop: 2,
         height: 15,
-        width: 15,
-        paddingLeft: 5,
-        paddingRight: 5,
-        resizeMode: 'cover',
+        width: 25,
+        resizeMode: 'contain',
         overflow: 'visible'
     },
     EmoteDirectory: {
-        position: 'absolute',
-        bottom: 60,
-        left: 10,
-        width: '75%',
-        height: '50%',
         zIndex: 1000,
-        backgroundColor: '#111',
-        borderRadius: 10,
-        borderColor: '#888',
-        borderWidth: StyleSheet.hairlineWidth
+        backgroundColor: '#101010',
+        borderRadius: 15,
+        maxHeight: 200
     },
     EmoteMenuItem: {
-        height: 25,
-        width: 25
+        resizeMode: 'contain',
+        overflow: 'visible',
+        height: 25
     },
     Flair: {
         height: 10,
