@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { SafeAreaView, View, FlatList, Text, TouchableHighlight, KeyboardAvoidingView, ActivityIndicator, TextInput, StyleSheet, Alert, Platform, TouchableOpacity } from 'react-native';
+import { SafeAreaView, View, FlatList, Text, TouchableHighlight, Button, ScrollView, KeyboardAvoidingView, ActivityIndicator, TextInput, StyleSheet, Alert, Platform, TouchableOpacity } from 'react-native';
+import { TextInputListItem } from '../components';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import styles from './styles';
 
@@ -117,7 +118,9 @@ class UserView extends Component {
             if (response.ok) {
                 this._addOurMessage(text);
             } else {
-                Alert.alert('Error', 'Unable to send message.  Try again later.');
+                response.json().then((json) => {
+                    Alert.alert('Error', json.message);
+                })
             }
         });
     }
@@ -184,13 +187,87 @@ class MessageListItem extends Component {
     }
 }
 
+class ComposeView extends Component {
+    static navigationOptions = ({ navigation }) => {
+        const { params = {} } = navigation.state;
+        return ({
+            title: 'Compose',
+            headerRight: <Button title='Send' onPress={params.sendHandler ? params.sendHandler : () => null} />
+        });
+    }
+
+    constructor(props) {
+        super(props);
+        this.state = {recipients: "", body: ""};
+    }
+
+    send() {
+        const recipients = this.state.recipients.toLowerCase().split(" ");
+
+        const formData = new FormData();
+
+        formData.append('message', this.state.body);
+
+        for (let i = 0; i < recipients.length; i++) {
+            formData.append('recipients[]', recipients[i]);
+        }
+
+        fetch(`https://www.destiny.gg/profile/messages/send`, {
+            credentials: 'include',
+            method: 'POST',
+            body: formData
+        }).then((response) => {
+            response.json().then((json) => {
+                if (json.success) {
+                    this.props.navigation.dispatch(NavigationActions.setParams({
+                        params: { shouldReload: true },
+                        key: this.props.navigation.state.params.messageViewKey
+                    }));
+                    console.log(response);
+                    this.props.navigation.goBack();
+                } else {
+                    Alert.alert('Error', json.message);
+                }
+            });
+        });
+    }
+
+    componentDidMount() {
+        this.props.navigation.setParams({ sendHandler: () => this.send() });
+    }
+
+    render() {
+        return (
+            <SafeAreaView style={styles.View}>
+                <ScrollView style={{paddingTop: 25}}>
+                    <TextInputListItem
+                        name='recipients'
+                        placeholder='Recipients (space separated)'
+                        onChange={(name, value) => this.setState({recipients: value})} 
+                        key='recipient'
+                        first={true}
+                    />
+                    <TextInputListItem
+                        name='body'
+                        placeholder='Write your message!'
+                        onChange={(name, value) => this.setState({body: value})}
+                        key='body'
+                        last={true}
+                        multiline={true}
+                    />
+                </ScrollView>
+            </SafeAreaView>
+        );
+    }
+}
+
 class ComposeButton extends Component {
     render() {
         return (
             <TouchableOpacity
                 onPress={this.props.onPress}
                 underlayColor={'#fff'}
-                style={{marginRight: 10}}
+                style={{marginRight: 15}}
             >
                 <Text style={{ fontFamily: 'ionicons', color: '#037aff', fontSize: 28 }}>&#xf417;</Text>
             </TouchableOpacity>
@@ -214,8 +291,8 @@ class MessageView extends Component {
             headerRight: <ComposeButton onPress={params.composeHandler ? params.composeHandler : () => null} />
         });
     }
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = { inbox: [], extraData: false, nextIndex: 25, loading: false};
         fetch("https://www.destiny.gg/api/messages/inbox").then((inbox) => {
             inbox.json().then((json) => {
@@ -226,7 +303,7 @@ class MessageView extends Component {
     }
 
     compose() {
-        console.log('ayy')
+        this.props.navigation.navigate('ComposeView', {messageViewKey: this.props.navigation.state.key});
     }
 
     loadMoreItems() {
@@ -264,6 +341,11 @@ class MessageView extends Component {
     }
 
     render() {
+        const { params = {} } = this.props.navigation.state;
+        if (params.shouldReload) {
+            this.props.navigation.setParams({shouldReload: false});
+            this.refreshInbox();
+        }        
         return (
             <SafeAreaView style={styles.View}>
                 <FlatList 
@@ -287,7 +369,8 @@ class MessageView extends Component {
 
 const MessageNav = StackNavigator({
     MessageView: { screen: MessageView },
-    UserView: { screen: UserView }
+    UserView: { screen: UserView },
+    ComposeView: { screen: ComposeView }
 }, {
     initialRouteName: 'MessageView',
     navigationOptions: {
