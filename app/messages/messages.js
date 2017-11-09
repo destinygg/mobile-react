@@ -192,6 +192,7 @@ class ComposeView extends Component {
         const { params = {} } = navigation.state;
         return ({
             title: 'Compose',
+            drawerLockMode: 'locked-closed',
             headerRight: <Button title='Send' onPress={params.sendHandler ? params.sendHandler : () => null} />
         });
     }
@@ -219,11 +220,7 @@ class ComposeView extends Component {
         }).then((response) => {
             response.json().then((json) => {
                 if (json.success) {
-                    this.props.navigation.dispatch(NavigationActions.setParams({
-                        params: { shouldReload: true },
-                        key: this.props.navigation.state.params.messageViewKey
-                    }));
-                    console.log(response);
+                    this.props.navigation.state.params.messageView.shouldRefresh = true;
                     this.props.navigation.goBack();
                 } else {
                     Alert.alert('Error', json.message);
@@ -300,10 +297,11 @@ class MessageView extends Component {
             });
         });   
         this.itemHeight = 75 + StyleSheet.hairlineWidth;
+        this.shouldRefresh = false;
     }
 
     compose() {
-        this.props.navigation.navigate('ComposeView', {messageViewKey: this.props.navigation.state.key});
+        this.props.navigation.navigate('ComposeView', {messageView: this});
     }
 
     loadMoreItems() {
@@ -341,9 +339,8 @@ class MessageView extends Component {
     }
 
     render() {
-        const { params = {} } = this.props.navigation.state;
-        if (params.shouldReload) {
-            this.props.navigation.setParams({shouldReload: false});
+        if (this.shouldRefresh) {
+            this.shouldRefresh = false;
             this.refreshInbox();
         }        
         return (

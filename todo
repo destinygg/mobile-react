@@ -1,15 +1,10 @@
-donate api access
-loots webview
 chat history (maybe?)
-
-save previous view and stream-resize state
-
 emotes in message view
-
-/donate
-{
-    amount: float,
-    message: ""...200
-}
-
 chat resizer on android
+test to make sure whispers are showing in chat correctly
+work with ceneza on notifications
+
+potential launch issues: 
+    - subscriptions may not work
+    - donations may not work
+    - twitch view renderer error on old android platforms -- maybe a native component is needed on android

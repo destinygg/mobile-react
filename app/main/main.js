@@ -37,6 +37,15 @@ export default class MainView extends Component {
         super(props);
         this.chat = props.screenProps.chat;
         this.state = {height: null, resizing: false};
+        applyPreviousResizeState();
+    }
+
+    applyPreviousResizeState() {
+        AsyncStorage.getItem('TwitchViewHeight').then((twitchViewHeight) => {
+            if (twitchViewHeight !== null) {
+                this.twitchView.setState({ height: twitchViewHeight });
+            }
+        });
     }
 
     render() {
@@ -101,7 +110,19 @@ export default class MainView extends Component {
         this.twitchView.setState(twitchState);
     }
 
+
+    _handleAppStateChange = (nextState) => {
+        if (nextState === 'background') {
+            AsyncStorage.setItem('TwitchViewHeight', this.twitchView.state.height);
+        }
+    }
+
     componentDidMount() {
         this.props.screenProps.chat.mainwindow.ui.sync();
+        AppState.addEventListener('change', this._handleAppStateChange);        
+    }
+
+    componentWillUnmount() {
+        AppState.removeEventListener('change', this._handleAppStateChange);   
     }
 }
