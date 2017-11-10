@@ -441,13 +441,23 @@ class AboutView extends Component {
         return (
             <SafeAreaView style={styles.View}>
                 <ScrollView>
-                    <Text style={styles.AboutHeader}>License</Text>
                     <Text style={styles.AboutBody}>
-
+                        "destiny.gg app" is licensed as proprietary software.
+                        All intellectual property, source code, and "destiny.gg" media assets
+                        are the property of destiny.gg LLC.  3rd party content of any sort
+                        is property of the respective copyright owners.  destiny.gg LLC
+                        assumes no responsibility for members of its social features. 
+                    </Text>
+                    <Text style={styles.AboutHeader}>Warranty</Text>
+                    <Text style={styles.AboutBody}>
+                        No warranty express or implied is provided.  This software
+                        is provided "as-is".
                     </Text>
                     <Text style={styles.AboutHeader}>Issues</Text>
                     <Text style={styles.AboutBody}>
-                        
+                        Developed by cako.io
+
+                        Issues may be reported to David Cako [dc@cako.io].
                     </Text>
                 </ScrollView>
             </SafeAreaView>
