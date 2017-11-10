@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, SafeAreaView, WebView, Dimensions, PanResponder } from 'react-native';
+import { View, SafeAreaView, WebView, Dimensions, PanResponder, AsyncStorage, AppState } from 'react-native';
 import { MobileChatView } from '../chat/chat';
 import styles from './styles';
 
@@ -37,13 +37,13 @@ export default class MainView extends Component {
         super(props);
         this.chat = props.screenProps.chat;
         this.state = {height: null, resizing: false};
-        applyPreviousResizeState();
+        this.applyPreviousResizeState();
     }
 
     applyPreviousResizeState() {
         AsyncStorage.getItem('TwitchViewHeight').then((twitchViewHeight) => {
             if (twitchViewHeight !== null) {
-                this.twitchView.setState({ height: twitchViewHeight });
+                this.twitchView.setState({ height: Number(twitchViewHeight) });
             }
         });
     }
@@ -113,7 +113,7 @@ export default class MainView extends Component {
 
     _handleAppStateChange = (nextState) => {
         if (nextState === 'background') {
-            AsyncStorage.setItem('TwitchViewHeight', this.twitchView.state.height);
+            AsyncStorage.setItem('TwitchViewHeight', this.twitchView.state.height.toString());
         }
     }
 

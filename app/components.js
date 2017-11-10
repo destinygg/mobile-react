@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, Picker, Modal, Button, TouchableHighlight, StyleSheet, Platform, Switch } from 'react-native';
+import { View, Text, TextInput, Picker, Modal, Button, TouchableHighlight, StyleSheet, Platform, Switch, WebView } from 'react-native';
 import styles from './styles';
 
 export class ListButton extends Component {
@@ -69,6 +69,7 @@ export class TextInputListItem extends Component {
                     underlineColorAndroid='#222'
                     multiline={this.props.multiline}
                     keyboardAppearance='dark'
+                    maxLength={this.props.maxLength}
                 />
             </View>
         )
@@ -236,6 +237,7 @@ export class FormItem extends Component {
                     first={this.props.first}
                     last={this.props.last}  
                     multiline={this.props.item.multiline}
+                    maxLength={this.props.item.maxLength}
                 />
             )
         } else if (this.props.item.type === "select") {
@@ -283,6 +285,18 @@ export class FormItem extends Component {
             <View>
                 {children}
             </View>
+        )
+    }
+}
+
+export class UserAgreement extends Component {
+    static navigationOptions = {
+        title: 'User Agreement',
+        drawerLockMode: 'locked-closed'
+    }
+    render() {
+        return (
+            <WebView source={{ url: 'https://www.destiny.gg/agreement' }} />
         )
     }
 }

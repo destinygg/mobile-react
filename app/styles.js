@@ -93,6 +93,14 @@ export const inheritedStyles = {
     View: {
         flex: 1,
         backgroundColor: "#0D0D0D"
+    },
+    SubscriptionTerms: {
+        color: '#444',
+        fontSize: 12,
+        margin: 15
+    },
+    UserAgreement: {
+        color: '#FB952B'
     }
 }
 

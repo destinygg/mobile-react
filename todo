@@ -8,3 +8,4 @@ potential launch issues:
     - subscriptions may not work
     - donations may not work
     - twitch view renderer error on old android platforms -- maybe a native component is needed on android
+    - twitch view may have obnoxious content warning every time -- maybe inject some js to bypass

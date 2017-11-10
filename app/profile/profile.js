@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, FlatList, SafeAreaView, ScrollView, WebView, Button, Platform, ActivityIndicator, Alert, TouchableHighlight } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
-import { NavList, NavListItem, FormItem } from '../components';
+import { NavList, NavListItem, FormItem, UserAgreement } from '../components';
 import styles from './styles';
 
 const countries = require("../../lib/assets/countries.json");
@@ -33,7 +33,7 @@ class ProfileForm extends Component {
 class FormSaveBtn extends Component {
     render() {
         return(
-            <View style={{ marginRight: 10 }}>
+            <View style={{ marginRight: 5 }}>
                 <Button title='Save' onPress={this.props.onSave} />
             </View>
         )
@@ -62,8 +62,6 @@ class FormView extends Component {
 
         updatedState[name] = value;
 
-        console.log(updatedState);
-
         this.setState(updatedState);
     }
     save() {
@@ -83,7 +81,6 @@ class FormView extends Component {
             if (response.ok) {
                 this.props.navigation.goBack();
             } else {
-                console.log(response);
                 this.showFailAlert();
             }
             this.props.navigation.setParams({ isSaving: false });
@@ -253,8 +250,8 @@ class SubscriptionMessageView extends Component {
         const { params = {} } = navigation.state;
 
         return {
-            headerRight: <View style={{ marginRight: 10 }}>
-                            <Button title='Continue' onPress={params.saveHandler ? params.saveHandler : () => null} />
+            headerRight: <View style={{ marginRight: 5 }}>
+                            <Button title='Pay' onPress={params.saveHandler ? params.saveHandler : () => null} />
                         </View>,
             drawerLockMode: 'locked-closed'            
         }
@@ -278,8 +275,6 @@ class SubscriptionMessageView extends Component {
         let updatedState = {};
 
         updatedState[name] = value;
-
-        console.log(updatedState);
 
         if (name === 'giftBool' && value === false && this.state.gift !== "") {
             updatedState['gift'] = "";
@@ -323,7 +318,8 @@ class SubscriptionMessageView extends Component {
                 name: "message",
                 type: "text",
                 multiline: true,
-                spacer: true
+                spacer: true,
+                maxLength: 250
             },
             {
                 tag: 'Renew',
@@ -355,8 +351,8 @@ class SubscriptionMessageView extends Component {
                     </View>
                     <ProfileForm formItems={this.formItems} formState={this.state} onChange={(name, value) => this._onChange(name, value)} />
                     <Text style={styles.SubscriptionTerms}>
-                        By clicking the "Continue" button, you are confirming that this purchase is 
-                        what you wanted and that you have read the <Text onPress={() => this._showUserAgreement()}>user agreement.</Text> 
+                        By clicking the "Pay" button, you are confirming that this purchase is 
+                        what you wanted and that you have read the <Text onPress={() => this._showUserAgreement()} style={styles.UserAgreement}>user agreement.</Text> 
                     </Text>
                 </ScrollView>
             </SafeAreaView>
@@ -374,30 +370,32 @@ class SubscriptionWebView extends Component {
     };
     constructor(props) {
         super(props);
-        this.state = {webViewHtml: null};
-        const { navigation } = this.props;          
-        const formData = new FormData();
-        formData.append('subscription', navigation.state.params.subId);
-        formData.append('gift', navigation.state.params.gift);
-        formData.append('sub-message', navigation.state.params.message);
-        formData.append('renew', navigation.state.params.renew);
+        const { navigation } = this.props;   
 
-        fetch(`https://www.destiny.gg/subscription/create`, {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            method: 'POST',
-            credentials: 'include',
-            body: formData
-        }).then((response) => {
-            response.text().then((html) => {
-                this.setState({webViewHtml: html});                
-            })
-        })
+        const formData = {
+            subscription: navigation.state.params.subId,
+            gift: navigation.state.params.gift,
+            'sub-message': navigation.state.params.message,
+            'renew': navigation.state.params.renew
+        };
+        
+        /* fetch() + pass html string into webview doesn't work, as
+           paypal doesn't like the change in useragent.  construct
+           formdata manually.
+        */
+        this.body = Object.keys(formData).map((key) => {
+            return encodeURIComponent(key) + '=' + encodeURIComponent(formData[key]);
+        }).join('&').replace(/%20/g, '+');
     }
     render() {
-        console.log(this.state.webViewHtml);
         return (
             <WebView
-                source={(this.state.webViewHtml === null) ? {uri: ''} : {html: this.state.webViewHtml}}
+                source={{
+                    uri: `https://www.destiny.gg/subscription/create`,
+                    method: 'POST',
+                    body: this.body
+                }}
+                startInLoadingState={true}
                 style={{ backgroundColor: '#000' }}
                 onNavigationStateChange={e => {
                     if (e.loading == false && e.url.indexOf('destiny.gg') != -1) {
@@ -421,14 +419,6 @@ class SubscriptionWebView extends Component {
     }
 }
 
-class UserAgreement extends Component {
-    render() {
-        return (
-            <WebView source={{url: 'https://www.destiny.gg/agreement'}} />
-        )
-    }
-}
-
 class DiscordView extends FormView {
     static navigationOptions = {
         title: 'Discord',
@@ -446,6 +436,25 @@ class DiscordView extends FormView {
     }
 }
 
+class AboutView extends Component {
+    render() {
+        return (
+            <SafeAreaView style={styles.View}>
+                <ScrollView>
+                    <Text style={styles.AboutHeader}>License</Text>
+                    <Text style={styles.AboutBody}>
+
+                    </Text>
+                    <Text style={styles.AboutHeader}>Issues</Text>
+                    <Text style={styles.AboutBody}>
+                        
+                    </Text>
+                </ScrollView>
+            </SafeAreaView>
+        )
+    }
+}
+
 class ProfileView extends Component {
     static navigationOptions = {
         title: 'Profile',
@@ -455,6 +464,7 @@ class ProfileView extends Component {
             { itemText: 'Account', itemTarget: 'Account' },
             { itemText: 'Subscription', itemTarget: 'Subscription' },
             { itemText: 'Discord', itemTarget: 'Discord' }
+            { itemText: 'Discord', itemTarget: 'About' }
         ];
         const created = new Date(this.props.screenProps.chat.me.createdDate);
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -462,7 +472,7 @@ class ProfileView extends Component {
             <ScrollView style={styles.View}>
                 <View style={styles.ProfileHeader}>
                     <Text style={styles.ProfileName}>{this.props.screenProps.chat.user.username}</Text>
-                    <Text style={styles.ProfileCreated}>{'Created: ' + created.toLocaleDateString('en-GB', options)}</Text>
+                    <Text style={styles.ProfileCreated}>{'Member since: ' + created.toLocaleDateString('en-GB', options)}</Text>
                 </View>
                 <NavList listItems={this.listItems} navigation={this.props.navigation}/>
             </ScrollView>
@@ -477,7 +487,8 @@ const ProfileNav = StackNavigator({
     SubscriptionMessageView: { screen: SubscriptionMessageView },
     SubscriptionWebView: { screen: SubscriptionWebView },
     Discord: { screen: DiscordView },
-    UserAgreement: { screen: UserAgreement }
+    UserAgreement: { screen: UserAgreement },
+    About: { screen: AboutView }
 }, {
     initialRouteName: 'Profile',
     navigationOptions: {

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { View, ScrollView, Text, TextInput, WebView } from 'react-native';
-import { NavigationActions } from 'react-navigation';
+import { View, ScrollView, Text, TextInput, WebView, Platform, Button, SafeAreaView } from 'react-native';
+import { StackNavigator, NavigationActions } from 'react-navigation';
+import { TextInputListItem, UserAgreement } from '../components';
+import styles from '../styles';
 
 class DonateWebView extends Component {
     static navigationOptions = {
@@ -11,27 +13,30 @@ class DonateWebView extends Component {
         super(props);
         this.state = { webViewHtml: null };
         const { navigation } = this.props;
-        const formData = new FormData();
-        formData.append('amount', navigation.state.params.amount);
-        formData.append('message', navigation.state.params.message);
 
-        fetch(`https://www.destiny.gg/donate`, {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            method: 'POST',
-            credentials: 'include',
-            body: formData
-        }).then((response) => {
-            response.text().then((html) => {
-                this.setState({ webViewHtml: html });
-            })
-        });
+        const formData = {
+            amount: navigation.state.params.amount,
+            message: navigation.state.params.message,
+        };
+
+        /* fetch() + pass html string into webview doesn't work, as
+           paypal doesn't like the change in useragent.  construct
+           formdata manually.
+        */
+        this.body = Object.keys(formData).map((key) => {
+            return encodeURIComponent(key) + '=' + encodeURIComponent(formData[key]);
+        }).join('&').replace(/%20/g, '+');
     }
 
     render() {
-        console.log(this.state.webViewHtml);
         return (
             <WebView
-                source={(this.state.webViewHtml === null) ? { uri: '' } : { html: this.state.webViewHtml }}
+                source={{
+                    uri: `https://www.destiny.gg/donate`,
+                    method: 'POST',
+                    body: this.body
+                }}
+                startInLoadingState={true}
                 style={{ backgroundColor: '#000' }}
                 onNavigationStateChange={e => {
                     if (e.loading == false && e.url.indexOf('destiny.gg') != -1) {
@@ -60,7 +65,9 @@ class DonateView extends Component {
         const { params = {} } = navigation.state;
         return ({
             title: 'Donate',
-            headerRight: <Button title='Send' onPress={params.sendHandler ? params.sendHandler : () => null} />
+            headerRight: <View style={{ marginRight: 5 }}>
+                            <Button title='Pay' onPress={params.sendHandler ? params.sendHandler : () => null} />
+                        </View>
         });
     }
 
@@ -95,16 +102,22 @@ class DonateView extends Component {
                         key='message'
                         last={true}
                         multiline={true}
+                        maxLength={200}
                     />
+                    <Text style={styles.SubscriptionTerms}>
+                        By clicking the "Pay" button, you are confirming that this purchase is
+                        what you wanted and that you have read the <Text onPress={() => this._showUserAgreement()} style={styles.UserAgreement}>user agreement.</Text>
+                    </Text>
                 </ScrollView>
             </SafeAreaView>
         );
     }
 }
 
-export const DonateNav = StackNavigator({
+const DonateNav = StackNavigator({
     DonateView: { screen: DonateView },
-    DonateWebView: { screen: DonateWebView }
+    DonateWebView: { screen: DonateWebView },
+    UserAgreement: { screen: UserAgreement }
 }, {
     initialRouteName: 'DonateView',
     navigationOptions: {
@@ -114,3 +127,5 @@ export const DonateNav = StackNavigator({
     },
     cardStyle: styles.View
 });
+
+export default DonateNav;

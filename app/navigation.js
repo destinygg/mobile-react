@@ -6,6 +6,7 @@ import MainView from './main/main';
 import { ChatViewWrapper } from './chat/window';
 import ProfileNav from './profile/profile';
 import MessageNav from './messages/messages';
+import DonateNav from './donate/donate.js';
 
 const MainNav = DrawerNavigator({
     MainView: { screen: MainView },
@@ -16,6 +17,7 @@ const MainNav = DrawerNavigator({
             title: 'Messages'
         }
     },
+    DonateView: { screen: DonateNav },
     ProfileView: { screen: ProfileNav }
 }, {
     initialRouteName: "MainView",
