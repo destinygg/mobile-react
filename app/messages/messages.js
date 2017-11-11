@@ -193,7 +193,7 @@ class ComposeView extends Component {
         return ({
             title: 'Compose',
             drawerLockMode: 'locked-closed',
-            headerRight: <View style={{ marginRight: 5 }}>
+            headerRight: <View style={styles.navbarRight}>
                             <Button title='Send' onPress={params.sendHandler ? params.sendHandler : () => null} />
                         </View>
         });

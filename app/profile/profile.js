@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, SafeAreaView, ScrollView, WebView, Button, Platform, ActivityIndicator, Alert, TouchableHighlight } from 'react-native';
+import { View, Text, FlatList, SafeAreaView, ScrollView, WebView, Button, Platform, ActivityIndicator, Alert, TouchableHighlight, KeyboardAvoidingView } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
-import { NavList, NavListItem, FormItem, UserAgreement } from '../components';
+import { NavList, NavListItem, FormItem, UserAgreement, ListButton } from '../components';
 import styles from './styles';
 
 const countries = require("../../lib/assets/countries.json");
@@ -33,7 +33,7 @@ class ProfileForm extends Component {
 class FormSaveBtn extends Component {
     render() {
         return(
-            <View style={{ marginRight: 5 }}>
+            <View style={styles.navbarRight}>
                 <Button title='Save' onPress={this.props.onSave} />
             </View>
         )
@@ -250,7 +250,7 @@ class SubscriptionMessageView extends Component {
         const { params = {} } = navigation.state;
 
         return {
-            headerRight: <View style={{ marginRight: 5 }}>
+            headerRight: <View style={styles.navbarRight}>
                             <Button title='Pay' onPress={params.saveHandler ? params.saveHandler : () => null} />
                         </View>,
             drawerLockMode: 'locked-closed'            
@@ -352,7 +352,7 @@ class SubscriptionMessageView extends Component {
                     <ProfileForm formItems={this.formItems} formState={this.state} onChange={(name, value) => this._onChange(name, value)} />
                     <Text style={styles.SubscriptionTerms}>
                         By clicking the "Pay" button, you are confirming that this purchase is 
-                        what you wanted and that you have read the <Text onPress={() => this._showUserAgreement()} style={styles.UserAgreement}>user agreement.</Text> 
+                        what you wanted and that you have read the <Text onPress={() => this._showUserAgreement()} style={styles.Link}>user agreement.</Text> 
                     </Text>
                 </ScrollView>
             </SafeAreaView>
@@ -436,35 +436,6 @@ class DiscordView extends FormView {
     }
 }
 
-class AboutView extends Component {
-    render() {
-        return (
-            <SafeAreaView style={styles.View}>
-                <ScrollView>
-                    <Text style={styles.AboutBody}>
-                        "destiny.gg app" is licensed as proprietary software.
-                        All intellectual property, source code, and "destiny.gg" media assets
-                        are the property of destiny.gg LLC.  3rd party content of any sort
-                        is property of the respective copyright owners.  destiny.gg LLC
-                        assumes no responsibility for members of its social features. 
-                    </Text>
-                    <Text style={styles.AboutHeader}>Warranty</Text>
-                    <Text style={styles.AboutBody}>
-                        No warranty express or implied is provided.  This software
-                        is provided "as-is".
-                    </Text>
-                    <Text style={styles.AboutHeader}>Issues</Text>
-                    <Text style={styles.AboutBody}>
-                        Developed by cako.io
-
-                        Issues may be reported to David Cako [dc@cako.io].
-                    </Text>
-                </ScrollView>
-            </SafeAreaView>
-        )
-    }
-}
-
 class ProfileView extends Component {
     static navigationOptions = {
         title: 'Profile',
@@ -474,7 +445,6 @@ class ProfileView extends Component {
             { itemText: 'Account', itemTarget: 'Account' },
             { itemText: 'Subscription', itemTarget: 'Subscription' },
             { itemText: 'Discord', itemTarget: 'Discord' }
-            { itemText: 'Discord', itemTarget: 'About' }
         ];
         const created = new Date(this.props.screenProps.chat.me.createdDate);
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -497,8 +467,7 @@ const ProfileNav = StackNavigator({
     SubscriptionMessageView: { screen: SubscriptionMessageView },
     SubscriptionWebView: { screen: SubscriptionWebView },
     Discord: { screen: DiscordView },
-    UserAgreement: { screen: UserAgreement },
-    About: { screen: AboutView }
+    UserAgreement: { screen: UserAgreement }
 }, {
     initialRouteName: 'Profile',
     navigationOptions: {

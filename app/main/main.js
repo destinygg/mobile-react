@@ -57,9 +57,8 @@ export default class MainView extends Component {
         return (
             <SafeAreaView style={[styles.MainView]}>
                 <TwitchView ref={(ref) => this.twitchView = ref}/>
-                <View style={dividerStyle}>
-                    <View style={styles.TwitchViewDividerHandle} {...this._panResponder.panHandlers} />
-                </View>
+                <View style={dividerStyle} />
+                <View style={styles.TwitchViewDividerHandle} {...this._panResponder.panHandlers} />                
                 {this.props.screenProps.chat.mainwindow.uiElem}
             </SafeAreaView>
         );

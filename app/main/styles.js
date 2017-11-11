@@ -19,7 +19,6 @@ const styles = StyleSheet.create({
     },
     TwitchViewDivider: {
         height: 2,
-        zIndex: 1000,        
         backgroundColor: 'transparent',
     },
     DividerResizing: {
@@ -27,10 +26,12 @@ const styles = StyleSheet.create({
         opacity: .5
     },
     TwitchViewDividerHandle: {
-        height: 8,
-        width: 8,
-        top: -2,        
-        borderRadius: 4,
+        height: (Platform.OS === 'ios') ? 8 : 16,
+        marginTop: (Platform.OS === 'ios') ? -8 : -16,
+        top: (Platform.OS === 'ios') ? 4 : 8,
+        zIndex: 1000,
+        width: (Platform.OS === 'ios') ? 8 : 24,
+        borderRadius: (Platform.OS === 'ios') ? 4 : 8,
         backgroundColor: '#222',
         alignSelf: 'center',
     }

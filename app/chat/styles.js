@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     },
     Emote: {
         marginTop: 2,
-        height: 15,
+        height: (Platform.OS === 'ios') ? 15 : 25,
         width: 25,
         resizeMode: 'contain',
         overflow: 'visible'
@@ -99,8 +99,8 @@ const styles = StyleSheet.create({
         height: 25
     },
     Flair: {
-        height: 10,
-        width: 10,
+        height: (Platform.OS === 'ios') ? 10 : 15,
+        width: (Platform.OS === 'ios') ? 10 : 15,
         resizeMode: 'contain'
     },
     Time: {

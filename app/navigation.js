@@ -1,12 +1,13 @@
 import { StackNavigator, DrawerNavigator } from 'react-navigation';
 import React, { Component } from 'react';
-import { AuthView, AuthWebView } from './auth/auth.js'
-import InitView from './init/init.js'
+import { AuthView, AuthWebView } from './auth/auth'
+import InitView from './init/init'
 import MainView from './main/main';
 import { ChatViewWrapper } from './chat/window';
 import ProfileNav from './profile/profile';
 import MessageNav from './messages/messages';
-import DonateNav from './donate/donate.js';
+import DonateNav from './donate/donate';
+import AboutView from './about/about'
 
 const MainNav = DrawerNavigator({
     MainView: { screen: MainView },
@@ -18,7 +19,8 @@ const MainNav = DrawerNavigator({
         }
     },
     DonateView: { screen: DonateNav },
-    ProfileView: { screen: ProfileNav }
+    ProfileView: { screen: ProfileNav },
+    About: { screen: AboutView }
 }, {
     initialRouteName: "MainView",
     drawerBackgroundColor: '#111',

@@ -65,7 +65,7 @@ class DonateView extends Component {
         const { params = {} } = navigation.state;
         return ({
             title: 'Donate',
-            headerRight: <View style={{ marginRight: 5 }}>
+            headerRight: <View style={styles.navbarRight}>
                             <Button title='Pay' onPress={params.sendHandler ? params.sendHandler : () => null} />
                         </View>
         });

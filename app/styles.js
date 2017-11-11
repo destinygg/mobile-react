@@ -99,8 +99,11 @@ export const inheritedStyles = {
         fontSize: 12,
         margin: 15
     },
-    UserAgreement: {
+    Link: {
         color: '#FB952B'
+    },
+    navbarRight: {
+        marginRight: (Platform.OS == 'ios') ? 5 : 15
     }
 }
 
