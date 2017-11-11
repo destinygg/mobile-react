@@ -26,12 +26,12 @@ const styles = StyleSheet.create({
         opacity: .5
     },
     TwitchViewDividerHandle: {
-        height: (Platform.OS === 'ios') ? 8 : 16,
-        marginTop: (Platform.OS === 'ios') ? -8 : -16,
-        top: (Platform.OS === 'ios') ? 4 : 8,
+        height: (Platform.OS === 'ios') ? 12 : 16,
+        marginTop: (Platform.OS === 'ios') ? -12 : -16,
+        top: (Platform.OS === 'ios') ? 6 : 8,
         zIndex: 1000,
-        width: (Platform.OS === 'ios') ? 8 : 24,
-        borderRadius: (Platform.OS === 'ios') ? 4 : 8,
+        width: (Platform.OS === 'ios') ? 24 : 24,
+        borderRadius: (Platform.OS === 'ios') ? 8 : 8,
         backgroundColor: '#222',
         alignSelf: 'center',
     }

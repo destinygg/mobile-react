@@ -22,7 +22,7 @@ const MainNav = DrawerNavigator({
     ProfileView: { screen: ProfileNav },
     About: { screen: AboutView }
 }, {
-    initialRouteName: "MainView",
+    initialRouteName: "ChatView",
     drawerBackgroundColor: '#111',
     contentOptions: {
         activeBackgroundColor: '#181818',

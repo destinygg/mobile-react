@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { SafeAreaView, View, FlatList, Text, TouchableHighlight, Button, ScrollView, KeyboardAvoidingView, ActivityIndicator, TextInput, StyleSheet, Alert, Platform, TouchableOpacity } from 'react-native';
+import { SafeAreaView, View, FlatList, Text, TouchableHighlight, AsyncStorage, AppState, Button, ScrollView, KeyboardAvoidingView, ActivityIndicator, TextInput, StyleSheet, Alert, Platform, TouchableOpacity } from 'react-native';
 import { TextInputListItem } from '../components';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import styles from './styles';
@@ -302,6 +302,12 @@ class MessageView extends Component {
         this.shouldRefresh = false;
     }
 
+    _handleAppStateChange = (nextState) => {
+        if (nextState === 'background') {
+            AsyncStorage.setItem('InitRoute', this.props.navigation.state.routeName);
+        }
+    }
+
     compose() {
         this.props.navigation.navigate('ComposeView', {messageView: this});
     }
@@ -338,6 +344,7 @@ class MessageView extends Component {
 
     componentDidMount() {
         this.props.navigation.setParams({ composeHandler: () => this.compose() });
+        AppState.addEventListener('change', this._handleAppStateChange);          
     }
 
     render() {

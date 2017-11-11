@@ -16,7 +16,7 @@ class App extends Component {
         return (
             <View style={styles.View}>
                 <StatusBar barStyle='light-content' />
-                <InitNav screenProps={{ chat: this.chat }} />                
+                <InitNav screenProps={{ chat: this.chat, init: true }} />                
             </View>
         );
     }

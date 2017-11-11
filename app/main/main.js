@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, SafeAreaView, WebView, Dimensions, PanResponder, AsyncStorage, AppState } from 'react-native';
+import { View, SafeAreaView, WebView, Dimensions, PanResponder, AsyncStorage, AppState, Platform } from 'react-native';
 import { MobileChatView } from '../chat/chat';
 import styles from './styles';
 
@@ -94,7 +94,7 @@ export default class MainView extends Component {
 
     _resize(gestureState) {
         if (gestureState.moveY > 50) {
-            this.twitchView.setState({ height: gestureState.moveY });
+            this.twitchView.setState({ height: gestureState.moveY - ((Platform.OS === 'ios') ? 45 : 0) });
         }
     }
 
@@ -104,7 +104,7 @@ export default class MainView extends Component {
             resizing: false
         }
         if (gestureState.moveY > 50) {
-            twitchState.height = gestureState.moveY;
+            twitchState.height = gestureState.moveY - ((Platform.OS === 'ios') ? 45 : 0) ;
         }
         this.twitchView.setState(twitchState);
     }
@@ -113,15 +113,17 @@ export default class MainView extends Component {
     _handleAppStateChange = (nextState) => {
         if (nextState === 'background') {
             AsyncStorage.setItem('TwitchViewHeight', this.twitchView.state.height.toString());
+            AsyncStorage.setItem('InitRoute', this.props.navigation.state.routeName);
         }
     }
 
     componentDidMount() {
         this.props.screenProps.chat.mainwindow.ui.sync();
-        AppState.addEventListener('change', this._handleAppStateChange);        
+        AppState.addEventListener('change', this._handleAppStateChange);       
     }
 
     componentWillUnmount() {
         AppState.removeEventListener('change', this._handleAppStateChange);   
+        AsyncStorage.setItem('TwitchViewHeight', this.twitchView.state.height.toString());        
     }
 }

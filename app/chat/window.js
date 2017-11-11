@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, SafeAreaView, TextInput, Animated, FlatList, KeyboardAvoidingView, Text, ScrollView, TouchableOpacity, ActivityIndicator, TouchableHighlight, Platform, RefreshControl, Dimensions } from 'react-native';
+import { View, SafeAreaView, TextInput, Animated, FlatList, AsyncStorage, AppState, KeyboardAvoidingView, Text, ScrollView, TouchableOpacity, ActivityIndicator, TouchableHighlight, Platform, RefreshControl, Dimensions } from 'react-native';
 import styles from './styles';
 import EventEmitter from '../../lib/assets/chat/js/emitter';
 import { emoteImgs } from './images';
@@ -352,6 +352,25 @@ export class ChatViewWrapper extends Component {
     static navigationOptions = {
         title: 'Chat',
     };
+
+    constructor(props) {
+        super(props);
+        if (this.props.screenProps.init === true) {
+            this.props.screenProps.init = false;
+            AsyncStorage.getItem("InitRoute").then((route) => {
+                if (route != null) {
+                    this.props.navigation.navigate(route);                
+                }
+            });
+        }
+    }
+
+    _handleAppStateChange = (nextState) => {
+        if (nextState === 'background') {
+            AsyncStorage.setItem('InitRoute', this.props.navigation.state.routeName);
+        }
+    }
+
     render() {
         return (
             <SafeAreaView style={[styles.View]}>{this.props.screenProps.chat.mainwindow.uiElem}</SafeAreaView>
@@ -360,5 +379,6 @@ export class ChatViewWrapper extends Component {
 
     componentDidMount() {
         this.props.screenProps.chat.mainwindow.ui.sync();
+        AppState.addEventListener('change', this._handleAppStateChange);          
     }
 }

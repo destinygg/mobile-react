@@ -35,8 +35,7 @@ const styles = StyleSheet.create({
     AboutDevHeader: {
         color: '#000',
         fontSize: 36,
-        fontWeight: '300',
-        letterSpacing: 2,
+        fontWeight: '400',
         marginBottom: 10
     },
     badgePressed: {
