@@ -444,7 +444,7 @@ class ProfileView extends Component {
         this.listItems = [
             { itemText: 'Account', itemTarget: 'Account' },
             { itemText: 'Subscription', itemTarget: 'Subscription' },
-            { itemText: 'Discord', itemTarget: 'Discord' }
+            // soon (TM) -- no chat.me entry yet { itemText: 'Discord', itemTarget: 'Discord' }
         ];
         const created = new Date(this.props.screenProps.chat.me.createdDate);
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };

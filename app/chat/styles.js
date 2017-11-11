@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     EmoteMenuItem: {
         resizeMode: 'contain',
         overflow: 'visible',
-        height: 25
+        height: (Platform.OS === 'ios') ? 25 : 20
     },
     Flair: {
         height: (Platform.OS === 'ios') ? 10 : 15,

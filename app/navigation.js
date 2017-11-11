@@ -27,7 +27,8 @@ const MainNav = DrawerNavigator({
     contentOptions: {
         activeBackgroundColor: '#181818',
         inactiveTintColor: '#fff'
-    }
+    },
+    drawerWidth: 250
 });
 
 const InitNav = StackNavigator({

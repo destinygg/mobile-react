@@ -84,6 +84,10 @@ class DonateView extends Component {
         this.props.navigation.setParams({ sendHandler: () => this.send() });
     }
 
+    _showUserAgreement() {
+        this.props.navigation.navigate('UserAgreement');
+    }
+
     render() {
         return (
             <SafeAreaView style={styles.View}>
@@ -106,7 +110,7 @@ class DonateView extends Component {
                     />
                     <Text style={styles.SubscriptionTerms}>
                         By clicking the "Pay" button, you are confirming that this purchase is
-                        what you wanted and that you have read the <Text onPress={() => this._showUserAgreement()} style={styles.UserAgreement}>user agreement.</Text>
+                        what you wanted and that you have read the <Text onPress={() => this._showUserAgreement()} style={styles.Link}>user agreement.</Text>
                     </Text>
                 </ScrollView>
             </SafeAreaView>
