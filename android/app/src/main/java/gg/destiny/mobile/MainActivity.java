@@ -1,4 +1,4 @@
-package com.destinyapp;
+package gg.destiny.mobile;
 
 import com.facebook.react.ReactActivity;
 
@@ -10,6 +10,6 @@ public class MainActivity extends ReactActivity {
      */
     @Override
     protected String getMainComponentName() {
-        return "destinyapp";
+        return "destiny.gg";
     }
 }

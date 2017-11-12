@@ -1,4 +1,4 @@
-package com.destinyapp;
+package gg.destiny.mobile;
 
 import android.app.Application;
 
