@@ -55,7 +55,7 @@ export default class MainView extends Component {
             dividerStyle.push({top: this.state.height});
         }
         return (
-            <SafeAreaView style={[styles.MainView]}>
+            <SafeAreaView style={[styles.MainView]} onLayout={(e) => this._onLayout(e.nativeEvent)}>
                 <TwitchView ref={(ref) => this.twitchView = ref}/>
                 <View style={dividerStyle} />
                 <View style={styles.TwitchViewDividerHandle} {...this._panResponder.panHandlers} />                
@@ -93,8 +93,8 @@ export default class MainView extends Component {
     }
 
     _resize(gestureState) {
-        if (gestureState.moveY > 50) {
-            this.twitchView.setState({ height: gestureState.moveY - ((Platform.OS === 'ios') ? 45 : 0) });
+        if (gestureState.moveY > 50 && gestureState.moveY < this.state.height - 50) {
+            this.twitchView.setState({ height: gestureState.moveY - ((Platform.OS === 'ios') ? 45 : 10) });
         }
     }
 
@@ -103,16 +103,21 @@ export default class MainView extends Component {
         let twitchState = {
             resizing: false
         }
-        if (gestureState.moveY > 50) {
-            twitchState.height = gestureState.moveY - ((Platform.OS === 'ios') ? 45 : 0) ;
+        if (gestureState.moveY > 50 && gestureState.moveY < this.state.height - 50) {
+            twitchState.height = gestureState.moveY - ((Platform.OS === 'ios') ? 45 : 10) ;
         }
         this.twitchView.setState(twitchState);
     }
 
+    _onLayout(e) {
+        this.setState({height: e.layout.height});
+    }
 
     _handleAppStateChange = (nextState) => {
         if (nextState === 'background') {
-            AsyncStorage.setItem('TwitchViewHeight', this.twitchView.state.height.toString());
+            if (this.twitchView.state.height !== null) {
+                AsyncStorage.setItem('TwitchViewHeight', this.twitchView.state.height.toString());                
+            }
             AsyncStorage.setItem('InitRoute', this.props.navigation.state.routeName);
         }
     }
@@ -124,6 +129,8 @@ export default class MainView extends Component {
 
     componentWillUnmount() {
         AppState.removeEventListener('change', this._handleAppStateChange);   
-        AsyncStorage.setItem('TwitchViewHeight', this.twitchView.state.height.toString());        
+        if (this.twitchView.state.height !== null) {            
+            AsyncStorage.setItem('TwitchViewHeight', this.twitchView.state.height.toString());        
+        }
     }
 }

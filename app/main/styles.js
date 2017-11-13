@@ -30,8 +30,8 @@ const styles = StyleSheet.create({
         marginTop: (Platform.OS === 'ios') ? -12 : -16,
         top: (Platform.OS === 'ios') ? 6 : 8,
         zIndex: 1000,
-        width: (Platform.OS === 'ios') ? 24 : 24,
-        borderRadius: (Platform.OS === 'ios') ? 8 : 8,
+        width: (Platform.OS === 'ios') ? 24 : 30,
+        borderRadius: (Platform.OS === 'ios') ? 8 : 10,
         backgroundColor: '#222',
         alignSelf: 'center',
     }

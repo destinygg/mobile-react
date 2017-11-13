@@ -3,6 +3,7 @@ import { View, Text, FlatList, SafeAreaView, ScrollView, WebView, Button, Platfo
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import { NavList, NavListItem, FormItem, UserAgreement, ListButton } from '../components';
 import styles from './styles';
+import moment from 'moment';
 
 const countries = require("../../lib/assets/countries.json");
 const countryOptions = countries.map((item) => {
@@ -446,13 +447,12 @@ class ProfileView extends Component {
             { itemText: 'Subscription', itemTarget: 'Subscription' },
             // soon (TM) -- no chat.me entry yet { itemText: 'Discord', itemTarget: 'Discord' }
         ];
-        const created = new Date(this.props.screenProps.chat.me.createdDate);
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const created = moment(this.props.screenProps.chat.me.createdDate);
         return (
             <ScrollView style={styles.View}>
                 <View style={styles.ProfileHeader}>
                     <Text style={styles.ProfileName}>{this.props.screenProps.chat.user.username}</Text>
-                    <Text style={styles.ProfileCreated}>{'Member since: ' + created.toLocaleDateString('en-GB', options)}</Text>
+                    <Text style={styles.ProfileCreated}>{'Member since: ' + created.format('dddd, D MMMM YYYY')}</Text>
                 </View>
                 <NavList listItems={this.listItems} navigation={this.props.navigation}/>
             </ScrollView>
