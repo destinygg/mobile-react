@@ -21,6 +21,7 @@ export default class InitView extends Component {
                         .withUserAndSettings(me)
                         .connect("wss://www.destiny.gg/ws");
                     screenProps.chat.me = me;
+                    global.bugsnag.setUser(me.userId, me.username, me.username + '@destiny.gg');
                     navigation.dispatch(NavigationActions.reset({
                         index: 0,
                         actions: [
