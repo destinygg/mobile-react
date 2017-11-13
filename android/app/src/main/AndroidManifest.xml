@@ -16,6 +16,8 @@
       android:label="@string/app_name"
       android:icon="@mipmap/ic_launcher"
       android:theme="@style/AppTheme">
+    <meta-data android:name="com.bugsnag.android.413c4e2656ea74f74409aeaad0c8b619"
+            android:value="413c4e2656ea74f74409aeaad0c8b619"/>
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
