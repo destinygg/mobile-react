@@ -182,7 +182,12 @@ export class MobileChatMessage extends PureComponent {
     }
     render() {
         return (
-            <Text style={this.props.msg.classes} onLayout={(e) => this.props.msg.height = e.nativeEvent.layout.height}>
+            <Text style={this.props.msg.classes} onLayout={(e) => {
+                    this.props.msg.height = e.nativeEvent.layout.height;
+                    if (this.props.msg.window.lastmessage == this.props.msg) {
+                        this.props.msg.window.ui.scrollToEnd();          
+                    }
+            }}>
                 {this.props.time}
                 {this.props.user}
                 <Text>{this.props.ctrl}</Text>
@@ -205,7 +210,14 @@ export class MobileChatEmoteMessage extends PureComponent {
             combo.push(<Text key='ComboCombo' style={styles.ComboCombo}> C-C-C-COMBO</Text>);
         }
         return (
-            <Text onLayout={(e) => this.props.msg.height = e.nativeEvent.layout.height}>{this.props.time}{this.props.emote}{combo}</Text>
+            <Text onLayout={(e) => {
+                this.props.msg.height = e.nativeEvent.layout.height
+                if (this.props.msg.window.lastmessage == this.props.msg) {
+                    this.props.msg.window.ui.scrollToEnd();            
+                }
+            }}>
+                {this.props.time}{this.props.emote}{combo}
+            </Text>
         )
     }
 }

@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
         paddingLeft: 2,
     },
     ChatViewList: {
-        flex: 1,
+        flex: 1
     },
     ChatMessage: {
         flexDirection: 'row',
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         backgroundColor: 'transparent',
-        minHeight: 18       
+        minHeight: 18
     },
     subscriber: {
         color: '#488ce7'

@@ -115,7 +115,6 @@ export class MobileChatView extends Component {
             emoteDirShown: false
         }
         this.pinned = true;
-        this.maybePin = false;
         this.input = "";
         this.inputElem = null;
         this.messageList = null;
@@ -181,20 +180,13 @@ export class MobileChatView extends Component {
                             return item.item;
                         }}
                         ref={(ref) => this.messageList = ref}
-                        onScrollBeginDrag={(e) => {
-                            this.pinned = false;
-                        }}
-                        onScrollEndDrag={(e) => {
-                            this.maybePin = true;
-                        }}
-                        onScroll={(e) => this._onScroll(e)}
-                        onMomentumScrollEnd={(e) => {
-                            this.maybePin = false;
-                        }}
-                        inverted={true}
                         onLayout={(e) => {
                             this.height = e.nativeEvent.layout.height;
+                            this.scrollToEnd();
                         }}
+                        onScrollBeginDrag={() => this._onScroll()}
+                        onEndReached={() => this.pin()}
+                        onEndReachedThreshold={0.1}
                     />
                     <EmoteDirectory onSelect={(emote) => this.appendText(emote)} ref={(ref) => this.emoteDir = ref} />                                                                            
                 </View>
@@ -211,13 +203,7 @@ export class MobileChatView extends Component {
     }
 
     _onScroll(e) {
-        if (!this.maybePin) {
-            return;
-        }
-        if (e.nativeEvent.contentOffset.y < 100) {
-            this.pinned = true;
-            this.maybePin = false;
-        }
+        this.pinned = false;
     }
 
     isPinned() {
@@ -234,12 +220,18 @@ export class MobileChatView extends Component {
     }
 
     sync() {
-        this.setState({ messages: [].concat(this.props.window.lines).reverse() });
+        this.setState({ messages: [].concat(this.props.window.lines) });
     }
 
     componentDidMount() {
         global.bugsnag.leaveBreadcrumb('ChatView mounted.');   
         this.sync();     
+    }
+
+    scrollToEnd() {
+        if (this.messageList && this.pinned) {
+            this.messageList.scrollToEnd();
+        }
     }
 }
 
@@ -319,7 +311,7 @@ export default class MobileWindow extends EventEmitter {
         this.lines.push(message.ui);
         message.afterRender(chat);        
         this.cleanup();                
-        if (this.ui && this.ui.isPinned()) {            
+        if (this.ui) {            
             this.ui.sync();
         }
     }
@@ -349,6 +341,8 @@ export default class MobileWindow extends EventEmitter {
         if (this.ui && (this.ui.isPinned() || this.waspinned)) {
             if (this.lines.length >= this.maxlines) {
                 this.lines.splice(0, this.lines.length - this.maxlines);
+                this.ui.sync();
+                this.ui.scrollToEnd();
             }
         }
     }

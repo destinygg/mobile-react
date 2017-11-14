@@ -10,7 +10,6 @@
 		"bugsnag-react-native": "^2.6.0",
 		"moment": "~2.19",
 		"react": "^16.0.0",
-		"react-native": "^0.50.1",
 		"react-navigation": "^1.0.0-beta.17",
 		"throttle-debounce": "~1.0.1"
 	},
