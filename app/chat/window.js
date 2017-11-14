@@ -34,7 +34,7 @@ class EmoteDirectory extends Component {
 
     render() {
         return (
-            <Animated.View style={[styles.EmoteDirectory, {flex: this.flex}]}>
+            <Animated.View style={[styles.EmoteDirectory, {flex: this.flex}]} collapsable={false}>
                 <ScrollView>
                     <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center'}}>
                         {this.children}
@@ -42,6 +42,10 @@ class EmoteDirectory extends Component {
                 </ScrollView>
             </Animated.View>
         )
+    }
+
+    componentDidMount() {
+        global.bugsnag.leaveBreadcrumb('EmoteDirectory mounted.');        
     }
 }
 
@@ -95,6 +99,10 @@ class MobileChatInput extends Component {
                 />
             </View>
         )
+    }
+
+    componentDidMount() {
+        global.bugsnag.leaveBreadcrumb('Text input mounted.');                
     }
 }
 
@@ -228,6 +236,11 @@ export class MobileChatView extends Component {
     sync() {
         this.setState({ messages: [].concat(this.props.window.lines).reverse() });
     }
+
+    componentDidMount() {
+        global.bugsnag.leaveBreadcrumb('ChatView mounted.');   
+        this.sync();     
+    }
 }
 
 export default class MobileWindow extends EventEmitter {
@@ -358,7 +371,7 @@ export class ChatViewWrapper extends Component {
         if (this.props.screenProps.init === true) {
             this.props.screenProps.init = false;
             AsyncStorage.getItem("InitRoute").then((route) => {
-                if (route != null) {
+                if (['MainView', 'ChatView', 'MessageView'].indexOf(route) != -1) {
                     this.props.navigation.navigate(route);                
                 }
             });
@@ -378,7 +391,6 @@ export class ChatViewWrapper extends Component {
     }
 
     componentDidMount() {
-        this.props.screenProps.chat.mainwindow.ui.sync();
         AppState.addEventListener('change', this._handleAppStateChange);          
     }
 }

@@ -15,16 +15,23 @@ class TwitchView extends Component {
         if (this.state.height) { twitchViewStyle.push({ flex: 0, height: this.state.height}); }
 
         return (
-            <View style={twitchViewStyle}>
+            <View style={twitchViewStyle} collapsable={false}>
                 <WebView
                     source={{uri: `https://player.twitch.tv/?channel=destiny&playsinline=true`}}
                     scrollEnabled={false}
                     style={styles.TwitchViewInner}
                     allowsInlineMediaPlayback={true}
                     mediaPlaybackRequiresUserAction={false}
+                    collapsable={false}
+                    startInLoadingState={true}
                 />
             </View> 
         );
+    }
+
+    componentDidMount() {
+        this.props.parent.applyPreviousResizeState();
+        global.bugsnag.leaveBreadcrumb('TwitchView mounted.');                
     }
 }
 
@@ -37,13 +44,15 @@ export default class MainView extends Component {
         super(props);
         this.chat = props.screenProps.chat;
         this.state = {height: null, resizing: false};
-        this.applyPreviousResizeState();
+        global.mainview = this;
     }
 
     applyPreviousResizeState() {
         AsyncStorage.getItem('TwitchViewHeight').then((twitchViewHeight) => {
             if (twitchViewHeight !== null) {
+                global.bugsnag.leaveBreadcrumb('Applying resize state: ' + twitchViewHeight);
                 this.twitchView.setState({ height: Number(twitchViewHeight) });
+                global.bugsnag.leaveBreadcrumb('Resize state applied.');                
             }
         });
     }
@@ -55,8 +64,8 @@ export default class MainView extends Component {
             dividerStyle.push({top: this.state.height});
         }
         return (
-            <SafeAreaView style={[styles.MainView]} onLayout={(e) => this._onLayout(e.nativeEvent)}>
-                <TwitchView ref={(ref) => this.twitchView = ref}/>
+            <SafeAreaView style={[styles.MainView]} onLayout={(e) => this._onLayout(e.nativeEvent)} collapsable={false}>
+                <TwitchView ref={(ref) => this.twitchView = ref} parent={this}/>
                 <View style={dividerStyle} />
                 <View style={styles.TwitchViewDividerHandle} {...this._panResponder.panHandlers} />                
                 {this.props.screenProps.chat.mainwindow.uiElem}
@@ -66,6 +75,7 @@ export default class MainView extends Component {
 
 
     componentWillMount() {
+        global.bugsnag.leaveBreadcrumb('Creating pan responder.')        
         this._panResponder = PanResponder.create({
             onStartShouldSetPanResponder: (evt, gestureState) => true,
             onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
@@ -85,6 +95,7 @@ export default class MainView extends Component {
                 this._endResize(gestureState);
             }
         });
+        global.bugsnag.leaveBreadcrumb('Pan responder created.')        
     }
 
     _beginResize(gestureState) {
@@ -110,7 +121,9 @@ export default class MainView extends Component {
     }
 
     _onLayout(e) {
+        global.bugsnag.leaveBreadcrumb('MainView before onLayout.');                
         this.setState({height: e.layout.height});
+        global.bugsnag.leaveBreadcrumb('MainView after onLayout.');                        
     }
 
     _handleAppStateChange = (nextState) => {
@@ -123,8 +136,9 @@ export default class MainView extends Component {
     }
 
     componentDidMount() {
-        this.props.screenProps.chat.mainwindow.ui.sync();
-        AppState.addEventListener('change', this._handleAppStateChange);       
+        global.bugsnag.leaveBreadcrumb('MainView mounted.');        
+        AppState.addEventListener('change', this._handleAppStateChange);    
+        global.bugsnag.leaveBreadcrumb('Added AppState listener.');                
     }
 
     componentWillUnmount() {

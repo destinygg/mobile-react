@@ -9,3 +9,16 @@ potential launch issues:
     - donations may not work
     - twitch view renderer error on old android platforms -- maybe a native component is needed on android
     - twitch view may have obnoxious content warning every time -- maybe inject some js to bypass
+
+launch bugs:
+
+IllegalViewOperationExceptionMainActivity, thinking this is the emote drawer being
+optimized away, and thinking that I have fixed it...
+
+link formatter
+
+greentext formatter
+
+change to non-interactive twitch embed
+
+move chat to normal list rotated^2
