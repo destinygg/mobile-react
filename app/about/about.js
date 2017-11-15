@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { SafeAreaView, ScrollView, View, Text, TouchableHighlight, Linking } from 'react-native';
+import { ScrollView, View, Text, TouchableHighlight, Linking } from 'react-native';
+import { SafeAreaView } from 'react-navigation';
 import styles from './styles';
 
 export default class AboutView extends Component {

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { View, SafeAreaView, WebView, Dimensions, PanResponder, AsyncStorage, AppState, Platform } from 'react-native';
+import { View, WebView, Dimensions, PanResponder, AsyncStorage, AppState, Platform } from 'react-native';
+import { SafeAreaView } from 'react-navigation';
 import { MobileChatView } from '../chat/chat';
 import styles from './styles';
 

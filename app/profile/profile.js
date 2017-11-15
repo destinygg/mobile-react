@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, SafeAreaView, ScrollView, WebView, Button, Platform, ActivityIndicator, Alert, TouchableHighlight, KeyboardAvoidingView } from 'react-native';
-import { StackNavigator, NavigationActions } from 'react-navigation';
+import { View, Text, FlatList, ScrollView, WebView, Button, Platform, ActivityIndicator, Alert, TouchableHighlight, KeyboardAvoidingView } from 'react-native';
+import { StackNavigator, NavigationActions, SafeAreaView } from 'react-navigation';
 import { NavList, NavListItem, FormItem, UserAgreement, ListButton } from '../components';
 import styles from './styles';
 import moment from 'moment';

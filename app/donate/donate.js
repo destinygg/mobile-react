@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { View, ScrollView, Text, TextInput, WebView, Platform, Button, SafeAreaView } from 'react-native';
-import { StackNavigator, NavigationActions } from 'react-navigation';
+import { View, ScrollView, Text, TextInput, WebView, Platform, Button } from 'react-native';
+import { StackNavigator, NavigationActions, SafeAreaView } from 'react-navigation';
 import { TextInputListItem, UserAgreement } from '../components';
 import styles from '../styles';
 

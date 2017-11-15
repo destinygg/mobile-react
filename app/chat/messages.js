@@ -184,9 +184,6 @@ export class MobileChatMessage extends PureComponent {
         return (
             <Text style={this.props.msg.classes} onLayout={(e) => {
                     this.props.msg.height = e.nativeEvent.layout.height;
-                    if (this.props.msg.window.lastmessage == this.props.msg) {
-                        this.props.msg.window.ui.scrollToEnd();          
-                    }
             }}>
                 {this.props.time}
                 {this.props.user}
@@ -212,9 +209,6 @@ export class MobileChatEmoteMessage extends PureComponent {
         return (
             <Text onLayout={(e) => {
                 this.props.msg.height = e.nativeEvent.layout.height
-                if (this.props.msg.window.lastmessage == this.props.msg) {
-                    this.props.msg.window.ui.scrollToEnd();            
-                }
             }}>
                 {this.props.time}{this.props.emote}{combo}
             </Text>

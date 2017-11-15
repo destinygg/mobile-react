@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { View, SafeAreaView, TextInput, Animated, FlatList, AsyncStorage, AppState, KeyboardAvoidingView, Text, ScrollView, TouchableOpacity, ActivityIndicator, TouchableHighlight, Platform, RefreshControl, Dimensions } from 'react-native';
+import { View, TextInput, Animated, FlatList, AsyncStorage, AppState, KeyboardAvoidingView, Text, ScrollView, TouchableOpacity, ActivityIndicator, TouchableHighlight, Platform, RefreshControl, Dimensions } from 'react-native';
+import { SafeAreaView } from 'react-navigation';
 import styles from './styles';
 import EventEmitter from '../../lib/assets/chat/js/emitter';
 import { emoteImgs } from './images';
@@ -118,6 +119,7 @@ export class MobileChatView extends Component {
         this.input = "";
         this.inputElem = null;
         this.messageList = null;
+        this.height = 0;
     }
 
     changeInputText(text) {
@@ -184,9 +186,8 @@ export class MobileChatView extends Component {
                             this.height = e.nativeEvent.layout.height;
                             this.scrollToEnd();
                         }}
-                        onScrollBeginDrag={() => this._onScroll()}
-                        onEndReached={() => this.pin()}
-                        onEndReachedThreshold={0.1}
+                        onScroll={(e) => this._onScroll(e)}
+                        inverted={true}
                     />
                     <EmoteDirectory onSelect={(emote) => this.appendText(emote)} ref={(ref) => this.emoteDir = ref} />                                                                            
                 </View>
@@ -203,7 +204,11 @@ export class MobileChatView extends Component {
     }
 
     _onScroll(e) {
-        this.pinned = false;
+        if (e.nativeEvent.contentOffset.y < 300) {
+            this.pinned = true;            
+        } else {
+            this.pinned = false;
+        }
     }
 
     isPinned() {
@@ -220,7 +225,9 @@ export class MobileChatView extends Component {
     }
 
     sync() {
-        this.setState({ messages: [].concat(this.props.window.lines) });
+        if (this.pinned) {
+            this.setState({ messages: [].concat(this.props.window.lines) });            
+        }
     }
 
     componentDidMount() {
@@ -230,7 +237,7 @@ export class MobileChatView extends Component {
 
     scrollToEnd() {
         if (this.messageList && this.pinned) {
-            this.messageList.scrollToEnd();
+            //this.messageList.scrollTo(0);
         }
     }
 }
@@ -308,7 +315,7 @@ export default class MobileWindow extends EventEmitter {
     addMessage(chat, message) {
         this.lastmessage = message        
         message.ui = message.html(chat)
-        this.lines.push(message.ui);
+        this.lines.unshift(message.ui);
         message.afterRender(chat);        
         this.cleanup();                
         if (this.ui) {            

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { SafeAreaView, View, FlatList, Text, TouchableHighlight, AsyncStorage, AppState, Button, ScrollView, KeyboardAvoidingView, ActivityIndicator, TextInput, StyleSheet, Alert, Platform, TouchableOpacity } from 'react-native';
+import { View, FlatList, Text, TouchableHighlight, AsyncStorage, AppState, Button, ScrollView, KeyboardAvoidingView, ActivityIndicator, TextInput, StyleSheet, Alert, Platform, TouchableOpacity } from 'react-native';
 import { TextInputListItem } from '../components';
-import { StackNavigator, NavigationActions } from 'react-navigation';
+import { StackNavigator, NavigationActions, SafeAreaView } from 'react-navigation';
 import styles from './styles';
 
 const MOMENT_FORMAT = {
