@@ -25,21 +25,21 @@ class EmoteDirectory extends Component {
         this.emotes = Array.from(emoteImgs.keys()).sort();
         this.children = this.emotes.map((emote) => {
             return (
-                <TouchableHighlight style={{margin: 5}} key={emote} onPress={() => this.props.onSelect(emote)}>
-                    <Emote name={emote} emoteMenu={true}/>
+                <TouchableHighlight style={{marginLeft: 5, marginRight: 5, flex: 1, justifyContent: 'center'}} key={emote} onPress={() => this.props.onSelect(emote)}>
+                    <View>
+                        <Emote name={emote} emoteMenu={true}/>
+                    </View>
                 </TouchableHighlight>
             );
         });
-        this.flex = new Animated.Value(0.0001);
+        this.flex = new Animated.Value(0);
     }
 
     render() {
         return (
-            <Animated.View style={[styles.EmoteDirectory, {flex: this.flex}]} collapsable={false}>
-                <ScrollView>
-                    <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center'}}>
-                        {this.children}
-                    </View>
+            <Animated.View style={[styles.EmoteDirectory, {height: this.flex}]} collapsable={false}>
+                <ScrollView horizontal={true}>
+                    {this.children}
                 </ScrollView>
             </Animated.View>
         )
@@ -72,32 +72,20 @@ class MobileChatInput extends Component {
     render() {
         return (
             <View style={styles.ChatInputOuter}>
-                <View style={{ justifyContent: 'center' }}>
-                    <TouchableOpacity onPress={() => this.props.toggleEmoteDir()}>
-                        <Text style={{
-                            fontFamily: 'ionicons',
-                            color: '#888',
-                            fontSize: 20,
-                            marginLeft: 5,
-                            marginRight: 5,
-                            marginTop: 2
-                        }}>
-                            &#xf38e;
-                    </Text>
-                    </TouchableOpacity>
-                </View>
-                <TextInput
-                    style={styles.ChatInput}
-                    placeholder={'Write something...'}
-                    placeholderTextColor="#888"
-                    onChangeText={this.props.onChangeText}
-                    onSubmitEditing={this.props.onSubmit}
-                    ref={ref => this.input = ref}
-                    underlineColorAndroid='#222'
-                    value={this.state.value}
-                    keyboardAppearance='dark'
-                    onFocus={() => this.props.hideEmoteDir()}
-                />
+                <EmoteDirectory onSelect={(emote) => this.appendText(emote)} ref={(ref) => this.emoteDir = ref} />                                                                                        
+                <TouchableOpacity onPress={() => this.props.toggleEmoteDir()}>
+                    <Text style={{
+                        fontFamily: 'ionicons',
+                        color: '#888',
+                        fontSize: 36,
+                        paddingLeft: 15,
+                        paddingRight: 15,
+                        paddingTop: 15,
+                        paddingBottom: 15
+                    }}>
+                        &#xf38e;
+                </Text>
+                </TouchableOpacity>
             </View>
         )
     }
@@ -139,7 +127,7 @@ export class MobileChatView extends Component {
                 this.emoteDir.flex,
                 {
                     duration: 300,
-                    toValue: 0.0001
+                    toValue: 0
                 }
             ).start(() => this.setState({ emoteDirShown: false }));
         }
@@ -151,7 +139,7 @@ export class MobileChatView extends Component {
                 this.emoteDir.flex,
                 {
                     duration: 300,
-                    toValue: 0.0001
+                    toValue: 50
                 }
             ).start(() => this.setState({ emoteDirShown: false }));
         } else {
@@ -159,7 +147,7 @@ export class MobileChatView extends Component {
                 this.emoteDir.flex,
                 {
                     duration: 300,
-                    toValue: 1
+                    toValue: 0
                 }
             ).start(() => this.setState({ emoteDirShown: true }));
             this.inputElem.blur();
@@ -189,7 +177,6 @@ export class MobileChatView extends Component {
                         onScroll={(e) => this._onScroll(e)}
                         inverted={true}
                     />
-                    <EmoteDirectory onSelect={(emote) => this.appendText(emote)} ref={(ref) => this.emoteDir = ref} />                                                                            
                 </View>
                 <MobileChatInput 
                     ref={(ref) => this.inputElem = ref}
@@ -221,7 +208,7 @@ export class MobileChatView extends Component {
 
     send() {
         this.props.chat.control.emit('SEND', this.input.trim());
-        this.inputElem.input.clear();
+        this.changeInputText('');
     }
 
     sync() {
@@ -347,7 +334,7 @@ export default class MobileWindow extends EventEmitter {
     cleanup() {
         if (this.ui && (this.ui.isPinned() || this.waspinned)) {
             if (this.lines.length >= this.maxlines) {
-                this.lines.splice(0, this.lines.length - this.maxlines);
+                this.lines.splice(-1, this.lines.length - this.maxlines);
                 this.ui.sync();
                 this.ui.scrollToEnd();
             }

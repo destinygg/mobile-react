@@ -1,3 +1,5 @@
+import UserFeatures from '../../lib/assets/chat/js/features'
+
 const emoteDir = require('../../lib/assets/emotes.json');
 
 const destinyEmotes = Array.from(emoteDir['destiny']);
@@ -103,7 +105,7 @@ export class EmoteFormatter {
             const before = msg.substring(0, result.index);
 
             if (before !== "") {
-                formatted.push({ "string": before, "greenText": msg.greenText });
+                formatted.push({ "string": before, "greenText": message.greenText });
             }
 
             formatted.push({ "emote": result[0] });
@@ -112,7 +114,7 @@ export class EmoteFormatter {
         }
         
         if (msg.length > 0) {
-            formatted.push({ "string": msg, "greenText": msg.greenText });            
+            formatted.push({ "string": msg, "greenText": message.greenText });            
         }
 
         return formatted;
@@ -139,7 +141,7 @@ export class MentionedUserFormatter {
                     const before = msg[i].substring(0, result.index);
 
                     if (before !== "") {
-                        formatted.push({ string: before, greenText: msg.greenText });
+                        formatted.push({ string: before, greenText: message.greenText });
                     }
 
                     formatted.push({ mention: result[0] });
@@ -159,7 +161,7 @@ export class MentionedUserFormatter {
 export class GreenTextFormatter {
 
     format(chat, msg, message = null) {
-        if (message.user && msg.indexOf('&gt;') === 0) {
+        if (message.user && msg.indexOf('>') === 0) {
             if (message.user.hasAnyFeatures(
                 UserFeatures.SUBSCRIBER,
                 UserFeatures.SUBSCRIBERT0,
@@ -173,10 +175,9 @@ export class GreenTextFormatter {
                 UserFeatures.COMPCHALLENGE,
                 UserFeatures.ADMIN,
                 UserFeatures.MODERATOR
-            ))
-                msg.greenText = true;
-        } else {
-            msg.greenText = false;
+            )) {
+                message.greenText = true;                
+            }
         }
         return msg;
     }

@@ -420,9 +420,9 @@ class SubscriptionWebView extends Component {
     }
 }
 
-class DiscordView extends FormView {
+class SettingsView extends FormView {
     static navigationOptions = {
-        title: 'Discord',
+        title: 'Settings',
     };
     constructor(props) {
         super(props);
@@ -455,6 +455,7 @@ class ProfileView extends Component {
                     <Text style={styles.ProfileCreated}>{'Member since: ' + created.format('dddd, D MMMM YYYY')}</Text>
                 </View>
                 <NavList listItems={this.listItems} navigation={this.props.navigation}/>
+                <ListButton text='Settings' first={true} last={true} onPress={this.props.navigation.navigate('Settings')} />
             </ScrollView>
         )
     }
@@ -466,8 +467,8 @@ const ProfileNav = StackNavigator({
     Subscription: { screen: SubscriptionView },
     SubscriptionMessageView: { screen: SubscriptionMessageView },
     SubscriptionWebView: { screen: SubscriptionWebView },
-    Discord: { screen: DiscordView },
-    UserAgreement: { screen: UserAgreement }
+    UserAgreement: { screen: UserAgreement },
+    //Settings: { screen: SettingsView }
 }, {
     initialRouteName: 'Profile',
     navigationOptions: {

@@ -59,17 +59,18 @@ export default class MainView extends Component {
     }
 
     render() {
-        let dividerStyle = [styles.TwitchViewDivider];        
+        let dividerStyle = [styles.TwitchViewDivider];     
         if (this.state.resizing) { 
             dividerStyle.push(styles.DividerResizing); 
-            dividerStyle.push({top: this.state.height});
         }
         return (
-            <SafeAreaView style={[styles.MainView]} onLayout={(e) => this._onLayout(e.nativeEvent)} collapsable={false}>
-                <TwitchView ref={(ref) => this.twitchView = ref} parent={this}/>
-                <View style={dividerStyle} />
-                <View style={styles.TwitchViewDividerHandle} {...this._panResponder.panHandlers} />                
-                {this.props.screenProps.chat.mainwindow.uiElem}
+            <SafeAreaView style={[styles.MainView]} collapsable={false}>
+                <View style={styles.View} onLayout={(e) => this._onLayout(e.nativeEvent)}>
+                    <TwitchView ref={(ref) => this.twitchView = ref} parent={this}/>
+                    <View style={dividerStyle} />
+                    <View style={styles.TwitchViewDividerHandle} {...this._panResponder.panHandlers} />                
+                    {this.props.screenProps.chat.mainwindow.uiElem}
+                </View>
             </SafeAreaView>
         );
     }
@@ -105,7 +106,7 @@ export default class MainView extends Component {
     }
 
     _resize(gestureState) {
-        if (gestureState.moveY > 50 && gestureState.moveY < this.state.height - 50) {
+        if (gestureState.moveY > 50 && gestureState.moveY < this.state.height - 50 && this.twitchView) {
             this.twitchView.setState({ height: gestureState.moveY - ((Platform.OS === 'ios') ? 45 : 10) });
         }
     }
@@ -118,7 +119,9 @@ export default class MainView extends Component {
         if (gestureState.moveY > 50 && gestureState.moveY < this.state.height - 50) {
             twitchState.height = gestureState.moveY - ((Platform.OS === 'ios') ? 45 : 10) ;
         }
-        this.twitchView.setState(twitchState);
+        if (this.twitchView) {
+            this.twitchView.setState(twitchState);            
+        }
     }
 
     _onLayout(e) {

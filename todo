@@ -12,13 +12,8 @@ potential launch issues:
 
 launch bugs:
 
-IllegalViewOperationExceptionMainActivity, thinking this is the emote drawer being
-optimized away, and thinking that I have fixed it...
-
 link formatter
 
 greentext formatter
 
 change to non-interactive twitch embed
-
-move chat to normal list rotated^2

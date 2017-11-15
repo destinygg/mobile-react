@@ -126,9 +126,15 @@ class UserBadge extends Component {
     constructor(props) {
         super(props);
         this.style = [styles.UserBadge];
+        let admin = false;
         for (let i = 0; i < this.props.user.features.length; i++) {
-            this.style.push(styles[this.props.user.features[i]]);
+            if (this.props.user.features[i] == UserFeatures.ADMIN) {
+                admin = true;
+            } else {
+                this.style.push(styles[this.props.user.features[i]]);                
+            }
         }
+        if (admin) this.style.push(UserFeatures.ADMIN);
     }
     render() {
         return (
@@ -166,16 +172,16 @@ export class MobileChatMessage extends PureComponent {
         this.formatted = [];
         for (let i = 0; i < this.props.text.length; i++) {
             if ('string' in this.props.text[i]) {
-                this.formatted.push(<MsgText key={i}>{this.props.text[i].string}</MsgText>);
+                this.formatted.push(<MsgText 
+                                        key={i} 
+                                        style={(this.props.text[i].greenText) ? styles.greenText : null}
+                                    >
+                                        {this.props.text[i].string}
+                                    </MsgText>
+                );
                 continue;
             } else if ('emote' in this.props.text[i]) {
                 this.formatted.push(<Emote key={i} name={this.props.text[i].emote} />);
-                continue;
-            } else if ('mention' in this.props.text[i]) {
-                this.formatted.push(<Mention key={i} user={this.props.text[i].mention}/>);
-                continue;
-            } else if ('greenText' in this.props.text[i]) {
-                this.formatted.push(<GreenText key={i}>{this.props.text[i].greenText}</GreenText>);
                 continue;
             }
         }

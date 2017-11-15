@@ -7,8 +7,8 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: 0,
         paddingBottom: 10,
-        paddingRight: 2,
-        paddingLeft: 2,
+        paddingRight: 10,
+        paddingLeft: 10,
     },
     ChatViewList: {
         flex: 1
@@ -27,6 +27,9 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         backgroundColor: 'transparent',
         minHeight: 18
+    },
+    greenText: {
+        color: '#6ca528'
     },
     subscriber: {
         color: '#488ce7'
@@ -65,20 +68,18 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         borderColor: '#222',
         borderWidth: (Platform.OS === 'ios') ? StyleSheet.hairlineWidth : 0,
-        paddingTop: 8,
-        paddingBottom: 8,
         paddingLeft: 12,
         paddingRight: 12,
         marginLeft: 5,
     },
     ChatInputOuter: { 
         flexDirection: 'row', 
-        paddingLeft: 5, 
-        paddingRight: 5, 
-        paddingTop: 5, 
-        paddingBottom: 5, 
-        backgroundColor: '#0D0D0D',
-        zIndex: 2000
+        paddingLeft: 10, 
+        paddingRight: 10,
+        marginBottom: 10, 
+        backgroundColor: '#101010',
+        borderRadius: 15,
+        zIndex: 2000,
     },
     Emote: {
         marginTop: 2,
@@ -90,8 +91,9 @@ const styles = StyleSheet.create({
     EmoteDirectory: {
         zIndex: 1000,
         backgroundColor: '#101010',
-        borderRadius: 15,
-        maxHeight: 200
+        borderTopLeftRadius: 15,
+        borderTopRightRadius: 15,
+        height: 0,
     },
     EmoteMenuItem: {
         resizeMode: 'contain',
