@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         paddingRight: 10,
         paddingLeft: 10,
-        marginBottom: 65
+        marginBottom: 60
     },
     ChatViewList: {
         flex: 1

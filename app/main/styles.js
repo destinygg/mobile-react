@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     CardDrawer: {
-        height: 300,
+        minHeight: 300,
         position: 'absolute',
         top: 0,
         flex: 1,

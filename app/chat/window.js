@@ -1,5 +1,5 @@
 import React, { Component, PureComponent } from 'react';
-import { View, TextInput, Animated, FlatList, AsyncStorage, AppState, KeyboardAvoidingView, Text, ScrollView, TouchableOpacity, ActivityIndicator, TouchableHighlight, Platform, RefreshControl, Dimensions } from 'react-native';
+import { View, TextInput, Animated, FlatList, Keyboard, AsyncStorage, AppState, KeyboardAvoidingView, Text, ScrollView, TouchableOpacity, ActivityIndicator, TouchableHighlight, Platform, RefreshControl, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import styles from './styles';
 import EventEmitter from '../../lib/assets/chat/js/emitter';
@@ -173,7 +173,10 @@ export class MobileChatInput extends Component {
     }
 
     componentDidMount() {
-        global.bugsnag.leaveBreadcrumb('Text input mounted.');                
+        global.bugsnag.leaveBreadcrumb('Text input mounted.');   
+        Keyboard.addListener('keyboardDidHide', () => {
+            this.blur();
+        })             
     }
 }
 
@@ -192,29 +195,23 @@ export class MobileChatView extends Component {
 
     render() {
         return (
-            <KeyboardAvoidingView
-                behavior='padding'
-                style={[styles.View, styles.ChatView]}
-                keyboardVerticalOffset={(Platform.OS ==='android') ? -400 : 0}
-            >
-                <View style={[styles.View]}>
-                    <FlatList
-                        data={this.state.messages}
-                        style={styles.ChatViewList}
-                        extraData={this.state.extraData}
-                        renderItem={item => {
-                            return item.item;
-                        }}
-                        ref={(ref) => this.messageList = ref}
-                        onLayout={(e) => {
-                            this.height = e.nativeEvent.layout.height;
-                            this.scrollToEnd();
-                        }}
-                        onScroll={(e) => this._onScroll(e)}
-                        inverted={true}
-                    />
-                </View>
-            </KeyboardAvoidingView>
+            <View style={[styles.View, styles.ChatView]}>
+                <FlatList
+                    data={this.state.messages}
+                    style={styles.ChatViewList}
+                    extraData={this.state.extraData}
+                    renderItem={item => {
+                        return item.item;
+                    }}
+                    ref={(ref) => this.messageList = ref}
+                    onLayout={(e) => {
+                        this.height = e.nativeEvent.layout.height;
+                        this.scrollToEnd();
+                    }}
+                    onScroll={(e) => this._onScroll(e)}
+                    inverted={true}
+                />
+            </View>
         );
     }
 

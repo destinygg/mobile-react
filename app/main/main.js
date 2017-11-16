@@ -1,5 +1,5 @@
 import React, { Component, PureComponent } from 'react';
-import { View, WebView, Dimensions, PanResponder, AsyncStorage, AppState, Platform, Animated } from 'react-native';
+import { View, WebView, Dimensions, PanResponder, AsyncStorage, AppState, KeyboardAvoidingView, Platform, Animated, Keyboard } from 'react-native';
 import { StackNavigator, SafeAreaView, NavigationActions } from 'react-navigation';
 import { MobileChatView, MobileChatInput } from '../chat/window';
 import styles from './styles';
@@ -8,6 +8,11 @@ import ProfileNav from '../profile/profile';
 import MessageNav from '../messages/messages';
 import DonateNav from '../donate/donate';
 import AboutView from '../about/about'
+
+const MIN_SWIPE_DISTANCE = 10;
+const DEVICE_HEIGHT = parseFloat(Dimensions.get('window').height);
+const THRESHOLD = DEVICE_HEIGHT - 150;
+const VY_MAX = 0.1;
 
 class TwitchView extends Component {
     constructor() {
@@ -92,31 +97,40 @@ class CardDrawer extends Component {
         }
     }
 
-    _onStartDrag(e, gesture) {
-
+    openDrawer(options) {
+        Animated.spring(this.panY, {
+            toValue: this.props.mainView.state.height - 300,
+            bounciness: 0,
+            restSpeedThreshold: 0.1,
+            useNativeDriver: this.props.useNativeAnimations,
+            ...options,
+        }).start(() => {
+            this._lastOpenValue = 1;
+        });
     }
 
-    _onMove(e, gesture) {
+    closeDrawer(options) {
+        Animated.spring(this.panY, {
+            toValue: this.props.mainView.state.height,
+            bounciness: 0,
+            restSpeedThreshold: 1,
+            useNativeDriver: this.props.useNativeAnimations,
+            ...options,
+        }).start(() => {
+            this._lastOpenValue = 0;
+        });
     }
 
     _onEndDrag(e, gesture) {
 
     }
 
-    maybeOpen(gesture) {
-        console.log(gesture.vy);
-        if (gesture.vy < -0.15) {
-            Animated.spring(this.panY, {
-                toValue: this.props.mainView.state.height - 300,
-                friction: 10,
-                tension: -(gesture.vy*100)
-            }).start();
+    avoidKeyboard(height) {
+        console.log('HEIGHT' + height);
+        if ((this.props.mainView.state.height - height) > 100) {
+            this.panY.setValue(this.props.mainView.state.height - height)            
         } else {
-            Animated.spring(this.panY, {
-                toValue: this.props.mainView.state.height,
-                friction: 10,
-                tension: 40
-            }).start();
+            this.panY.setValue(this.props.mainView.state.height);                        
         }
     }
 
@@ -124,25 +138,61 @@ class CardDrawer extends Component {
         this._panResponder = PanResponder.create({  // Ask to be the responder:
             onStartShouldSetPanResponder: (evt, gestureState) => false, 
             onStartShouldSetPanResponderCapture: (evt, gestureState) => false, 
-            onMoveShouldSetPanResponder: (evt, gestureState) => {
-                if (Math.abs(gestureState.dy) > 50) {
-                    return true;
-                } else {
+            onMoveShouldSetPanResponder: (evt, { moveY, dx, dy }) => {
+                if (!dx || !dy || Math.abs(dy) < MIN_SWIPE_DISTANCE) {
                     return false;
-                }                
+                }
+
+                const overlayArea = 300;
+
+                if (this._lastOpenValue === 1) {
+
+                        this._isClosing = true;
+                        return true;
+                } else {
+                    if (dy < 0) {
+                        this._isClosing = false;
+                        return true;
+                    }
+
+                    return false;
+                }
             }, 
-            onMoveShouldSetPanResponderCapture: (evt, gestureState) => false, 
+            onMoveShouldSetPanResponderCapture: (evt, { moveY, dx, dy }) => {
+                if (this._lastOpenValue === 1) {
+                    return true;
+                }
+            }, 
             onPanResponderGrant: (evt, gestureState) => {  // The gesture has started. Show visual feedback so the user knows
-                this.props.mainView.chat.mainwindow.enterBg()
             }, 
             onPanResponderMove: Animated.event(
                 [null, { moveY: this.panY }]
             ), 
             onPanResponderTerminationRequest: (evt, gestureState) => true, 
-            onPanResponderRelease: (evt, gestureState) => {  // The user has released all touches while this view is the
-                // responder. This typically means a gesture has succeeded
-                this.props.mainView.chat.mainwindow.exitBg()     
-                this.maybeOpen(gestureState);           
+            onPanResponderRelease: (evt, { moveY, vy }) => {  // The user has released all touches while this view is the
+                const previouslyOpen = this._isClosing;
+                const isWithinVelocityThreshold = vy < VY_MAX && vy > -VY_MAX;
+
+                console.log(THRESHOLD);
+                
+                if (
+                    (vy < 0) ||
+                    vy <= -VY_MAX ||
+                    (isWithinVelocityThreshold &&
+                        previouslyOpen)
+                ) {
+                    this.openDrawer({ velocity: vy });
+                } else if (
+                    (vy > 0) ||
+                    vy > VY_MAX ||
+                    (isWithinVelocityThreshold && !previouslyOpen)
+                ) {
+                    this.closeDrawer({ velocity: -(vy) });
+                } else if (previouslyOpen) {
+                    this.openDrawer();
+                } else {
+                    this.closeDrawer();
+                }
             }, 
             onPanResponderTerminate: (evt, gestureState) => {  // Another component has become the responder, so this gesture
                 // should be cancelled
@@ -206,6 +256,12 @@ export default class MainView extends Component {
         this.cardDrawerNav.dispatch(NavigationActions.navigate({routeName: 'ProfileView'}))
     }
 
+    blurInput() {
+        if (this.chat.inputElem && this.chat.inputElem.blur) {
+            this.chat.inputElem.blur();
+        }
+    }
+
     render() {
         let dividerStyle = [styles.TwitchViewDivider];     
         if (this.state.resizing) { 
@@ -213,6 +269,14 @@ export default class MainView extends Component {
         }
         return (
             <SafeAreaView style={[styles.MainView]} collapsable={false}>
+                <KeyboardAvoidingView
+                    behavior='height'
+                    style={[styles.View]}
+                    keyboardVerticalOffset={(Platform.OS === 'android') ? -400 : 0}
+                    onLayout={(e) => {
+                        this.cardDrawer.avoidKeyboard(e.nativeEvent.layout.height);
+                    }}
+                >
                 <View style={styles.View} onLayout={(e) => this._onLayout(e.nativeEvent)}>
                     {(() => {
                         if (this.state.streamShown) {
@@ -236,6 +300,7 @@ export default class MainView extends Component {
                         <CardDrawerNav screenProps={{ ...this.props.screenProps, mainView: this }} />
                     </CardDrawer>
                 }
+                </KeyboardAvoidingView>
             </SafeAreaView>
         );
     }
@@ -290,8 +355,14 @@ export default class MainView extends Component {
     }
 
     _onLayout(e) {
-        global.bugsnag.leaveBreadcrumb('MainView before onLayout.');                
-        this.setState({height: e.layout.height});
+        global.bugsnag.leaveBreadcrumb('MainView before onLayout.');  
+        if (this.state.height === null) {
+            this.setState({ 
+                height: (e.layout.height > e.layout.width) ? 
+                    e.layout.height :
+                    e.layout.width 
+            });
+        }              
         global.bugsnag.leaveBreadcrumb('MainView after onLayout.');                        
     }
 
