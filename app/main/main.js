@@ -62,23 +62,23 @@ class CardDrawerNavList extends PureComponent {
 class CardDrawer extends Component {
     constructor(props) {
         super(props);
-        this.translateY = new Animated.spring(225, {
-            useNativeDriver: true
-        })
+        this.panY = new Animated.Value(this.props.mainView.state.height - 25);
+        console.log(this.props.mainView.state.height);
+        this.translateY = Animated.diffClamp(this.panY, this.props.mainView.state.height - 300, this.props.mainView.state.height - 25 );        
         this.height = null;
         this.offsets = null;
     }
 
     render() {
         return (
-            <View style={[styles.CardDrawer, { transform: [{
-                translateY: this.translateY
-            }] }]} 
-                onLayout={(e) => this._onLayout(e)}
+            <Animated.View style={[styles.CardDrawer, { 
+                    transform: [{
+                        translateY: this.translateY
+                }]}]}
                 {...this._panResponder.panHandlers}
             >
                 {this.props.children}
-            </View>            
+            </Animated.View>            
         )
     }
 
@@ -96,7 +96,6 @@ class CardDrawer extends Component {
     }
 
     _onMove(e, gesture) {
-        this.props.mainView.height - gesture.y0
     }
 
     _onEndDrag(e, gesture) {
@@ -108,8 +107,8 @@ class CardDrawer extends Component {
             onStartShouldSetPanResponder: (evt, gestureState) => false, 
             onStartShouldSetPanResponderCapture: (evt, gestureState) => false, 
             onMoveShouldSetPanResponder: (evt, gestureState) => {
-                if (gestureState.dy > -50) {
-                    return false;
+                if (Math.abs(gestureState.dy > 50)) {
+                    return true;
                 } else {
                     return true;
                 }                
@@ -119,11 +118,9 @@ class CardDrawer extends Component {
                 // what is happening!
                 // gestureState.d{x,y} will be set to zero now
             }, 
-            onPanResponderMove: Animated.event([null, // ignore the native event
-                // extract dx and dy from gestureState
-                // like 'pan.x = gestureState.dx, pan.y = gestureState.dy'
-                { dx: pan.x, dy: pan.y }])
-            , 
+            onPanResponderMove: Animated.event(
+                [null, { moveY: this.panY }]
+            ), 
             onPanResponderTerminationRequest: (evt, gestureState) => true, 
             onPanResponderRelease: (evt, gestureState) => {  // The user has released all touches while this view is the
                 // responder. This typically means a gesture has succeeded
@@ -210,13 +207,15 @@ export default class MainView extends Component {
                     })()}
                     {this.props.screenProps.chat.mainwindow.uiElem}
                 </View>
-                <CardDrawer ref={(ref) => this.cardDrawer = ref} >
-                    <MobileChatInput
-                        ref={(ref) => this.chat.inputElem = ref}
-                        chat={this.chat}
-                    />
-                    <CardDrawerNav screenProps={{...this.props.screenProps, mainView: this}} />
-                </CardDrawer>
+                {this.state.height != null && 
+                    <CardDrawer ref={(ref) => this.cardDrawer = ref} mainView={this}>
+                        <MobileChatInput
+                            ref={(ref) => this.chat.inputElem = ref}
+                            chat={this.chat}
+                        />
+                        <CardDrawerNav screenProps={{ ...this.props.screenProps, mainView: this }} />
+                    </CardDrawer>
+                }
             </SafeAreaView>
         );
     }

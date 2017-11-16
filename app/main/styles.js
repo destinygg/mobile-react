@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     CardDrawer: {
         height: 300,
         position: 'absolute',
-        bottom: 0,
+        top: 0,
         flex: 1,
         backgroundColor: '#151515',
         borderTopLeftRadius: 25,
