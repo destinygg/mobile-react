@@ -266,6 +266,7 @@ export default class MobileWindow extends EventEmitter {
         this.lines = [];
         this.messageKey = 0;
         this.ui = null;
+        this.background = false;
     }
 
     censor(nick) {
@@ -323,13 +324,22 @@ export default class MobileWindow extends EventEmitter {
         this.locks--;
     }
 
+    enterBg() {
+        this.background = true;
+    }
+
+    exitBg() {
+        this.background = false;
+        this.ui.sync();
+    }
+
     addMessage(chat, message) {
         this.lastmessage = message        
         message.ui = message.html(chat)
         this.lines.unshift(message.ui);
         message.afterRender(chat);        
         this.cleanup();                
-        if (this.ui) {            
+        if (this.ui && !this.background) {            
             this.ui.sync();
         }
     }
@@ -359,8 +369,10 @@ export default class MobileWindow extends EventEmitter {
         if (this.ui && (this.ui.isPinned() || this.waspinned)) {
             if (this.lines.length >= this.maxlines) {
                 this.lines.splice(-1, this.lines.length - this.maxlines);
-                this.ui.sync();
-                this.ui.scrollToEnd();
+                if (!this.background) {
+                    this.ui.sync();
+                    this.ui.scrollToEnd();
+                }
             }
         }
     }

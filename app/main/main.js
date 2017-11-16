@@ -62,9 +62,8 @@ class CardDrawerNavList extends PureComponent {
 class CardDrawer extends Component {
     constructor(props) {
         super(props);
-        this.panY = new Animated.Value(this.props.mainView.state.height - 25);
-        console.log(this.props.mainView.state.height);
-        this.translateY = Animated.diffClamp(this.panY, this.props.mainView.state.height - 300, this.props.mainView.state.height - 25 );        
+        this.panY = new Animated.Value(this.props.mainView.state.height);
+        this.translateY = Animated.diffClamp(this.panY, this.props.mainView.state.height - 300, this.props.mainView.state.height - 65 );        
         this.height = null;
         this.offsets = null;
     }
@@ -102,6 +101,23 @@ class CardDrawer extends Component {
 
     }
 
+    maybeOpen(gesture) {
+        console.log(gesture.vy);
+        if (gesture.vy < -0.15) {
+            Animated.spring(this.panY, {
+                toValue: this.props.mainView.state.height - 300,
+                friction: 10,
+                tension: -(gesture.vy*100)
+            }).start();
+        } else {
+            Animated.spring(this.panY, {
+                toValue: this.props.mainView.state.height,
+                friction: 10,
+                tension: 40
+            }).start();
+        }
+    }
+
     componentWillMount() {
         this._panResponder = PanResponder.create({  // Ask to be the responder:
             onStartShouldSetPanResponder: (evt, gestureState) => false, 
@@ -115,8 +131,7 @@ class CardDrawer extends Component {
             }, 
             onMoveShouldSetPanResponderCapture: (evt, gestureState) => false, 
             onPanResponderGrant: (evt, gestureState) => {  // The gesture has started. Show visual feedback so the user knows
-                // what is happening!
-                // gestureState.d{x,y} will be set to zero now
+                this.props.mainView.chat.mainwindow.enterBg()
             }, 
             onPanResponderMove: Animated.event(
                 [null, { moveY: this.panY }]
@@ -124,6 +139,8 @@ class CardDrawer extends Component {
             onPanResponderTerminationRequest: (evt, gestureState) => true, 
             onPanResponderRelease: (evt, gestureState) => {  // The user has released all touches while this view is the
                 // responder. This typically means a gesture has succeeded
+                this.props.mainView.chat.mainwindow.exitBg()     
+                this.maybeOpen(gestureState);           
             }, 
             onPanResponderTerminate: (evt, gestureState) => {  // Another component has become the responder, so this gesture
                 // should be cancelled
