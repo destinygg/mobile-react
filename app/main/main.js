@@ -1,8 +1,13 @@
-import React, { Component } from 'react';
-import { View, WebView, Dimensions, PanResponder, AsyncStorage, AppState, Platform } from 'react-native';
-import { SafeAreaView } from 'react-navigation';
-import { MobileChatView } from '../chat/chat';
+import React, { Component, PureComponent } from 'react';
+import { View, WebView, Dimensions, PanResponder, AsyncStorage, AppState, Platform, Animated } from 'react-native';
+import { StackNavigator, SafeAreaView, NavigationActions } from 'react-navigation';
+import { MobileChatView, MobileChatInput } from '../chat/window';
 import styles from './styles';
+import { ButtonList } from '../components'
+import ProfileNav from '../profile/profile';
+import MessageNav from '../messages/messages';
+import DonateNav from '../donate/donate';
+import AboutView from '../about/about'
 
 class TwitchView extends Component {
     constructor() {
@@ -36,6 +41,120 @@ class TwitchView extends Component {
     }
 }
 
+class CardDrawerNavList extends PureComponent {
+    constructor(props) {
+        super(props);
+        this.routes = [
+            { itemText: 'Stream', itemTarget: () => this.props.screenProps.mainView.showStream() },
+            { itemText: 'Chat', itemTarget: () => this.props.screenProps.mainView.hideStream() },
+            { itemText: 'Messages', itemTarget: () => this.props.navigation.navigate('MessageView') },
+            { itemText: 'Donate', itemTarget: () => this.props.navigation.navigate('DonateView') },
+            { itemText: 'Profile', itemTarget: () => this.props.navigation.navigate('ProfileView')}
+        ];
+    }
+    render() {
+        return (
+            <ButtonList listItems={this.routes} listButtonStyle={{backgroundColor: '#151515'}} />
+        )
+    }
+}
+
+class CardDrawer extends Component {
+    constructor(props) {
+        super(props);
+        this.translateY = new Animated.spring(225, {
+            useNativeDriver: true
+        })
+        this.height = null;
+        this.offsets = null;
+    }
+
+    render() {
+        return (
+            <View style={[styles.CardDrawer, { transform: [{
+                translateY: this.translateY
+            }] }]} 
+                onLayout={(e) => this._onLayout(e)}
+                {...this._panResponder.panHandlers}
+            >
+                {this.props.children}
+            </View>            
+        )
+    }
+
+    _onLayout(e) {
+        this.height = e.nativeEvent.layout.height;
+        this.offsets = {
+            hidden: -(this.height) + 15, 
+            input: -(this.height) + 50,
+            full: 0
+        }
+    }
+
+    _onStartDrag(e, gesture) {
+
+    }
+
+    _onMove(e, gesture) {
+        this.props.mainView.height - gesture.y0
+    }
+
+    _onEndDrag(e, gesture) {
+
+    }
+
+    componentWillMount() {
+        this._panResponder = PanResponder.create({  // Ask to be the responder:
+            onStartShouldSetPanResponder: (evt, gestureState) => false, 
+            onStartShouldSetPanResponderCapture: (evt, gestureState) => false, 
+            onMoveShouldSetPanResponder: (evt, gestureState) => {
+                if (gestureState.dy > -50) {
+                    return false;
+                } else {
+                    return true;
+                }                
+            }, 
+            onMoveShouldSetPanResponderCapture: (evt, gestureState) => false, 
+            onPanResponderGrant: (evt, gestureState) => {  // The gesture has started. Show visual feedback so the user knows
+                // what is happening!
+                // gestureState.d{x,y} will be set to zero now
+            }, 
+            onPanResponderMove: Animated.event([null, // ignore the native event
+                // extract dx and dy from gestureState
+                // like 'pan.x = gestureState.dx, pan.y = gestureState.dy'
+                { dx: pan.x, dy: pan.y }])
+            , 
+            onPanResponderTerminationRequest: (evt, gestureState) => true, 
+            onPanResponderRelease: (evt, gestureState) => {  // The user has released all touches while this view is the
+                // responder. This typically means a gesture has succeeded
+            }, 
+            onPanResponderTerminate: (evt, gestureState) => {  // Another component has become the responder, so this gesture
+                // should be cancelled
+            }, 
+            onShouldBlockNativeResponder: (evt, gestureState) => {  // Returns whether this component should block native components from becoming the JS
+                // responder. Returns true by default. Is currently only supported on android.
+                return false;
+            },
+        });
+    }
+}
+
+const CardDrawerNav = StackNavigator({
+    NavList: { screen: CardDrawerNavList },
+    MessageView: {
+        screen: MessageNav,
+        navigationOptions: {
+            title: 'Messages'
+        }
+    },
+    DonateView: { screen: DonateNav },
+    ProfileView: { screen: ProfileNav },
+    About: { screen: AboutView }
+}, {
+    initialRouteName: 'NavList',
+    headerMode: 'none'
+});
+
 export default class MainView extends Component {
     static navigationOptions = {
         title: 'Stream'
@@ -44,7 +163,7 @@ export default class MainView extends Component {
     constructor(props) {
         super(props);
         this.chat = props.screenProps.chat;
-        this.state = {height: null, resizing: false};
+        this.state = {height: null, resizing: false, streamShown: true};
         global.mainview = this;
     }
 
@@ -58,6 +177,18 @@ export default class MainView extends Component {
         });
     }
 
+    hideStream() {
+        this.setState({streamShown: false});
+    }
+
+    showStream() {
+        this.setState({ streamShown: true });
+    }
+
+    test() {
+        this.cardDrawerNav.dispatch(NavigationActions.navigate({routeName: 'ProfileView'}))
+    }
+
     render() {
         let dividerStyle = [styles.TwitchViewDivider];     
         if (this.state.resizing) { 
@@ -66,11 +197,26 @@ export default class MainView extends Component {
         return (
             <SafeAreaView style={[styles.MainView]} collapsable={false}>
                 <View style={styles.View} onLayout={(e) => this._onLayout(e.nativeEvent)}>
-                    <TwitchView ref={(ref) => this.twitchView = ref} parent={this}/>
-                    <View style={dividerStyle} />
-                    <View style={styles.TwitchViewDividerHandle} {...this._panResponder.panHandlers} />                
+                    {(() => {
+                        if (this.state.streamShown) {
+                            return (
+                                <View>
+                                    <TwitchView ref={(ref) => this.twitchView = ref} parent={this} />
+                                    <View style={dividerStyle} />
+                                    <View style={styles.TwitchViewDividerHandle} {...this._panResponder.panHandlers} />   
+                                </View>
+                            )
+                        }
+                    })()}
                     {this.props.screenProps.chat.mainwindow.uiElem}
                 </View>
+                <CardDrawer ref={(ref) => this.cardDrawer = ref} >
+                    <MobileChatInput
+                        ref={(ref) => this.chat.inputElem = ref}
+                        chat={this.chat}
+                    />
+                    <CardDrawerNav screenProps={{...this.props.screenProps, mainView: this}} />
+                </CardDrawer>
             </SafeAreaView>
         );
     }
@@ -133,7 +279,7 @@ export default class MainView extends Component {
     _handleAppStateChange = (nextState) => {
         if (nextState === 'background') {
             if (this.twitchView.state.height !== null) {
-                AsyncStorage.setItem('TwitchViewHeight', this.twitchView.state.height.toString());                
+                AsyncStorage.setItem('TwitchViewHeight', Math.floor(this.twitchView.state.height).toString());                
             }
             AsyncStorage.setItem('InitRoute', this.props.navigation.state.routeName);
         }
@@ -148,7 +294,7 @@ export default class MainView extends Component {
     componentWillUnmount() {
         AppState.removeEventListener('change', this._handleAppStateChange);   
         if (this.twitchView.state.height !== null) {            
-            AsyncStorage.setItem('TwitchViewHeight', this.twitchView.state.height.toString());        
+            AsyncStorage.setItem('TwitchViewHeight', Math.floor(this.twitchView.state.height).toString());        
         }
     }
 }

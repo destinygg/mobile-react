@@ -32,8 +32,19 @@ const styles = StyleSheet.create({
         zIndex: 1000,
         width: (Platform.OS === 'ios') ? 24 : 30,
         borderRadius: (Platform.OS === 'ios') ? 8 : 10,
-        backgroundColor: '#222',
+        backgroundColor: '#151515',
         alignSelf: 'center',
+    },
+    CardDrawer: {
+        height: 300,
+        position: 'absolute',
+        bottom: 0,
+        flex: 1,
+        backgroundColor: '#151515',
+        borderTopLeftRadius: 25,
+        borderTopRightRadius: 25,
+        marginLeft: 5,
+        marginRight: 5,
     }
 });
 

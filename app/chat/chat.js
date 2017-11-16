@@ -17,6 +17,10 @@ export class MobileChat extends Chat {
         this.me = null;
     }
 
+    send(text) {
+        this.control.emit('SEND', text.trim());
+    }
+
     censor(nick) {
         this.mainwindow.censor(nick);
     }

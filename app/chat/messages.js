@@ -134,7 +134,7 @@ class UserBadge extends Component {
                 this.style.push(styles[this.props.user.features[i]]);                
             }
         }
-        if (admin) this.style.push(UserFeatures.ADMIN);
+        if (admin) this.style.push('admin');
     }
     render() {
         return (
@@ -374,7 +374,7 @@ class ChatUserMessage extends ChatMessage {
 
         const user = (this.continued) ?
                     null : 
-                    <UserBadge user={this.user} onPress={(username) => this.window.ui.appendText(username)}>{buildFeatures(this.user)}</UserBadge>;
+                    <UserBadge user={this.user} onPress={(username) => this.window.chat.appendInputText(username)}>{buildFeatures(this.user)}</UserBadge>;
         return this.wrap(
             buildTime(this), user, ctrl, buildMessageTxt(chat, this)
         );

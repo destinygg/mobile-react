@@ -16,6 +16,10 @@ export class ListButton extends Component {
             innerStyle.push(styles.innerLastInList); 
         }
 
+        if (this.props.style) {
+            outerStyle.push(this.props.style);
+        }
+
         return (
             <TouchableHighlight onPress={() => this.props.onPress()} style={outerStyle}>
                 <View style={innerStyle}>
@@ -86,6 +90,7 @@ export class ButtonList extends Component {
                     key={index}
                     first={index === 0}
                     last={index === (array.length - 1)}
+                    style={this.props.listButtonStyle}
                 />
             );
         });
