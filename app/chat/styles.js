@@ -8,7 +8,8 @@ const styles = StyleSheet.create({
         paddingTop: 0,
         paddingBottom: 10,
         paddingRight: 10,
-        paddingLeft: 10
+        paddingLeft: 10,
+        marginBottom: 65
     },
     ChatViewList: {
         flex: 1

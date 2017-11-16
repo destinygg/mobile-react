@@ -54,7 +54,9 @@ class CardDrawerNavList extends PureComponent {
     }
     render() {
         return (
-            <ButtonList listItems={this.routes} listButtonStyle={{backgroundColor: '#151515'}} />
+            <View style={{backgroundColor: '#151515'}}>
+                <ButtonList listItems={this.routes} listButtonStyle={{backgroundColor: '#151515'}} />
+            </View>
         )
     }
 }
@@ -63,7 +65,7 @@ class CardDrawer extends Component {
     constructor(props) {
         super(props);
         this.panY = new Animated.Value(this.props.mainView.state.height);
-        this.translateY = Animated.diffClamp(this.panY, this.props.mainView.state.height - 300, this.props.mainView.state.height - 65 );        
+        this.translateY = Animated.diffClamp(this.panY, this.props.mainView.state.height - 300, this.props.mainView.state.height - 60 );        
         this.height = null;
         this.offsets = null;
     }
@@ -123,10 +125,10 @@ class CardDrawer extends Component {
             onStartShouldSetPanResponder: (evt, gestureState) => false, 
             onStartShouldSetPanResponderCapture: (evt, gestureState) => false, 
             onMoveShouldSetPanResponder: (evt, gestureState) => {
-                if (Math.abs(gestureState.dy > 50)) {
+                if (Math.abs(gestureState.dy) > 50) {
                     return true;
                 } else {
-                    return true;
+                    return false;
                 }                
             }, 
             onMoveShouldSetPanResponderCapture: (evt, gestureState) => false, 
@@ -147,7 +149,7 @@ class CardDrawer extends Component {
             }, 
             onShouldBlockNativeResponder: (evt, gestureState) => {  // Returns whether this component should block native components from becoming the JS
                 // responder. Returns true by default. Is currently only supported on android.
-                return false;
+                return true;
             },
         });
     }
@@ -166,7 +168,8 @@ const CardDrawerNav = StackNavigator({
     About: { screen: AboutView }
 }, {
     initialRouteName: 'NavList',
-    headerMode: 'none'
+    headerMode: 'none',
+    cardStyle: { backgroundColor: '#151515' }
 });
 
 export default class MainView extends Component {
