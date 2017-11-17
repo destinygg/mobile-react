@@ -48,9 +48,19 @@ const styles = StyleSheet.create({
     },
     CardDrawerNavList: {
         backgroundColor: '#151515',
-        paddingTop: 25,
+        paddingTop: 5,
         paddingBottom: 50,
         marginTop: -5
+    },
+    DrawerHandle: {
+        position: 'absolute',
+        height: 4,
+        width: 150,
+        backgroundColor: '#888',
+        borderRadius: 2,
+        top: 80,
+        alignSelf: 'center',
+        zIndex: 3000
     }
 });
 

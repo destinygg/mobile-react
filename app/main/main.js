@@ -66,17 +66,12 @@ class CardDrawerNavList extends PureComponent {
 class CardDrawer extends Component {
     constructor(props) {
         super(props);
-        this.screenHeight = this.props.mainView.state.height;
-        this.openedY = this.props.mainView.state.height - 300;
-        this.closedY = this.props.mainView.state.height - 65;
-        this.panY = new Animated.Value(this.props.mainView.state.height);
-        this.translateY = Animated.diffClamp(this.panY, this.openedY, this.closedY );    
-        this.props.mainView.inputElem.bindAnimation({
-            binding: this.translateY,
-            interpolate: [this.openedY, this.closedY]
-        });
         this.height = null;
         this.offsets = null;
+        this.openedY = this.props.mainView.state.interpolate.max;
+        this.closedY = this.props.mainView.state.interpolate.min;
+        this.translateY = this.props.mainView.state.translateY;
+        this.panY = this.props.mainView.state.panY;
     }
 
     render() {
@@ -87,7 +82,17 @@ class CardDrawer extends Component {
                 }]}]}
                 {...this._panResponder.panHandlers}
             >
-                {this.props.children}
+                <Animated.View style={[
+                    styles.DrawerHandle, 
+                    {opacity: this.translateY.interpolate({
+                        inputRange: [
+                            this.props.mainView.state.interpolate.max,
+                            this.props.mainView.state.interpolate.min
+                        ],
+                        outputRange: [1, 0]
+                    })}]} 
+                />
+                    {this.props.children}
             </Animated.View>            
         )
     }
@@ -102,9 +107,9 @@ class CardDrawer extends Component {
     }
 
     openDrawer(options) {
-        this.props.mainView.inputElem.hide();
+        this.props.mainView.chat.inputElem.hide();
         Animated.spring(this.panY, {
-            toValue: this.props.mainView.state.height - 300,
+            toValue: this.openedY,
             bounciness: 0,
             restSpeedThreshold: 0.1,
             useNativeDriver: this.props.useNativeAnimations,
@@ -115,7 +120,7 @@ class CardDrawer extends Component {
     }
 
     closeDrawer(options) {
-        this.props.mainView.inputElem.show();        
+        this.props.mainView.chat.inputElem.show();        
         Animated.spring(this.panY, {
             toValue: this.props.mainView.state.height,
             bounciness: 0,
@@ -148,8 +153,6 @@ class CardDrawer extends Component {
                 if (!dx || !dy || Math.abs(dy) < MIN_SWIPE_DISTANCE) {
                     return false;
                 }
-
-                const overlayArea = 300;
 
                 if (this._lastOpenValue === 1) {
 
@@ -266,7 +269,9 @@ export default class MainView extends Component {
                     style={[styles.View]}
                     keyboardVerticalOffset={(Platform.OS === 'android') ? -400 : 0}
                     onLayout={(e) => {
-                        this.cardDrawer.avoidKeyboard(e.nativeEvent.layout.height);
+                        if (this.cardDrawer && this.state.height) {
+                            this.cardDrawer.avoidKeyboard(e.nativeEvent.layout.height);
+                        }
                     }}
                 >
                 <View style={styles.View} onLayout={(e) => this._onLayout(e.nativeEvent)}>
@@ -288,6 +293,13 @@ export default class MainView extends Component {
                         <MobileChatInput
                             ref={(ref) => this.chat.inputElem = ref}
                             chat={this.chat}
+                            animationBinding={{
+                                binding: this.state.translateY,
+                                interpolate: [
+                                    this.state.interpolate.max,
+                                    this.state.interpolate.max + 30
+                                ]
+                            }}
                         />
                         <CardDrawerNavList screenProps={{ ...this.props.screenProps, mainView: this }} navigation={this.props.navigation} />
                     </CardDrawer>
@@ -349,10 +361,18 @@ export default class MainView extends Component {
     _onLayout(e) {
         global.bugsnag.leaveBreadcrumb('MainView before onLayout.');  
         if (this.state.height === null) {
+            const interpolate = {
+                max: e.layout.height - 325,
+                min: e.layout.height - 65
+            };
+            const panY = new Animated.Value(e.layout.height);
             this.setState({ 
                 height: (e.layout.height > e.layout.width) ? 
                     e.layout.height :
-                    e.layout.width 
+                    e.layout.width,
+                panY: panY,
+                translateY: Animated.diffClamp(panY, interpolate.max, interpolate.min),
+                interpolate: interpolate
             });
         }              
         global.bugsnag.leaveBreadcrumb('MainView after onLayout.');                        

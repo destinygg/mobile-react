@@ -92,7 +92,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#151515',
         borderTopLeftRadius: 25,
         borderTopRightRadius: 25,
-        marginTop: 10
+        marginTop: 10,
+        paddingTop: 5,
+        paddingLeft: 5,
+        paddingRight: 5
     },
     Emote: {
         marginTop: 2,

@@ -70,15 +70,21 @@ class EmoteDirectory extends PureComponent {
 export class MobileChatInput extends Component {
     constructor(props) {
         super(props);
-        this.state = {value: "", emoteDirShown: false, shown: true, opacity: null, interpolate: null};
+        this.state = {value: "", emoteDirShown: false, shown: true};
+        this.opacity = null;
+        this.interpolate = null;
         this.input = null;
     }
 
+    componentWillMount() {
+        this.bindAnimation(this.props.animationBinding);        
+    }
+
     bindAnimation(config) {
-        this.setState({
-            opacity: config.binding,
-            interpolate: config.interpolate
-        });
+        this.opacity = {opacity: config.binding.interpolate({
+            inputRange: config.interpolate,
+            outputRange: [0, 1]
+        })};
     }
 
     set(text) {
@@ -181,44 +187,38 @@ export class MobileChatInput extends Component {
         return (
             <View 
                 style={[
-                    styles.ChatInputOuter, 
-                    (this.state.opacity) ?
-                        {opacity: 
-                            this.opacity.interpolate({
-                                inputRange: this.state.interpolate,
-                                outputRange: [0, 1]
-                            })
-                        } :
-                        null
+                    styles.ChatInputOuter 
                 ]} 
                 pointerEvents={(this.state.shown) ? 'auto' : 'none'}
             >
                 <EmoteDirectory onSelect={(emote) => this.append(emote)} ref={(ref) => this.emoteDir = ref} />                                                                                        
                 <View style={styles.ChatInputInner}>
-                    <TouchableOpacity onPress={() => this.toggleEmoteDir()}>
-                        <Text style={{
-                            fontFamily: 'ionicons',
-                            color: '#888',
-                            fontSize: 30,
-                            paddingLeft: 10,
-                            paddingRight: 10,
-                            paddingTop: 10,
-                            paddingBottom: 10
-                        }}>
-                            &#xf38e;
-                        </Text>
-                    </TouchableOpacity>
-                    <TextInput
-                        style={styles.ChatInput}
-                        placeholder={'Write something...'}
-                        placeholderTextColor="#888"
-                        onChangeText={(text) => this.set(text)}
-                        onSubmitEditing={() => this.send()}
-                        ref={ref => this.input = ref}
-                        underlineColorAndroid='#222'
-                        value={this.state.value}
-                        keyboardAppearance='dark'
-                    />
+                    <Animated.View style={[{flex: 1, flexDirection: 'row'}, this.opacity]}>
+                        <TouchableOpacity onPress={() => this.toggleEmoteDir()}>
+                            <Text style={{
+                                fontFamily: 'ionicons',
+                                color: '#888',
+                                fontSize: 30,
+                                paddingLeft: 10,
+                                paddingRight: 10,
+                                paddingTop: 10,
+                                paddingBottom: 10
+                            }}>
+                                &#xf38e;
+                            </Text>
+                        </TouchableOpacity>
+                        <TextInput
+                            style={styles.ChatInput}
+                            placeholder={'Write something...'}
+                            placeholderTextColor="#888"
+                            onChangeText={(text) => this.set(text)}
+                            onSubmitEditing={() => this.send()}
+                            ref={ref => this.input = ref}
+                            underlineColorAndroid='#222'
+                            value={this.state.value}
+                            keyboardAppearance='dark'
+                        />
+                    </Animated.View>
                 </View>
             </View>
         )
