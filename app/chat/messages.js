@@ -21,9 +21,9 @@ export const MessageTypes = {
 }
 
 const formatters = new Map()
-//formatters.set('url', new UrlFormatter())
 formatters.set('green', new GreenTextFormatter())
 formatters.set('emote', new EmoteFormatter())
+formatters.set('url', new UrlFormatter())
 //formatters.set('mentioned', new MentionedUserFormatter())
 
 function buildMessageTxt(chat, message) {
@@ -158,11 +158,35 @@ export class Emote extends Component {
     }
 }
 
+class MediaModal extends Component {
+    
+}
+
 class MsgText extends Component {
+    constructor(props) {
+        super(props);
+        let styles = [styles.MsgText];
+
+        if (this.props.greenText) {
+            styles.push(styles.greenText);
+        }
+
+        if (this.props.link) {
+            styles.push(styles.linkText);
+        }
+    }
     render() {
-        return (
-            <Text style={styles.MsgText}>{this.props.children}</Text>
-        )
+        if(this.props.link) {
+            return (
+                <TouchableHighlight>
+                    <Text style={styles}>{this.props.children}</Text>
+                </TouchableHighlight>
+            )
+        } else {
+            return (
+                <Text style={styles}>{this.props.children}</Text>
+            )
+        }
     }
 }
 
@@ -174,7 +198,8 @@ export class MobileChatMessage extends PureComponent {
             if ('string' in this.props.text[i]) {
                 this.formatted.push(<MsgText 
                                         key={i} 
-                                        style={(this.props.text[i].greenText) ? styles.greenText : null}
+                                        greenText={this.props.text[i].greenText}
+                                        link={this.props.text[i].link}
                                     >
                                         {this.props.text[i].string}
                                     </MsgText>

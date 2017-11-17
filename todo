@@ -12,10 +12,15 @@ potential launch issues:
 
 launch bugs:
 
-link formatter
+settings menu
 
-greentext formatter
+remove dragger bar from emote dir.
 
-change to non-interactive twitch embed
+slightly reduce rounding on drawer corners
 
-fix admin crash badge tag
+animate drawer handle up and down and change opacity slightly
+so you can see it when closed.
+
+link modal
+
+horizontal view

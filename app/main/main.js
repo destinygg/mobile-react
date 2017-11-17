@@ -296,8 +296,8 @@ export default class MainView extends Component {
                             animationBinding={{
                                 binding: this.state.translateY,
                                 interpolate: [
-                                    this.state.interpolate.max,
-                                    this.state.interpolate.max + 30
+                                    this.state.interpolate.min,
+                                    this.state.interpolate.min + 30
                                 ]
                             }}
                         />
@@ -363,7 +363,7 @@ export default class MainView extends Component {
         if (this.state.height === null) {
             const interpolate = {
                 max: e.layout.height - 325,
-                min: e.layout.height - 65
+                min: e.layout.height - 75
             };
             const panY = new Animated.Value(e.layout.height);
             this.setState({ 
