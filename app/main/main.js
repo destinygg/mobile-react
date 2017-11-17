@@ -4,10 +4,7 @@ import { StackNavigator, SafeAreaView, NavigationActions } from 'react-navigatio
 import { MobileChatView, MobileChatInput } from '../chat/window';
 import styles from './styles';
 import { ButtonList } from '../components'
-import ProfileNav from '../profile/profile';
-import MessageNav from '../messages/messages';
-import DonateNav from '../donate/donate';
-import AboutView from '../about/about'
+
 
 const MIN_SWIPE_DISTANCE = 10;
 const DEVICE_HEIGHT = parseFloat(Dimensions.get('window').height);
@@ -59,7 +56,7 @@ class CardDrawerNavList extends PureComponent {
     }
     render() {
         return (
-            <View style={{backgroundColor: '#151515'}}>
+            <View style={styles.CardDrawerNavList}>
                 <ButtonList listItems={this.routes} listButtonStyle={{backgroundColor: '#151515'}} />
             </View>
         )
@@ -69,8 +66,15 @@ class CardDrawerNavList extends PureComponent {
 class CardDrawer extends Component {
     constructor(props) {
         super(props);
+        this.screenHeight = this.props.mainView.state.height;
+        this.openedY = this.props.mainView.state.height - 300;
+        this.closedY = this.props.mainView.state.height - 65;
         this.panY = new Animated.Value(this.props.mainView.state.height);
-        this.translateY = Animated.diffClamp(this.panY, this.props.mainView.state.height - 300, this.props.mainView.state.height - 60 );        
+        this.translateY = Animated.diffClamp(this.panY, this.openedY, this.closedY );    
+        this.props.mainView.inputElem.bindAnimation({
+            binding: this.translateY,
+            interpolate: [this.openedY, this.closedY]
+        });
         this.height = null;
         this.offsets = null;
     }
@@ -98,6 +102,7 @@ class CardDrawer extends Component {
     }
 
     openDrawer(options) {
+        this.props.mainView.inputElem.hide();
         Animated.spring(this.panY, {
             toValue: this.props.mainView.state.height - 300,
             bounciness: 0,
@@ -110,6 +115,7 @@ class CardDrawer extends Component {
     }
 
     closeDrawer(options) {
+        this.props.mainView.inputElem.show();        
         Animated.spring(this.panY, {
             toValue: this.props.mainView.state.height,
             bounciness: 0,
@@ -126,7 +132,6 @@ class CardDrawer extends Component {
     }
 
     avoidKeyboard(height) {
-        console.log('HEIGHT' + height);
         if ((this.props.mainView.state.height - height) > 100) {
             this.panY.setValue(this.props.mainView.state.height - height)            
         } else {
@@ -139,6 +144,7 @@ class CardDrawer extends Component {
             onStartShouldSetPanResponder: (evt, gestureState) => false, 
             onStartShouldSetPanResponderCapture: (evt, gestureState) => false, 
             onMoveShouldSetPanResponder: (evt, { moveY, dx, dy }) => {
+                console.log(dy);
                 if (!dx || !dy || Math.abs(dy) < MIN_SWIPE_DISTANCE) {
                     return false;
                 }
@@ -158,22 +164,25 @@ class CardDrawer extends Component {
                     return false;
                 }
             }, 
-            onMoveShouldSetPanResponderCapture: (evt, { moveY, dx, dy }) => {
-                if (this._lastOpenValue === 1) {
-                    return true;
-                }
-            }, 
+            onMoveShouldSetPanResponderCapture: (evt, { moveY, dx, dy }) => false, 
             onPanResponderGrant: (evt, gestureState) => {  // The gesture has started. Show visual feedback so the user knows
             }, 
             onPanResponderMove: Animated.event(
                 [null, { moveY: this.panY }]
             ), 
             onPanResponderTerminationRequest: (evt, gestureState) => true, 
-            onPanResponderRelease: (evt, { moveY, vy }) => {  // The user has released all touches while this view is the
+            onPanResponderRelease: (evt, { moveY, vy, dx, dy }) => {  // The user has released all touches while this view is the
                 const previouslyOpen = this._isClosing;
                 const isWithinVelocityThreshold = vy < VY_MAX && vy > -VY_MAX;
 
-                console.log(THRESHOLD);
+                if (!dx || !dy || Math.abs(dy) < MIN_SWIPE_DISTANCE) {
+                    if (previouslyOpen) {
+                        this.openDrawer();
+                    } else {
+                        this.closeDrawer();
+                    }
+                    return false;                    
+                }
                 
                 if (
                     (vy < 0) ||
@@ -204,23 +213,6 @@ class CardDrawer extends Component {
         });
     }
 }
-
-const CardDrawerNav = StackNavigator({
-    NavList: { screen: CardDrawerNavList },
-    MessageView: {
-        screen: MessageNav,
-        navigationOptions: {
-            title: 'Messages'
-        }
-    },
-    DonateView: { screen: DonateNav },
-    ProfileView: { screen: ProfileNav },
-    About: { screen: AboutView }
-}, {
-    initialRouteName: 'NavList',
-    headerMode: 'none',
-    cardStyle: { backgroundColor: '#151515' }
-});
 
 export default class MainView extends Component {
     static navigationOptions = {
@@ -297,7 +289,7 @@ export default class MainView extends Component {
                             ref={(ref) => this.chat.inputElem = ref}
                             chat={this.chat}
                         />
-                        <CardDrawerNav screenProps={{ ...this.props.screenProps, mainView: this }} />
+                        <CardDrawerNavList screenProps={{ ...this.props.screenProps, mainView: this }} navigation={this.props.navigation} />
                     </CardDrawer>
                 }
                 </KeyboardAvoidingView>

@@ -22,9 +22,9 @@ const tagcolors = [
 class EmoteDirectory extends PureComponent {
     constructor(props) {
         super(props);
-        this.state = {filter: ''};
+        this.state = {filter: '', shown: false};
         this.emotes = Array.from(emoteImgs.keys()).sort();
-        this.height = new Animated.Value(0);
+        this.top = new Animated.Value(50);
     }
 
     filter(string) {
@@ -46,10 +46,18 @@ class EmoteDirectory extends PureComponent {
                     );
                 });
         return (
-            <Animated.View style={[styles.EmoteDirectory, {height: this.height}]} collapsable={false}>
-                <ScrollView horizontal={true} keyboardShouldPersistTaps={'always'}>
-                    {children}
-                </ScrollView>
+            <Animated.View style={[
+                    styles.EmoteDirectoryOuter, 
+                    (this.state.shown) ? styles.EmoteDirShown : null, 
+                    {transform:[{
+                        translateY: this.top
+                    }]}
+                ]} collapsable={false}>
+                <View style={styles.EmoteDirectory}>
+                    <ScrollView horizontal={true} keyboardShouldPersistTaps={'always'}>
+                        {children}
+                    </ScrollView>
+                </View>
             </Animated.View>
         )
     }
@@ -62,8 +70,15 @@ class EmoteDirectory extends PureComponent {
 export class MobileChatInput extends Component {
     constructor(props) {
         super(props);
-        this.state = {value: "", emoteDirShown: false};
+        this.state = {value: "", emoteDirShown: false, shown: true, opacity: null, interpolate: null};
         this.input = null;
+    }
+
+    bindAnimation(config) {
+        this.setState({
+            opacity: config.binding,
+            interpolate: config.interpolate
+        });
     }
 
     set(text) {
@@ -88,7 +103,7 @@ export class MobileChatInput extends Component {
     }
 
     focus() {
-        if (!this.input.isFocused()) {
+        if (this.input && !this.input.isFocused()) {
             this.input.requestAnimationFrame(this.input.focus);
         }
     }
@@ -99,8 +114,20 @@ export class MobileChatInput extends Component {
     }
 
     blur() {
-        if (this.input.isFocused()) {
+        if (this.input && this.input.isFocused()) {
             this.input.blur();
+        }
+    }
+
+    hide() {
+        if (this.state.shown) {
+            this.setState({ shown: false });
+        }
+    }
+
+    show() {
+        if (!this.state.shown) {
+            this.setState({ shown: true });
         }
     }
 
@@ -108,41 +135,66 @@ export class MobileChatInput extends Component {
     hideEmoteDir() {
         if (this.state.emoteDirShown) {
             Animated.timing(
-                this.emoteDir.height,
+                this.emoteDir.top,
                 {
                     duration: 300,
                     toValue: 0
                 }
-            ).start(() => this.setState({ emoteDirShown: false }));
+            ).start(() => {
+                this.setState({ emoteDirShown: false });
+                this.emoteDir.setState({ emoteDirShown: false });
+            });
         }
     }
 
     toggleEmoteDir() {
         if (this.state.emoteDirShown) {
             Animated.timing(
-                this.emoteDir.height,
+                this.emoteDir.top,
                 {
                     duration: 300,
                     toValue: 0
                 }
-            ).start(() => this.setState({ emoteDirShown: false }));
+            ).start(() => {
+                this.setState({ emoteDirShown: false });
+                this.emoteDir.setState({ emoteDirShown: false });
+            });
         } else {
-            this.emoteDir.filter(this.state.value.split(' ').slice(-1)[0]);                 
+            this.emoteDir.filter(this.state.value.split(' ').slice(-1)[0]);     
             Animated.timing(
-                this.emoteDir.height,
+
+            )            
+            Animated.timing(
+                this.emoteDir.top,
                 {
                     duration: 300,
-                    toValue: 50
+                    toValue: -50
                 }
-            ).start(() => this.setState({ emoteDirShown: true }));
+            ).start(() => {
+                this.setState({ emoteDirShown: true });
+                this.emoteDir.setState({ emoteDirShown: true });
+            });
         }
     }
 
     render() {
         return (
-            <View style={styles.ChatInputOuter}>
+            <View 
+                style={[
+                    styles.ChatInputOuter, 
+                    (this.state.opacity) ?
+                        {opacity: 
+                            this.opacity.interpolate({
+                                inputRange: this.state.interpolate,
+                                outputRange: [0, 1]
+                            })
+                        } :
+                        null
+                ]} 
+                pointerEvents={(this.state.shown) ? 'auto' : 'none'}
+            >
                 <EmoteDirectory onSelect={(emote) => this.append(emote)} ref={(ref) => this.emoteDir = ref} />                                                                                        
-                <View style={{flexDirection: 'row'}}>
+                <View style={styles.ChatInputInner}>
                     <TouchableOpacity onPress={() => this.toggleEmoteDir()}>
                         <Text style={{
                             fontFamily: 'ionicons',

@@ -134,7 +134,7 @@ class UserBadge extends Component {
                 this.style.push(styles[this.props.user.features[i]]);                
             }
         }
-        if (admin) this.style.push('admin');
+        if (admin) this.style.push(styles['admin']);
     }
     render() {
         return (

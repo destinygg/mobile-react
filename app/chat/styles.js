@@ -82,15 +82,17 @@ const styles = StyleSheet.create({
     },
     ChatInputOuter: { 
         flexDirection: 'column', 
-        paddingLeft: 10, 
-        paddingRight: 10,
-        paddingBottom: 10,
-        marginTop: 5, 
-        backgroundColor: '#151515',
+        paddingTop: 50,
         width: '100%',
         alignSelf: 'center',
+    },
+    ChatInputInner: {
+        flexDirection: 'row',
+        zIndex: 2000,
+        backgroundColor: '#151515',
         borderTopLeftRadius: 25,
         borderTopRightRadius: 25,
+        marginTop: 10
     },
     Emote: {
         marginTop: 2,
@@ -99,11 +101,19 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
         overflow: 'visible'
     },
+    EmoteDirectoryOuter: {
+        borderTopLeftRadius: 25,
+        borderTopRightRadius: 25,
+        position: 'absolute',
+        width: '100%',
+        top: 60,
+        height: 60,
+        backgroundColor: '#151515',        
+    },
     EmoteDirectory: {
-        zIndex: 1000,
-        borderTopLeftRadius: 15,
-        borderTopRightRadius: 15,
-        height: 0,
+        paddingLeft: 15,
+        paddingRight: 15,
+        marginTop: 15
     },
     EmoteMenuItem: {
         resizeMode: 'contain',

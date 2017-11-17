@@ -39,12 +39,18 @@ const styles = StyleSheet.create({
         minHeight: 300,
         position: 'absolute',
         top: 0,
-        flex: 1,
-        backgroundColor: '#151515',
+        marginTop: -50,
         borderTopLeftRadius: 25,
         borderTopRightRadius: 25,
-        marginLeft: 5,
-        marginRight: 5,
+        paddingLeft: 5,
+        paddingRight: 5,
+        width: '100%'
+    },
+    CardDrawerNavList: {
+        backgroundColor: '#151515',
+        paddingTop: 25,
+        paddingBottom: 50,
+        marginTop: -5
     }
 });
 
