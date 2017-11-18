@@ -9,8 +9,10 @@ const emotes = require('./lib/assets/emotes.json');
 class App extends Component {
     constructor() {
         super();
-        this.chat = new MobileChat()
-                          .withEmotes(emotes);
+        if (!this.chat) {
+            this.chat = new MobileChat()
+                .withEmotes(emotes);
+        }
     }
     render() {
         return (

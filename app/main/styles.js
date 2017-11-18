@@ -40,25 +40,25 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 0,
         marginTop: -50,
-        borderTopLeftRadius: 25,
-        borderTopRightRadius: 25,
+        borderTopLeftRadius: 15,
+        borderTopRightRadius: 15,
         paddingLeft: 5,
         paddingRight: 5,
         width: '100%'
     },
     CardDrawerNavList: {
         backgroundColor: '#151515',
-        paddingTop: 5,
+        paddingTop: 20,
         paddingBottom: 50,
         marginTop: -5
     },
     DrawerHandle: {
         position: 'absolute',
         height: 4,
-        width: 150,
+        width: 100,
         backgroundColor: '#888',
         borderRadius: 2,
-        top: 80,
+        top: 70,
         alignSelf: 'center',
         zIndex: 3000
     }

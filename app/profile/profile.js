@@ -426,12 +426,16 @@ class SettingsView extends FormView {
     };
     constructor(props) {
         super(props);
-        this.endpoint = 'profile/discord/update';        
         this.formItems = [
             {
-                placeholder: "Discord name and ID (e.g., Destiny#123)",
-                name: "discordname",
-                type: "text"
+                placeholder: "Open media in modal",
+                name: "mediaModal",
+                type: "slider"
+            },
+            {
+                placeholder: "Close emote drawer on select",
+                name: "emoteDrawerLoseFocus",
+                type: "slider"
             }
         ];
     }

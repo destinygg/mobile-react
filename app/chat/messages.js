@@ -1,5 +1,5 @@
 import React, { Component, PureComponent } from 'react';
-import { View, Text, Image, findNodeHandle, TouchableHighlight } from 'react-native';
+import { View, Text, Image, findNodeHandle, TouchableHighlight, Modal, WebView } from 'react-native';
 import styles from './styles';
 import { emoteImgs, icons } from './images';
 import { UrlFormatter, GreenTextFormatter, EmoteFormatter, MentionedUserFormatter } from './formatters'
@@ -158,33 +158,37 @@ export class Emote extends Component {
     }
 }
 
-class MediaModal extends Component {
-    
-}
-
 class MsgText extends Component {
     constructor(props) {
         super(props);
-        let styles = [styles.MsgText];
+    }
+    render() {
+        let msgStyles = [styles.MsgText];
 
         if (this.props.greenText) {
-            styles.push(styles.greenText);
+            msgStyles.push(styles.greenText);
         }
 
         if (this.props.link) {
-            styles.push(styles.linkText);
+            msgStyles.push(styles.Link);
         }
-    }
-    render() {
+
         if(this.props.link) {
             return (
-                <TouchableHighlight>
-                    <Text style={styles}>{this.props.children}</Text>
-                </TouchableHighlight>
+                    <Text 
+                        onPress={() => {
+                            if (this.props.emit) {
+                                this.props.emit.openLink(this.props.link);
+                            }
+                        }}
+                        style={msgStyles}
+                    >
+                        {this.props.link + ' '}
+                    </Text>
             )
         } else {
             return (
-                <Text style={styles}>{this.props.children}</Text>
+                <Text style={msgStyles}>{this.props.children}</Text>
             )
         }
     }
@@ -199,7 +203,6 @@ export class MobileChatMessage extends PureComponent {
                 this.formatted.push(<MsgText 
                                         key={i} 
                                         greenText={this.props.text[i].greenText}
-                                        link={this.props.text[i].link}
                                     >
                                         {this.props.text[i].string}
                                     </MsgText>
@@ -208,6 +211,14 @@ export class MobileChatMessage extends PureComponent {
             } else if ('emote' in this.props.text[i]) {
                 this.formatted.push(<Emote key={i} name={this.props.text[i].emote} />);
                 continue;
+            } else if ('url' in this.props.text[i]) {
+                this.formatted.push(
+                    <MsgText
+                        key={i}
+                        link={this.props.text[i].url}
+                        emit={this.props.msg.window}                        
+                    />
+                );
             }
         }
     }

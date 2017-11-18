@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     },
     ChatInputOuter: { 
         flexDirection: 'column', 
-        paddingTop: 50,
+        paddingTop: 70,
         width: '100%',
         alignSelf: 'center',
     },
@@ -90,10 +90,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         zIndex: 2000,
         backgroundColor: '#151515',
-        borderTopLeftRadius: 25,
-        borderTopRightRadius: 25,
-        marginTop: 10,
-        paddingTop: 5,
+        borderTopLeftRadius: 15,
+        borderTopRightRadius: 15,
+        marginTop: 5,
+        paddingTop: 15,
         paddingLeft: 5,
         paddingRight: 5
     },
@@ -105,11 +105,11 @@ const styles = StyleSheet.create({
         overflow: 'visible'
     },
     EmoteDirectoryOuter: {
-        borderTopLeftRadius: 25,
-        borderTopRightRadius: 25,
+        borderTopLeftRadius: 15,
+        borderTopRightRadius: 15,
         position: 'absolute',
         width: '100%',
-        top: 60,
+        top: 75,
         height: 60,
         backgroundColor: '#151515',        
     },
@@ -151,6 +151,10 @@ const styles = StyleSheet.create({
     ComboCombo: {
         color: '#ccc',
         fontSize: 10
+    },
+    MediaModal: {
+        borderRadius: 15,
+        height: '70%'
     }
 });
 

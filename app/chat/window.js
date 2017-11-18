@@ -1,5 +1,5 @@
 import React, { Component, PureComponent } from 'react';
-import { View, TextInput, Animated, FlatList, Keyboard, AsyncStorage, AppState, KeyboardAvoidingView, Text, ScrollView, TouchableOpacity, ActivityIndicator, TouchableHighlight, Platform, RefreshControl, Dimensions } from 'react-native';
+import { View, TextInput, Animated, FlatList, Keyboard, AsyncStorage, Linking, AppState, KeyboardAvoidingView, Text, ScrollView, TouchableOpacity, ActivityIndicator, TouchableHighlight, Platform, RefreshControl, Dimensions, Modal, WebView } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import styles from './styles';
 import EventEmitter from '../../lib/assets/chat/js/emitter';
@@ -17,6 +17,12 @@ const tagcolors = [
     "lime",
     "pink",
     "black"
+];
+
+const mediaExts = [
+    'jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg',
+    'webm', 'mkv', 'flv', 'gifv', 'avi', 'wmv',
+    'mov', 'mp4', 'm4v', 'mpg', 'mpeg', '3gp'
 ];
 
 class EmoteDirectory extends PureComponent {
@@ -54,7 +60,11 @@ class EmoteDirectory extends PureComponent {
                     }]}
                 ]} collapsable={false}>
                 <View style={styles.EmoteDirectory}>
-                    <ScrollView horizontal={true} keyboardShouldPersistTaps={'always'}>
+                    <ScrollView 
+                        showsHorizontalScrollIndicator={false} 
+                        horizontal={true} 
+                        keyboardShouldPersistTaps={'always'}
+                    >
                         {children}
                     </ScrollView>
                 </View>
@@ -238,11 +248,13 @@ export class MobileChatView extends Component {
         this.state = {
             messages: [],
             extraData: true,
-            emoteDirShown: false
+            emoteDirShown: false,
+            mediaModalShown: false
         }
         this.pinned = true;
         this.messageList = null;
         this.height = 0;
+        this.mediaModalUri = null;
     }
 
     render() {
@@ -263,6 +275,22 @@ export class MobileChatView extends Component {
                     onScroll={(e) => this._onScroll(e)}
                     inverted={true}
                 />
+                <Modal
+                    animationType='slide'
+                    transparent={true}
+                    visible={this.state.mediaModalShown}
+                    onRequestClose={() => {
+                        this.setState({mediaModalShown: false})
+                    }}
+                    style={{justifyContent: 'center'}}
+                >
+                    <View style={styles.MediaModal}>
+                        <WebView 
+                            source={{uri: this.mediaModalUri}}
+                            allowsInlineMediaPlayback={true}
+                        />
+                    </View>
+                </Modal>
             </View>
         );
     }
@@ -287,6 +315,11 @@ export class MobileChatView extends Component {
         if (this.pinned) {
             this.setState({ messages: [].concat(this.props.window.lines) });            
         }
+    }
+
+    showMediaModal(uri) {
+        this.mediaModalUri = uri;
+        this.setState({mediaModalShown: true});
     }
 
     componentDidMount() {
@@ -316,6 +349,22 @@ export default class MobileWindow extends EventEmitter {
         this.messageKey = 0;
         this.ui = null;
         this.background = false;
+    }
+
+    openLink(uri) {
+        const extension = uri.split('.').slice(-1)[0];
+
+        if (uri.indexOf('://') == -1) {
+            uri = 'http://' + uri;
+        }
+
+        if (mediaExts.indexOf(extension) != -1) {
+            if (this.ui && this.ui.showMediaModal) {
+                this.ui.showMediaModal(uri);
+            }
+        } else {
+            Linking.openURL(uri);
+        }
     }
 
     censor(nick) {

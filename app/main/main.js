@@ -72,6 +72,20 @@ class CardDrawer extends Component {
         this.closedY = this.props.mainView.state.interpolate.min;
         this.translateY = this.props.mainView.state.translateY;
         this.panY = this.props.mainView.state.panY;
+        this.opacityBinding = this.translateY.interpolate({
+            inputRange: [
+                this.props.mainView.state.interpolate.max,
+                this.props.mainView.state.interpolate.min
+            ],
+            outputRange: [1, .2]
+        });
+        this.handleTopBinding = this.translateY.interpolate({
+            inputRange: [
+                this.props.mainView.state.interpolate.max,
+                this.props.mainView.state.interpolate.min
+            ],
+            outputRange: [20, 0]
+        });
     }
 
     render() {
@@ -84,13 +98,11 @@ class CardDrawer extends Component {
             >
                 <Animated.View style={[
                     styles.DrawerHandle, 
-                    {opacity: this.translateY.interpolate({
-                        inputRange: [
-                            this.props.mainView.state.interpolate.max,
-                            this.props.mainView.state.interpolate.min
-                        ],
-                        outputRange: [1, 0]
-                    })}]} 
+                    {
+                        opacity: this.opacityBinding,
+                        marginTop: this.handleTopBinding
+                    }
+                ]} 
                 />
                     {this.props.children}
             </Animated.View>            
@@ -280,15 +292,15 @@ export default class MainView extends Component {
                             return (
                                 <View>
                                     <TwitchView ref={(ref) => this.twitchView = ref} parent={this} />
-                                    <View style={dividerStyle} />
-                                    <View style={styles.TwitchViewDividerHandle} {...this._panResponder.panHandlers} />   
+                                    {!this.state.landscape && <View style={dividerStyle} />}
+                                    {!this.state.landscape && <View style={styles.TwitchViewDividerHandle} {...this._panResponder.panHandlers} /> }  
                                 </View>
                             )
                         }
                     })()}
-                    {this.props.screenProps.chat.mainwindow.uiElem}
+                    {!this.state.landscape && this.props.screenProps.chat.mainwindow.uiElem}
                 </View>
-                {this.state.height != null && 
+                {this.state.height != null && !this.state.landscape && 
                     <CardDrawer ref={(ref) => this.cardDrawer = ref} mainView={this}>
                         <MobileChatInput
                             ref={(ref) => this.chat.inputElem = ref}
@@ -296,8 +308,8 @@ export default class MainView extends Component {
                             animationBinding={{
                                 binding: this.state.translateY,
                                 interpolate: [
-                                    this.state.interpolate.min,
-                                    this.state.interpolate.min + 30
+                                    this.state.interpolate.min - 100,
+                                    this.state.interpolate.min
                                 ]
                             }}
                         />
@@ -360,20 +372,24 @@ export default class MainView extends Component {
 
     _onLayout(e) {
         global.bugsnag.leaveBreadcrumb('MainView before onLayout.');  
+        const viewHeight = (e.layout.height > e.layout.width) ? e.layout.height : e.layout.width;
+        const landscape = e.layout.width > e.layout.height;
+        global.bugsnag.leaveBreadcrumb('Entering landscape: ' + landscape);          
         if (this.state.height === null) {
             const interpolate = {
-                max: e.layout.height - 325,
-                min: e.layout.height - 75
+                max: viewHeight - 325,
+                min: viewHeight - 80
             };
-            const panY = new Animated.Value(e.layout.height);
+            const panY = new Animated.Value(viewHeight);
             this.setState({ 
-                height: (e.layout.height > e.layout.width) ? 
-                    e.layout.height :
-                    e.layout.width,
+                height: viewHeight,
                 panY: panY,
                 translateY: Animated.diffClamp(panY, interpolate.max, interpolate.min),
-                interpolate: interpolate
+                interpolate: interpolate,
+                landscape: landscape
             });
+        } else {
+            this.setState({landscape: landscape});
         }              
         global.bugsnag.leaveBreadcrumb('MainView after onLayout.');                        
     }

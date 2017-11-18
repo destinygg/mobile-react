@@ -8,26 +8,26 @@ const twitchEmotes = Array.from(emoteDir['twitch']);
 const gemoteregex = new RegExp(`\b`);
 let twitchemoteregex;
 
-const urlregex = new RegExp(`(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)`);
+const urlregex = new RegExp(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/);
 
 export class UrlFormatter {
     format(chat, msg, message = null) {
-        if (!str) return;
         const self = this;
         const regex  = urlregex;
         let formatted = [];
+        let extraclass = undefined;
 
-        if (/\b(?:NSFL)\b/i.test(str))
+        if (/\b(?:NSFL)\b/i.test(msg))
             extraclass = 'nsfl-link';
-        else if (/\b(?:NSFW|SPOILER)\b/i.test(str))
+        else if (/\b(?:NSFW|SPOILER)\b/i.test(msg))
             extraclass = 'nsfw-link';
 
         for (let i = 0; i < msg.length; i++) {
             if (msg[i].string) {
                 let searchIndex = msg[i].string.search(regex);
                 while (searchIndex != -1) {
-                    const before = msg[i].slice(0, searchIndex);
-                    const [url, after] = msg[i].slice(searchIndex).split(' ');
+                    const before = msg[i].string.slice(0, searchIndex);
+                    const [url, after] = msg[i].string.slice(searchIndex).split(' ');
 
                     if (before.length > 0) {
                         formatted.push({'string': before, greenText: msg[i].greenText});
@@ -35,8 +35,13 @@ export class UrlFormatter {
                     formatted.push({ 'url': url, class: extraclass });  
 
                     msg[i].string = after;
+                    
+                    if (after === undefined || after.length < 1) {
+                        break;
+                    } 
+                    searchIndex = msg[i].string.search(regex); 
                 }
-                if (msg[i].string.length > 0) {
+                if (msg[i].string != undefined && msg[i].string.length > 0) {
                     formatted.push(msg[i]);
                 }
             } else {
