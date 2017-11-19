@@ -68,6 +68,10 @@ const styles = StyleSheet.create({
     Subscriber: {
         color: '#488ce7'
     },
+    mention: {
+        backgroundColor: 'rgba(0, 122, 255, 0.5)',
+        borderRadius: 2
+    },
     ChatInput: {
         flex: 1,
         fontSize: 12,
@@ -90,10 +94,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         zIndex: 2000,
         backgroundColor: '#151515',
-        borderTopLeftRadius: 15,
-        borderTopRightRadius: 15,
+        borderTopLeftRadius: 25,
+        borderTopRightRadius: 25,
         marginTop: 5,
-        paddingTop: 15,
+        paddingTop: 8,
         paddingLeft: 5,
         paddingRight: 5
     },
@@ -105,8 +109,8 @@ const styles = StyleSheet.create({
         overflow: 'visible'
     },
     EmoteDirectoryOuter: {
-        borderTopLeftRadius: 15,
-        borderTopRightRadius: 15,
+        borderTopLeftRadius: 25,
+        borderTopRightRadius: 25,
         position: 'absolute',
         width: '100%',
         top: 75,

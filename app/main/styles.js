@@ -38,10 +38,9 @@ const styles = StyleSheet.create({
     CardDrawer: {
         minHeight: 300,
         position: 'absolute',
-        top: 0,
         marginTop: -50,
-        borderTopLeftRadius: 15,
-        borderTopRightRadius: 15,
+        borderTopLeftRadius: 25,
+        borderTopRightRadius: 25,
         paddingLeft: 5,
         paddingRight: 5,
         width: '100%'
@@ -49,16 +48,15 @@ const styles = StyleSheet.create({
     CardDrawerNavList: {
         backgroundColor: '#151515',
         paddingTop: 20,
-        paddingBottom: 50,
+        paddingBottom: 100,
         marginTop: -5
     },
     DrawerHandle: {
         position: 'absolute',
         height: 4,
-        width: 100,
         backgroundColor: '#888',
         borderRadius: 2,
-        top: 70,
+        top: 85,
         alignSelf: 'center',
         zIndex: 3000
     }

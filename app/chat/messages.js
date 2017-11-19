@@ -399,6 +399,8 @@ class ChatUserMessage extends ChatMessage {
             this.classes.push(styles[`msg-tagged-${this.tag}`]);
         if (this.target)
             this.classes.push(styles[`msg-whisper`]);
+        if (this.message.indexOf(chat.me.username) != -1)
+            this.classes.push(styles.mention)
 
         let ctrl = <MsgText>: </MsgText>;
         if (this.target)

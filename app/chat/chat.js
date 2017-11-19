@@ -1,6 +1,7 @@
 import Chat from '../../lib/assets/chat/js/chat';
 import MobileWindow from './window';
 import {MessageTypes, MobileMessageBuilder as MessageBuilder} from './messages'
+import {AsyncStorage} from 'react-native';
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -15,6 +16,34 @@ export class MobileChat extends Chat {
         this.mainwindow = new MobileWindow('main').into(this);
         this.mobilePmWindow = null;
         this.me = null;
+        this.mobileSettings = null;
+    }
+
+    loadMobileSettings(callback) {
+        AsyncStorage.getItem('appSettings', (err, settings) => {
+            let settingsObj;
+            if (err) {
+                settingsObj = this.resetMobileSettings();
+            } else {
+                if (settings) {
+                    settingsObj = JSON.parse(settings);
+                } else {
+                    settingsObj = this.resetMobileSettings();
+                }
+            }
+            this.mobileSettings = settingsObj;
+            callback(settingsObj);
+        });
+    }
+
+    resetMobileSettings() {
+        const settings = {
+            mediaModal: true,
+            emoteDirLoseFocus: false
+        };
+        AsyncStorage.setItem('appSettings', JSON.stringify(settings));
+        this.mobileSettings = settings;
+        return settings;
     }
 
     send(text) {

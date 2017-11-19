@@ -12,10 +12,10 @@ potential launch issues:
 
 launch bugs:
 
-settings menu
-
 link modal
 
-horizontal view
+add an inner view for card drawer so that invis emotedir is not touchable
 
-setting for keep awake
+figure out why profile pages are blank now
+
+separate profile list buttons

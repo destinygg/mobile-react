@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, AsyncStorage } from 'react-native';
+import { View, AsyncStorage, Alert } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import styles from '../styles';
 
@@ -37,6 +37,22 @@ export default class InitView extends Component {
                     ]
                 }));
             }
+        }, error => {
+            Alert.alert(
+                'Network rejection', 
+                'Check your network connection and retry.',
+                [
+                    {text: 'Retry', onPress: () => {
+                        navigation.dispatch(NavigationActions.reset({
+                            index: 0,
+                            actions: [
+                                NavigationActions.navigate({ routeName: 'InitView' })
+                            ]
+                        }));
+                    }}
+                ],
+                {cancelable: false}
+            );
         });
     }
 

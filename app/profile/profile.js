@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, ScrollView, WebView, Button, Platform, ActivityIndicator, Alert, TouchableHighlight, KeyboardAvoidingView } from 'react-native';
+import { View, Text, FlatList, ScrollView, WebView, Button, Platform, ActivityIndicator, Alert, TouchableHighlight, KeyboardAvoidingView, AsyncStorage } from 'react-native';
 import { StackNavigator, NavigationActions, SafeAreaView } from 'react-navigation';
 import { NavList, NavListItem, FormItem, UserAgreement, ListButton } from '../components';
+import AboutView from '../about/about'
 import styles from './styles';
 import moment from 'moment';
 
@@ -160,9 +161,11 @@ class AccountView extends FormView {
     }
     render() {
         return (
-            <ScrollView style={styles.View}>
-                <ProfileForm formItems={this.formItems} formState={this.state} onChange={(name, value) => this._onChange(name, value)} />
-            </ScrollView>
+            <SafeAreaView>
+                <ScrollView style={styles.View}>
+                    <ProfileForm formItems={this.formItems} formState={this.state} onChange={(name, value) => this._onChange(name, value)} />
+                </ScrollView>
+            </SafeAreaView>
         )
     }
 }
@@ -426,18 +429,28 @@ class SettingsView extends FormView {
     };
     constructor(props) {
         super(props);
+        this.state = this.props.screenProps.chat.mobileSettings;
         this.formItems = [
             {
-                placeholder: "Open media in modal",
+                tag: "Open media in modal",
                 name: "mediaModal",
-                type: "slider"
+                type: "switch",
             },
             {
-                placeholder: "Close emote drawer on select",
-                name: "emoteDrawerLoseFocus",
-                type: "slider"
+                tag: "Close emote drawer on select",
+                name: "emoteDirLoseFocus",
+                type: "switch",
             }
         ];
+    }
+    render() {
+        return (
+            <SafeAreaView>
+                <ScrollView style={styles.View}>
+                    <ProfileForm formItems={this.formItems} formState={this.state} onChange={(name, value) => this._onChange(name, value)} />
+                </ScrollView>
+            </SafeAreaView>
+        )
     }
 }
 
@@ -459,7 +472,9 @@ class ProfileView extends Component {
                     <Text style={styles.ProfileCreated}>{'Member since: ' + created.format('dddd, D MMMM YYYY')}</Text>
                 </View>
                 <NavList listItems={this.listItems} navigation={this.props.navigation}/>
-                <ListButton text='Settings' first={true} last={true} onPress={this.props.navigation.navigate('Settings')} />
+                <ListButton text='Settings' first={true} last={true} onPress={() => this.props.navigation.navigate('Settings')} />
+                <ListButton text='About' first={true} last={true} onPress={() => this.props.navigation.navigate('About')} />
+                
             </ScrollView>
         )
     }
@@ -472,7 +487,8 @@ const ProfileNav = StackNavigator({
     SubscriptionMessageView: { screen: SubscriptionMessageView },
     SubscriptionWebView: { screen: SubscriptionWebView },
     UserAgreement: { screen: UserAgreement },
-    //Settings: { screen: SettingsView }
+    Settings: { screen: SettingsView },
+    About: { screen: AboutView }
 }, {
     initialRouteName: 'Profile',
     navigationOptions: {

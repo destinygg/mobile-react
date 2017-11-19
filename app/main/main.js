@@ -20,7 +20,11 @@ class TwitchView extends Component {
     render() {
         let twitchViewStyle = [styles.TwitchViewOuter];
 
-        if (this.state.height) { twitchViewStyle.push({ flex: 0, height: this.state.height}); }
+        if (this.props.landscape) { 
+            twitchViewStyle.push({ flex: 1 });
+        } else {
+            if (this.state.height) { twitchViewStyle.push({ flex: 0, height: this.state.height}); }            
+        }
 
         return (
             <View style={twitchViewStyle} collapsable={false}>
@@ -77,7 +81,7 @@ class CardDrawer extends Component {
                 this.props.mainView.state.interpolate.max,
                 this.props.mainView.state.interpolate.min
             ],
-            outputRange: [1, .2]
+            outputRange: [1, .1]
         });
         this.handleTopBinding = this.translateY.interpolate({
             inputRange: [
@@ -86,21 +90,36 @@ class CardDrawer extends Component {
             ],
             outputRange: [20, 0]
         });
+        this.handleWidthBinding = this.translateY.interpolate({
+            inputRange: [
+                this.props.mainView.state.interpolate.max,
+                this.props.mainView.state.interpolate.min
+            ],
+            outputRange: [150, 75]
+        });
+        this.state = {top: 0, keyboardShown: false};
     }
 
     render() {
         return (
-            <Animated.View style={[styles.CardDrawer, { 
-                    transform: [{
-                        translateY: this.translateY
-                }]}]}
+            <Animated.View style={
+                [
+                    styles.CardDrawer, 
+                    { 
+                        transform: [{
+                            translateY: this.translateY
+                        }]
+                    },
+                    {top: this.state.top}
+                ]}
                 {...this._panResponder.panHandlers}
             >
                 <Animated.View style={[
                     styles.DrawerHandle, 
                     {
                         opacity: this.opacityBinding,
-                        marginTop: this.handleTopBinding
+                        marginTop: this.handleTopBinding,
+                        width: this.handleWidthBinding
                     }
                 ]} 
                 />
@@ -150,9 +169,9 @@ class CardDrawer extends Component {
 
     avoidKeyboard(height) {
         if ((this.props.mainView.state.height - height) > 100) {
-            this.panY.setValue(this.props.mainView.state.height - height)            
+            this.setState({top: -(this.props.mainView.state.height - height), keyboardShown: true});            
         } else {
-            this.panY.setValue(this.props.mainView.state.height);                        
+            this.setState({top: 0, keyboardShown: false});                        
         }
     }
 
@@ -161,7 +180,9 @@ class CardDrawer extends Component {
             onStartShouldSetPanResponder: (evt, gestureState) => false, 
             onStartShouldSetPanResponderCapture: (evt, gestureState) => false, 
             onMoveShouldSetPanResponder: (evt, { moveY, dx, dy }) => {
-                console.log(dy);
+                if (this.state.keyboardShown) {
+                    return false;
+                }
                 if (!dx || !dy || Math.abs(dy) < MIN_SWIPE_DISTANCE) {
                     return false;
                 }
@@ -237,15 +258,34 @@ export default class MainView extends Component {
     constructor(props) {
         super(props);
         this.chat = props.screenProps.chat;
-        this.state = {height: null, resizing: false, streamShown: true};
+        this.state = {
+            height: null, 
+            resizing: false, 
+            streamShown: true,
+            settings: {
+                mediaModal: null,
+                emoteDirLoseFocus: null
+            }
+        };
         global.mainview = this;
+        this.chat.loadMobileSettings((settings) => {
+            this.applyMobileSettings(settings);
+        });
+    }
+
+    applyMobileSettings(settings) {
+        this.setState({settings: settings});
     }
 
     applyPreviousResizeState() {
-        AsyncStorage.getItem('TwitchViewHeight').then((twitchViewHeight) => {
+        AsyncStorage.getItem('TwitchViewHeight').then((err, twitchViewHeight) => {
+            if (err) {
+                return;
+            }
             if (twitchViewHeight !== null) {
-                global.bugsnag.leaveBreadcrumb('Applying resize state: ' + twitchViewHeight);
-                this.twitchView.setState({ height: Number(twitchViewHeight) });
+                const resize = Math.floor(Number(twitchViewHeight));
+                global.bugsnag.leaveBreadcrumb('Applying resize state: ' + resize);
+                this.twitchView.setState({ height: resize});
                 global.bugsnag.leaveBreadcrumb('Resize state applied.');                
             }
         });
@@ -286,36 +326,39 @@ export default class MainView extends Component {
                         }
                     }}
                 >
-                <View style={styles.View} onLayout={(e) => this._onLayout(e.nativeEvent)}>
-                    {(() => {
-                        if (this.state.streamShown) {
-                            return (
-                                <View>
-                                    <TwitchView ref={(ref) => this.twitchView = ref} parent={this} />
-                                    {!this.state.landscape && <View style={dividerStyle} />}
-                                    {!this.state.landscape && <View style={styles.TwitchViewDividerHandle} {...this._panResponder.panHandlers} /> }  
-                                </View>
-                            )
+                    <View
+                        style={styles.View}
+                        onLayout={(e) => {
+                            this._onLayout(e.nativeEvent);
+                        }}
+                    >
+                        {(this.state.streamShown) &&
+                            <TwitchView ref={(ref) => this.twitchView = ref} parent={this}/>
                         }
-                    })()}
-                    {!this.state.landscape && this.props.screenProps.chat.mainwindow.uiElem}
-                </View>
-                {this.state.height != null && !this.state.landscape && 
-                    <CardDrawer ref={(ref) => this.cardDrawer = ref} mainView={this}>
-                        <MobileChatInput
-                            ref={(ref) => this.chat.inputElem = ref}
-                            chat={this.chat}
-                            animationBinding={{
-                                binding: this.state.translateY,
-                                interpolate: [
-                                    this.state.interpolate.min - 100,
-                                    this.state.interpolate.min
-                                ]
-                            }}
-                        />
-                        <CardDrawerNavList screenProps={{ ...this.props.screenProps, mainView: this }} navigation={this.props.navigation} />
-                    </CardDrawer>
-                }
+
+                        <View style={dividerStyle} />
+                        <View style={styles.TwitchViewDividerHandle} {...this._panResponder.panHandlers} />
+                        {this.props.screenProps.chat.mainwindow.uiElem}
+                    </View>
+                    {this.state.height != null && 
+                        <CardDrawer 
+                            ref={(ref) => this.cardDrawer = ref} 
+                            mainView={this}
+                        >
+                            <MobileChatInput
+                                ref={(ref) => this.chat.inputElem = ref}
+                                chat={this.chat}
+                                animationBinding={{
+                                    binding: this.state.translateY,
+                                    interpolate: [
+                                        this.state.interpolate.min - 100,
+                                        this.state.interpolate.min
+                                    ]
+                                }}
+                            />
+                            <CardDrawerNavList screenProps={{ ...this.props.screenProps, mainView: this }} navigation={this.props.navigation} />
+                        </CardDrawer>
+                    }
                 </KeyboardAvoidingView>
             </SafeAreaView>
         );
@@ -373,30 +416,25 @@ export default class MainView extends Component {
     _onLayout(e) {
         global.bugsnag.leaveBreadcrumb('MainView before onLayout.');  
         const viewHeight = (e.layout.height > e.layout.width) ? e.layout.height : e.layout.width;
-        const landscape = e.layout.width > e.layout.height;
-        global.bugsnag.leaveBreadcrumb('Entering landscape: ' + landscape);          
         if (this.state.height === null) {
             const interpolate = {
-                max: viewHeight - 325,
-                min: viewHeight - 80
+                max: viewHeight - 375,
+                min: viewHeight - 90
             };
             const panY = new Animated.Value(viewHeight);
             this.setState({ 
                 height: viewHeight,
                 panY: panY,
                 translateY: Animated.diffClamp(panY, interpolate.max, interpolate.min),
-                interpolate: interpolate,
-                landscape: landscape
+                interpolate: interpolate
             });
-        } else {
-            this.setState({landscape: landscape});
-        }              
+        }         
         global.bugsnag.leaveBreadcrumb('MainView after onLayout.');                        
     }
 
     _handleAppStateChange = (nextState) => {
         if (nextState === 'background') {
-            if (this.twitchView.state.height !== null) {
+            if (this.twitchView && this.twitchView.state.height !== null) {
                 AsyncStorage.setItem('TwitchViewHeight', Math.floor(this.twitchView.state.height).toString());                
             }
             AsyncStorage.setItem('InitRoute', this.props.navigation.state.routeName);
@@ -411,7 +449,7 @@ export default class MainView extends Component {
 
     componentWillUnmount() {
         AppState.removeEventListener('change', this._handleAppStateChange);   
-        if (this.twitchView.state.height !== null) {            
+        if (this.twitchView && this.twitchView.state.height !== null) {            
             AsyncStorage.setItem('TwitchViewHeight', Math.floor(this.twitchView.state.height).toString());        
         }
     }

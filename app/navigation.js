@@ -6,7 +6,6 @@ import MainView from './main/main'
 import ProfileNav from './profile/profile';
 import MessageNav from './messages/messages';
 import DonateNav from './donate/donate';
-import AboutView from './about/about'
 
 const InitNav = StackNavigator({
     InitView: { screen: InitView },
@@ -16,7 +15,6 @@ const InitNav = StackNavigator({
     ProfileView: { screen: ProfileNav },
     MessageView: { screen: MessageNav },
     DonateView: { screen: DonateNav },
-    AboutView: { screen: AboutView }
 }, {
     initialRouteName: 'InitView',
     headerMode: 'none',

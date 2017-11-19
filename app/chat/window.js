@@ -44,11 +44,11 @@ class EmoteDirectory extends PureComponent {
                     return (emote.toLowerCase().indexOf(this.state.filter) === 0);
                 }).map((emote) => {
                     return (
-                        <TouchableHighlight style={{ marginLeft: 5, marginRight: 5, flex: 1, justifyContent: 'center' }} key={emote} onPress={() => this.props.onSelect(emote)}>
+                        <TouchableOpacity style={{ marginLeft: 5, marginRight: 5, flex: 1, justifyContent: 'center' }} key={emote} onPress={() => this.props.onSelect(emote)}>
                             <View>
                                 <Emote name={emote} emoteMenu={true} />
                             </View>
-                        </TouchableHighlight>
+                        </TouchableOpacity>
                     );
                 });
         return (
@@ -64,6 +64,10 @@ class EmoteDirectory extends PureComponent {
                         showsHorizontalScrollIndicator={false} 
                         horizontal={true} 
                         keyboardShouldPersistTaps={'always'}
+                        onContentSizeChange={() => {
+                            this.scrollView.scrollTo({x: 0, animated: false});
+                        }}
+                        ref={ref => this.scrollView = ref}
                     >
                         {children}
                     </ScrollView>
@@ -112,6 +116,13 @@ export class MobileChatInput extends Component {
                 " "
             ) + text + " ";
         this.set(newVal);     
+    }
+
+    replace(text) {
+        let oldVal = this.state.value.split(' ');
+        oldVal[oldVal.length-1] = text;
+        const newVal = oldVal.join(' ');
+        this.set(newVal);
     }
 
     get() {
@@ -184,7 +195,7 @@ export class MobileChatInput extends Component {
                 this.emoteDir.top,
                 {
                     duration: 300,
-                    toValue: -50
+                    toValue: -38
                 }
             ).start(() => {
                 this.setState({ emoteDirShown: true });
@@ -201,7 +212,15 @@ export class MobileChatInput extends Component {
                 ]} 
                 pointerEvents={(this.state.shown) ? 'auto' : 'none'}
             >
-                <EmoteDirectory onSelect={(emote) => this.append(emote)} ref={(ref) => this.emoteDir = ref} />                                                                                        
+                <EmoteDirectory 
+                    onSelect={(emote) => {
+                        this.replace(emote);
+                        if (this.props.chat.mobileSettings.emoteDirLoseFocus) {
+                            this.hideEmoteDir();                            
+                        }
+                    }} 
+                    ref={(ref) => this.emoteDir = ref} 
+                />                                                                                        
                 <View style={styles.ChatInputInner}>
                     <Animated.View style={[{flex: 1, flexDirection: 'row'}, this.opacity]}>
                         <TouchableOpacity onPress={() => this.toggleEmoteDir()}>
@@ -358,7 +377,7 @@ export default class MobileWindow extends EventEmitter {
             uri = 'http://' + uri;
         }
 
-        if (mediaExts.indexOf(extension) != -1) {
+        if (mediaExts.indexOf(extension) != -1 && this.chat.mobileSettings.mediaModal) {
             if (this.ui && this.ui.showMediaModal) {
                 this.ui.showMediaModal(uri);
             }
