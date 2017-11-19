@@ -25,7 +25,7 @@ class ProfileForm extends Component {
         );
 
         return (
-            <View style={[styles.View, styles.List, { marginTop: 15 }]}>
+            <View style={[styles.View, styles.List, { marginTop: 15 }]} >
                 {children}
             </View>
         )
@@ -161,7 +161,7 @@ class AccountView extends FormView {
     }
     render() {
         return (
-            <SafeAreaView>
+            <SafeAreaView style={styles.View}>
                 <ScrollView style={styles.View}>
                     <ProfileForm formItems={this.formItems} formState={this.state} onChange={(name, value) => this._onChange(name, value)} />
                 </ScrollView>
@@ -224,7 +224,7 @@ class SubscriptionView extends Component {
 
     render() {
         return (
-            <SafeAreaView>
+            <SafeAreaView style={styles.View}>
                 <ScrollView style={styles.SubscriptionView}>
                     <Text style={styles.ChooseTitle}>Choose subscription.</Text>
                     <View style={styles.SubscriptionRow}>
@@ -445,7 +445,7 @@ class SettingsView extends FormView {
     }
     render() {
         return (
-            <SafeAreaView>
+            <SafeAreaView style={styles.View}>
                 <ScrollView style={styles.View}>
                     <ProfileForm formItems={this.formItems} formState={this.state} onChange={(name, value) => this._onChange(name, value)} />
                 </ScrollView>

@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
     DrawerHandle: {
         position: 'absolute',
         height: 4,
+        width: 125,
         backgroundColor: '#888',
         borderRadius: 2,
         top: 85,

@@ -12,10 +12,10 @@ potential launch issues:
 
 launch bugs:
 
-link modal
-
 add an inner view for card drawer so that invis emotedir is not touchable
 
-figure out why profile pages are blank now
-
 separate profile list buttons
+
+stream/chat toggle
+
+card bacground overlay

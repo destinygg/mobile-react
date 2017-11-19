@@ -1,5 +1,5 @@
 import React, { Component, PureComponent } from 'react';
-import { View, TextInput, Animated, FlatList, Keyboard, AsyncStorage, Linking, AppState, KeyboardAvoidingView, Text, ScrollView, TouchableOpacity, ActivityIndicator, TouchableHighlight, Platform, RefreshControl, Dimensions, Modal, WebView } from 'react-native';
+import { View, TextInput, Animated, FlatList, Keyboard, AsyncStorage, Linking, AppState, TouchableWithoutFeedback, KeyboardAvoidingView, Text, ScrollView, TouchableOpacity, ActivityIndicator, TouchableHighlight, Platform, RefreshControl, Dimensions, Modal, WebView } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import styles from './styles';
 import EventEmitter from '../../lib/assets/chat/js/emitter';
@@ -301,14 +301,21 @@ export class MobileChatView extends Component {
                     onRequestClose={() => {
                         this.setState({mediaModalShown: false})
                     }}
-                    style={{justifyContent: 'center'}}
                 >
-                    <View style={styles.MediaModal}>
-                        <WebView 
-                            source={{uri: this.mediaModalUri}}
-                            allowsInlineMediaPlayback={true}
-                        />
-                    </View>
+                    <TouchableWithoutFeedback
+                        style={{flex: 1}}
+                        onPress={() => this.setState({mediaModalShown: false})}
+                    >
+                        <View style={styles.MediaModal}>
+                            <View style={styles.MediaModalInner}>
+                                <WebView 
+                                    source={{uri: `http://google.com`}}
+                                    allowsInlineMediaPlayback={true}
+                                    scalesPageToFit={true}
+                                />
+                            </View>
+                        </View>
+                    </TouchableWithoutFeedback>
                 </Modal>
             </View>
         );

@@ -26,6 +26,7 @@ export class MobileChat extends Chat {
                 settingsObj = this.resetMobileSettings();
             } else {
                 if (settings) {
+                    console.log("loaded mobile settings: " + settings);
                     settingsObj = JSON.parse(settings);
                 } else {
                     settingsObj = this.resetMobileSettings();
@@ -43,6 +44,7 @@ export class MobileChat extends Chat {
         };
         AsyncStorage.setItem('appSettings', JSON.stringify(settings));
         this.mobileSettings = settings;
+        console.log("reset mobile settings: " + settings);
         return settings;
     }
 

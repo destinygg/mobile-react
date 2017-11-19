@@ -88,14 +88,14 @@ class CardDrawer extends Component {
                 this.props.mainView.state.interpolate.max,
                 this.props.mainView.state.interpolate.min
             ],
-            outputRange: [20, 0]
+            outputRange: [15, 0]
         });
         this.handleWidthBinding = this.translateY.interpolate({
             inputRange: [
                 this.props.mainView.state.interpolate.max,
                 this.props.mainView.state.interpolate.min
             ],
-            outputRange: [150, 75]
+            outputRange: [1, 0.6]
         });
         this.state = {top: 0, keyboardShown: false};
     }
@@ -118,12 +118,27 @@ class CardDrawer extends Component {
                     styles.DrawerHandle, 
                     {
                         opacity: this.opacityBinding,
-                        marginTop: this.handleTopBinding,
-                        width: this.handleWidthBinding
+                        transform: [
+                            {
+                                translateY: this.handleTopBinding,
+                            },
+                            {
+                                scaleX: this.handleWidthBinding
+                            },
+                        ],
                     }
                 ]} 
                 />
                     {this.props.children}
+                    <Animated.View 
+                        style={[
+                            styles.CardDrawerUnderlay,
+                            {
+                                opacity: this.underlayOpacity
+                            }
+                        ]}
+                        pointerEvents='none'
+                    />
             </Animated.View>            
         )
     }
@@ -143,7 +158,7 @@ class CardDrawer extends Component {
             toValue: this.openedY,
             bounciness: 0,
             restSpeedThreshold: 0.1,
-            useNativeDriver: this.props.useNativeAnimations,
+            useNativeDriver: true,
             ...options,
         }).start(() => {
             this._lastOpenValue = 1;
@@ -156,7 +171,7 @@ class CardDrawer extends Component {
             toValue: this.props.mainView.state.height,
             bounciness: 0,
             restSpeedThreshold: 1,
-            useNativeDriver: this.props.useNativeAnimations,
+            useNativeDriver: true,
             ...options,
         }).start(() => {
             this._lastOpenValue = 0;
@@ -293,10 +308,12 @@ export default class MainView extends Component {
 
     hideStream() {
         this.setState({streamShown: false});
+        this.cardDrawer.closeDrawer();
     }
 
     showStream() {
         this.setState({ streamShown: true });
+        this.cardDrawer.closeDrawer();        
     }
 
     test() {
@@ -418,7 +435,7 @@ export default class MainView extends Component {
         const viewHeight = (e.layout.height > e.layout.width) ? e.layout.height : e.layout.width;
         if (this.state.height === null) {
             const interpolate = {
-                max: viewHeight - 375,
+                max: viewHeight - 350,
                 min: viewHeight - 90
             };
             const panY = new Animated.Value(viewHeight);
@@ -438,6 +455,9 @@ export default class MainView extends Component {
                 AsyncStorage.setItem('TwitchViewHeight', Math.floor(this.twitchView.state.height).toString());                
             }
             AsyncStorage.setItem('InitRoute', this.props.navigation.state.routeName);
+            this.chat.source.disconnect();
+        } else {
+            this.chat.source.connect();
         }
     }
 

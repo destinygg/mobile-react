@@ -157,8 +157,13 @@ const styles = StyleSheet.create({
         fontSize: 10
     },
     MediaModal: {
-        borderRadius: 15,
-        height: '70%'
+        height: '100%',
+        backgroundColor: 'rgba(0,0,0,0.7)',
+        justifyContent: 'center'
+    },
+    MediaModalInner: {
+        height: '50%',
+        borderRadius: 15        
     }
 });
 
