@@ -165,7 +165,8 @@ export class MobileChatInput extends Component {
                 this.emoteDir.top,
                 {
                     duration: 300,
-                    toValue: 0
+                    toValue: 0,
+                    useNativeDriver: true
                 }
             ).start(() => {
                 this.setState({ emoteDirShown: false });
@@ -180,22 +181,21 @@ export class MobileChatInput extends Component {
                 this.emoteDir.top,
                 {
                     duration: 300,
-                    toValue: 0
+                    toValue: 0,
+                    useNativeDriver: true
                 }
             ).start(() => {
                 this.setState({ emoteDirShown: false });
                 this.emoteDir.setState({ emoteDirShown: false });
             });
         } else {
-            this.emoteDir.filter(this.state.value.split(' ').slice(-1)[0]);     
-            Animated.timing(
-
-            )            
+            this.emoteDir.filter(this.state.value.split(' ').slice(-1)[0]);           
             Animated.timing(
                 this.emoteDir.top,
                 {
                     duration: 300,
-                    toValue: -38
+                    toValue: -38,
+                    useNativeDriver: true                    
                 }
             ).start(() => {
                 this.setState({ emoteDirShown: true });
@@ -301,21 +301,21 @@ export class MobileChatView extends Component {
                     onRequestClose={() => {
                         this.setState({mediaModalShown: false})
                     }}
-                >
-                    <TouchableWithoutFeedback
-                        style={{flex: 1}}
-                        onPress={() => this.setState({mediaModalShown: false})}
-                    >
-                        <View style={styles.MediaModal}>
-                            <View style={styles.MediaModalInner}>
-                                <WebView 
-                                    source={{uri: `http://google.com`}}
-                                    allowsInlineMediaPlayback={true}
-                                    scalesPageToFit={true}
-                                />
-                            </View>
+                >    
+                    <View style={styles.MediaModal}>
+                        <TouchableWithoutFeedback
+                            onPress={() => this.setState({mediaModalShown: false})}
+                        >
+                            <View style={{position: 'absolute', height: '100%', width: '100%'}}/>
+                        </TouchableWithoutFeedback> 
+                        <View style={styles.MediaModalInner}>
+                            <WebView 
+                                source={{uri: this.mediaModalUri}}
+                                allowsInlineMediaPlayback={true}
+                                scalesPageToFit={true}
+                            />
                         </View>
-                    </TouchableWithoutFeedback>
+                    </View>
                 </Modal>
             </View>
         );

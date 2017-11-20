@@ -362,10 +362,6 @@ class SubscriptionMessageView extends Component {
             </SafeAreaView>
         )
     }
-
-    componentDidMount() {
-        this.props.navigation.setParams({ saveHandler: () => this.save() });
-    }
 }
 
 class SubscriptionWebView extends Component {
@@ -429,7 +425,8 @@ class SettingsView extends FormView {
     };
     constructor(props) {
         super(props);
-        this.state = this.props.screenProps.chat.mobileSettings;
+        this.state = Object.assign({}, this.props.screenProps.chat.mobileSettings);
+        console.log(this.state);
         this.formItems = [
             {
                 tag: "Open media in modal",
@@ -442,6 +439,13 @@ class SettingsView extends FormView {
                 type: "switch",
             }
         ];
+    }
+    _onChange(name, value) {
+        let updatedState = {};
+        updatedState[name] = value;
+        this.setState(updatedState);
+
+        this.props.screenProps.chat.setMobileSetting(name, value);
     }
     render() {
         return (
@@ -462,20 +466,26 @@ class ProfileView extends Component {
         this.listItems = [
             { itemText: 'Account', itemTarget: 'Account' },
             { itemText: 'Subscription', itemTarget: 'Subscription' },
-            // soon (TM) -- no chat.me entry yet { itemText: 'Discord', itemTarget: 'Discord' }
+            { itemText: 'Settings', itemTarget: 'Settings' }
         ];
         const created = moment(this.props.screenProps.chat.me.createdDate);
         return (
-            <ScrollView style={styles.View}>
-                <View style={styles.ProfileHeader}>
-                    <Text style={styles.ProfileName}>{this.props.screenProps.chat.user.username}</Text>
-                    <Text style={styles.ProfileCreated}>{'Member since: ' + created.format('dddd, D MMMM YYYY')}</Text>
-                </View>
-                <NavList listItems={this.listItems} navigation={this.props.navigation}/>
-                <ListButton text='Settings' first={true} last={true} onPress={() => this.props.navigation.navigate('Settings')} />
-                <ListButton text='About' first={true} last={true} onPress={() => this.props.navigation.navigate('About')} />
-                
-            </ScrollView>
+            <SafeAreaView style={styles.View}>
+                <ScrollView contentContainerStyle={[styles.View]}>
+                    <View style={styles.ProfileHeader}>
+                        <Text style={styles.ProfileName}>{this.props.screenProps.chat.user.username}</Text>
+                        <Text style={styles.ProfileCreated}>{'Member since: ' + created.format('dddd, D MMMM YYYY')}</Text>
+                    </View>
+                    <NavList listItems={this.listItems} navigation={this.props.navigation}/>
+                    <ListButton 
+                        text='About' 
+                        first={true} 
+                        last={true} 
+                        onPress={() => this.props.navigation.navigate('About')} 
+                        style={{marginTop: 75}}
+                    />
+                </ScrollView>
+            </SafeAreaView>
         )
     }
 }

@@ -13,12 +13,22 @@ class App extends Component {
             this.chat = new MobileChat()
                 .withEmotes(emotes);
         }
+        this.state = {navState: null};
     }
     render() {
         return (
             <View style={styles.View}>
                 <StatusBar barStyle='light-content' />
-                <InitNav screenProps={{ chat: this.chat, init: true }} />                
+                <InitNav 
+                    onNavigationStateChange={(prevState, currentState) => {
+                        const currentScreen = currentState.routes[currentState.index].routeName;
+                        const prevScreen = prevState.routes[prevState.index].routeName;
+                        if (prevScreen !== currentScreen) {
+                            this.setState({navState: currentScreen})
+                        }
+                    }}
+                    screenProps={{ chat: this.chat, init: true, navState: this.state.navState }} 
+                />                
             </View>
         );
     }

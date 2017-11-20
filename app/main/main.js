@@ -1,12 +1,12 @@
 import React, { Component, PureComponent } from 'react';
-import { View, WebView, Dimensions, PanResponder, AsyncStorage, AppState, KeyboardAvoidingView, Platform, Animated, Keyboard } from 'react-native';
+import { View, WebView, Dimensions, PanResponder, AsyncStorage, AppState, KeyboardAvoidingView, Platform, Animated, Keyboard, BackHandler } from 'react-native';
 import { StackNavigator, SafeAreaView, NavigationActions } from 'react-navigation';
 import { MobileChatView, MobileChatInput } from '../chat/window';
 import styles from './styles';
 import { ButtonList } from '../components'
 
 
-const MIN_SWIPE_DISTANCE = 10;
+const MIN_SWIPE_DISTANCE = 5;
 const DEVICE_HEIGHT = parseFloat(Dimensions.get('window').height);
 const THRESHOLD = DEVICE_HEIGHT - 150;
 const VY_MAX = 0.1;
@@ -153,7 +153,6 @@ class CardDrawer extends Component {
     }
 
     openDrawer(options) {
-        this.props.mainView.chat.inputElem.hide();
         Animated.spring(this.panY, {
             toValue: this.openedY,
             bounciness: 0,
@@ -161,12 +160,12 @@ class CardDrawer extends Component {
             useNativeDriver: true,
             ...options,
         }).start(() => {
+            this.props.mainView.chat.inputElem.hide();                                
             this._lastOpenValue = 1;
         });
     }
 
     closeDrawer(options) {
-        this.props.mainView.chat.inputElem.show();        
         Animated.spring(this.panY, {
             toValue: this.props.mainView.state.height,
             bounciness: 0,
@@ -174,6 +173,7 @@ class CardDrawer extends Component {
             useNativeDriver: true,
             ...options,
         }).start(() => {
+            this.props.mainView.chat.inputElem.show();                                        
             this._lastOpenValue = 0;
         });
     }
@@ -201,9 +201,15 @@ class CardDrawer extends Component {
                 if (!dx || !dy || Math.abs(dy) < MIN_SWIPE_DISTANCE) {
                     return false;
                 }
+                // these prevent the user from dragging the invisible emote dir section
+                if (this._lastOpenValue === 1 && moveY < this.openedY + 20) {
+                    return false;
+                }
+                if (this._lastOpenValue === 0 && moveY < this.closedY + 20) {
+                    return false
+                }
 
                 if (this._lastOpenValue === 1) {
-
                         this._isClosing = true;
                         return true;
                 } else {
@@ -228,9 +234,9 @@ class CardDrawer extends Component {
 
                 if (!dx || !dy || Math.abs(dy) < MIN_SWIPE_DISTANCE) {
                     if (previouslyOpen) {
-                        this.openDrawer();
+                        this.openDrawer({ velocity: (-1) * vy });
                     } else {
-                        this.closeDrawer();
+                        this.closeDrawer({ velocity: (-1) * vy });
                     }
                     return false;                    
                 }
@@ -241,13 +247,13 @@ class CardDrawer extends Component {
                     (isWithinVelocityThreshold &&
                         previouslyOpen)
                 ) {
-                    this.openDrawer({ velocity: vy });
+                    this.openDrawer({ velocity: (-1) * vy });
                 } else if (
                     (vy > 0) ||
                     vy > VY_MAX ||
                     (isWithinVelocityThreshold && !previouslyOpen)
                 ) {
-                    this.closeDrawer({ velocity: -(vy) });
+                    this.closeDrawer({ velocity: (-1) * vy });
                 } else if (previouslyOpen) {
                     this.openDrawer();
                 } else {
@@ -283,9 +289,6 @@ export default class MainView extends Component {
             }
         };
         global.mainview = this;
-        this.chat.loadMobileSettings((settings) => {
-            this.applyMobileSettings(settings);
-        });
     }
 
     applyMobileSettings(settings) {
@@ -455,16 +458,26 @@ export default class MainView extends Component {
                 AsyncStorage.setItem('TwitchViewHeight', Math.floor(this.twitchView.state.height).toString());                
             }
             AsyncStorage.setItem('InitRoute', this.props.navigation.state.routeName);
+            this.chat.saveMobileSettings();
             this.chat.source.disconnect();
-        } else {
-            this.chat.source.connect();
         }
     }
 
     componentDidMount() {
-        global.bugsnag.leaveBreadcrumb('MainView mounted.');        
+        global.bugsnag.leaveBreadcrumb('MainView mounted.');     
+        this.chat.loadMobileSettings((settings) => {
+            this.applyMobileSettings(settings);
+        });   
         AppState.addEventListener('change', this._handleAppStateChange);    
-        global.bugsnag.leaveBreadcrumb('Added AppState listener.');                
+        global.bugsnag.leaveBreadcrumb('Added AppState listener.');     
+        BackHandler.addEventListener('hardwareBackPress', () => {
+            if (this.props.screenProps.navState === 'MainNav' && 
+                this.cardDrawer._lastOpenValue === 1) {
+                    this.cardDrawer.closeDrawer();
+                    return true;
+            }
+            return false;
+        });           
     }
 
     componentWillUnmount() {

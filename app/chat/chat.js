@@ -20,21 +20,39 @@ export class MobileChat extends Chat {
     }
 
     loadMobileSettings(callback) {
-        AsyncStorage.getItem('appSettings', (err, settings) => {
-            let settingsObj;
-            if (err) {
-                settingsObj = this.resetMobileSettings();
-            } else {
-                if (settings) {
-                    console.log("loaded mobile settings: " + settings);
-                    settingsObj = JSON.parse(settings);
-                } else {
+        if (this.mobileSettings === null) {
+            AsyncStorage.getItem('appSettings', (err, settings) => {
+                let settingsObj;
+                if (err) {
                     settingsObj = this.resetMobileSettings();
+                } else {
+                    settingsObj = JSON.parse(settings);                    
+                    if (settingsObj !== null && 'mediaModal' in settingsObj && 'emoteDirLoseFocus' in settingsObj) {
+                        console.log("loaded mobile settings: " + settings);
+                    } else {
+                        settingsObj = this.resetMobileSettings();
+                    }
                 }
-            }
-            this.mobileSettings = settingsObj;
-            callback(settingsObj);
-        });
+                this.mobileSettings = settingsObj;
+                callback(settingsObj);
+            });
+        } else {
+            callback(this.mobileSettings);
+        }
+
+    }
+
+    saveMobileSettings() {
+        AsyncStorage.setItem('appSettings', JSON.stringify(this.mobileSettings));
+    }
+
+    setMobileSetting(name, value) {
+        if ((name === 'mediaModal' || name === 'emoteDirLoseFocus') && 
+            typeof value === 'boolean') {
+                this.mobileSettings[name] = value;
+        } else {
+            throw new Error('trying to set invalid mobile setting!');
+        }
     }
 
     resetMobileSettings() {
@@ -43,8 +61,7 @@ export class MobileChat extends Chat {
             emoteDirLoseFocus: false
         };
         AsyncStorage.setItem('appSettings', JSON.stringify(settings));
-        this.mobileSettings = settings;
-        console.log("reset mobile settings: " + settings);
+        console.log("reset mobile settings: " + JSON.stringify(settings));
         return settings;
     }
 
