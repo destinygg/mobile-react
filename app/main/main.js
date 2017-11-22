@@ -129,16 +129,16 @@ class CardDrawer extends Component {
                     }
                 ]} 
                 />
-                    {this.props.children}
-                    <Animated.View 
-                        style={[
-                            styles.CardDrawerUnderlay,
-                            {
-                                opacity: this.underlayOpacity
-                            }
-                        ]}
-                        pointerEvents='none'
-                    />
+                {this.props.children}
+                <Animated.View 
+                    style={[
+                        styles.CardDrawerUnderlay,
+                        {
+                            opacity: this.underlayOpacity
+                        }
+                    ]}
+                    pointerEvents='none'
+                />
             </Animated.View>            
         )
     }
@@ -362,17 +362,22 @@ export default class MainView extends Component {
                             ref={(ref) => this.cardDrawer = ref} 
                             mainView={this}
                         >
-                            <MobileChatInput
-                                ref={(ref) => this.chat.inputElem = ref}
-                                chat={this.chat}
-                                animationBinding={{
-                                    binding: this.state.translateY,
-                                    interpolate: [
-                                        this.state.interpolate.min - 100,
-                                        this.state.interpolate.min
-                                    ]
-                                }}
-                            />
+                            <View style={{flexDirection: 'row'}}>
+                                <MobileChatInput
+                                    ref={(ref) => this.chat.inputElem = ref}
+                                    chat={this.chat}
+                                    animationBinding={{
+                                        binding: this.state.translateY,
+                                        interpolate: [
+                                            this.state.interpolate.min - 100,
+                                            this.state.interpolate.min
+                                        ]
+                                    }}
+                                />
+                                <TouchableOpacity>
+                                    <Text>&#xf20d</Text>
+                                </TouchableOpacity>
+                            </View>
                             <CardDrawerNavList screenProps={{ ...this.props.screenProps, mainView: this }} navigation={this.props.navigation} />
                         </CardDrawer>
                     }
@@ -412,7 +417,7 @@ export default class MainView extends Component {
     }
 
     _resize(gestureState) {
-        if (gestureState.moveY > 50 && gestureState.moveY < this.state.height - 50 && this.twitchView) {
+        if (gestureState.moveY > 50 && gestureState.moveY < this.state.height - 75 && this.twitchView) {
             this.twitchView.setState({ height: gestureState.moveY - ((Platform.OS === 'ios') ? 45 : 10) });
         }
     }
@@ -422,7 +427,7 @@ export default class MainView extends Component {
         let twitchState = {
             resizing: false
         }
-        if (gestureState.moveY > 50 && gestureState.moveY < this.state.height - 50) {
+        if (gestureState.moveY > 50 && gestureState.moveY < this.state.height - 75) {
             twitchState.height = gestureState.moveY - ((Platform.OS === 'ios') ? 45 : 10) ;
         }
         if (this.twitchView) {

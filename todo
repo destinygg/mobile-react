@@ -1,7 +1,5 @@
 chat history (maybe?)
 emotes in message view
-chat resizer on android
-test to make sure whispers are showing in chat correctly
 work with ceneza on notifications
 
 potential launch issues: 
@@ -12,10 +10,12 @@ potential launch issues:
 
 launch bugs:
 
-add an inner view for card drawer so that invis emotedir is not touchable
-
-separate profile list buttons
-
 stream/chat toggle
 
 card bacground overlay
+
+button to toggle menu
+
+set maximum chat resize
+
+This makes reading this.state right after calling setState() a potential pitfall. 
