@@ -472,7 +472,7 @@ export default class MainView extends Component {
         global.bugsnag.leaveBreadcrumb('Added AppState listener.');     
         BackHandler.addEventListener('hardwareBackPress', () => {
             if (this.props.screenProps.navState === 'MainNav' && 
-                this.cardDrawer._lastOpenValue === 1) {
+                this.cardDrawer && this.cardDrawer._lastOpenValue === 1) {
                     this.cardDrawer.closeDrawer();
                     return true;
             }
