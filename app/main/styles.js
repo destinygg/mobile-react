@@ -37,13 +37,11 @@ const styles = StyleSheet.create({
     },
     CardDrawer: {
         minHeight: 300,
-        position: 'absolute',
-        marginTop: -50,
+        zIndex: 2000,
         borderTopLeftRadius: 25,
         borderTopRightRadius: 25,
-        paddingLeft: 5,
-        paddingRight: 5,
-        width: '100%'
+        position: 'absolute',
+        marginTop: -110
     },
     CardDrawerNavList: {
         backgroundColor: '#151515',
@@ -54,12 +52,20 @@ const styles = StyleSheet.create({
     DrawerHandle: {
         position: 'absolute',
         height: 4,
-        width: 125,
+        width: 100,
         backgroundColor: '#888',
         borderRadius: 2,
-        top: 85,
+        top: 55,
         alignSelf: 'center',
         zIndex: 3000
+    },
+    DrawerUnderlay: {
+        position: 'absolute',
+        height: '100%',
+        width: '100%',
+        zIndex: 1500,
+        backgroundColor: '#000',
+        opacity: 0
     }
 });
 

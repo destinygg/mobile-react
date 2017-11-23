@@ -28,20 +28,15 @@ const mediaExts = [
 class EmoteDirectory extends PureComponent {
     constructor(props) {
         super(props);
-        this.state = {filter: '', shown: false};
         this.emotes = Array.from(emoteImgs.keys()).sort();
         this.top = new Animated.Value(50);
-    }
-
-    filter(string) {
-        this.setState({filter: string.toLowerCase()});
     }
 
     render() {
         const children = 
             this.emotes
                 .filter((emote) => {
-                    return (emote.toLowerCase().indexOf(this.state.filter) === 0);
+                    return (emote.toLowerCase().indexOf(this.props.filter) === 0);
                 }).map((emote) => {
                     return (
                         <TouchableOpacity style={{ marginLeft: 5, marginRight: 5, flex: 1, justifyContent: 'center' }} key={emote} onPress={() => this.props.onSelect(emote)}>
@@ -54,7 +49,7 @@ class EmoteDirectory extends PureComponent {
         return (
             <Animated.View style={[
                     styles.EmoteDirectoryOuter, 
-                    (this.state.shown) ? styles.EmoteDirShown : null, 
+                    (this.props.shown) ? styles.EmoteDirShown : null, 
                     {transform:[{
                         translateY: this.top
                     }]}
@@ -65,7 +60,9 @@ class EmoteDirectory extends PureComponent {
                         horizontal={true} 
                         keyboardShouldPersistTaps={'always'}
                         onContentSizeChange={() => {
-                            this.scrollView.scrollTo({x: 0, animated: false});
+                            if (this.scrollView && this.scrollView.scrollTo) {
+                                this.scrollView.scrollTo({ x: 0, animated: false });
+                            }
                         }}
                         ref={ref => this.scrollView = ref}
                     >
@@ -84,7 +81,7 @@ class EmoteDirectory extends PureComponent {
 export class MobileChatInput extends Component {
     constructor(props) {
         super(props);
-        this.state = {value: "", emoteDirShown: false, shown: true};
+        this.state = {value: "", emoteDirShown: false, emoteFilter: ''};
         this.opacity = null;
         this.interpolate = null;
         this.input = null;
@@ -102,10 +99,7 @@ export class MobileChatInput extends Component {
     }
 
     set(text) {
-        this.setState({ value: text }); 
-        if (this.state.emoteDirShown) {
-            this.emoteDir.filter(text.split(' ').slice(-1)[0]);     
-        }
+        this.setState({ value: text, emoteFilter: text.split(' ').slice(-1)[0] }); 
     }
 
     append(text) {
@@ -146,19 +140,6 @@ export class MobileChatInput extends Component {
         }
     }
 
-    hide() {
-        if (this.state.shown) {
-            this.setState({ shown: false });
-        }
-    }
-
-    show() {
-        if (!this.state.shown) {
-            this.setState({ shown: true });
-        }
-    }
-
-
     hideEmoteDir() {
         if (this.state.emoteDirShown) {
             Animated.timing(
@@ -170,7 +151,6 @@ export class MobileChatInput extends Component {
                 }
             ).start(() => {
                 this.setState({ emoteDirShown: false });
-                this.emoteDir.setState({ emoteDirShown: false });
             });
         }
     }
@@ -186,20 +166,17 @@ export class MobileChatInput extends Component {
                 }
             ).start(() => {
                 this.setState({ emoteDirShown: false });
-                this.emoteDir.setState({ emoteDirShown: false });
             });
         } else {
-            this.emoteDir.filter(this.state.value.split(' ').slice(-1)[0]);           
+            this.setState({emoteFilter: this.state.value.split(' ').slice(-1)[0]});     
             Animated.timing(
                 this.emoteDir.top,
                 {
                     duration: 300,
-                    toValue: -38,
-                    useNativeDriver: true                    
+                    toValue: -55
                 }
             ).start(() => {
                 this.setState({ emoteDirShown: true });
-                this.emoteDir.setState({ emoteDirShown: true });
             });
         }
     }
@@ -210,7 +187,7 @@ export class MobileChatInput extends Component {
                 style={[
                     styles.ChatInputOuter 
                 ]} 
-                pointerEvents={(this.state.shown) ? 'auto' : 'none'}
+                pointerEvents={(this.props.shown) ? 'auto' : 'none'}
             >
                 <EmoteDirectory 
                     onSelect={(emote) => {
@@ -220,8 +197,10 @@ export class MobileChatInput extends Component {
                         }
                     }} 
                     ref={(ref) => this.emoteDir = ref} 
+                    shown={this.state.emoteDirShown}
+                    filter={this.state.emoteFilter}
                 />                                                                                        
-                <View style={styles.ChatInputInner}>
+                <View style={[styles.ChatInputInner, this.props.style]}>
                     <Animated.View style={[{flex: 1, flexDirection: 'row'}, this.opacity]}>
                         <TouchableOpacity onPress={() => this.toggleEmoteDir()}>
                             <Text style={{
@@ -253,11 +232,17 @@ export class MobileChatInput extends Component {
         )
     }
 
+    _handleKeyboardHidden = () => {
+        this.blur();
+    }
+
     componentDidMount() {
         global.bugsnag.leaveBreadcrumb('Text input mounted.');   
-        Keyboard.addListener('keyboardDidHide', () => {
-            this.blur();
-        })             
+        Keyboard.addListener('keyboardDidHide', this._handleKeyboardHidden);             
+    }
+
+    componentWillUnmount() {
+        Keyboard.removeListener('keyboardDidHide', this._handleKeyboardHidden);
     }
 }
 

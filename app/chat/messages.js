@@ -436,7 +436,7 @@ function ChatEmoteMessageCount(message) {
         stepClass = ' x5'
     if (!message._combo)
         console.error('no combo', message._combo)
-    if (message.ui) {
+    if (message.ui && message.ui.setState) {
         message.ui.setState({ comboClass: stepClass });        
     }
 }

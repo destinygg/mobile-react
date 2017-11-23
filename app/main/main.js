@@ -1,5 +1,5 @@
 import React, { Component, PureComponent } from 'react';
-import { View, WebView, Dimensions, PanResponder, AsyncStorage, AppState, KeyboardAvoidingView, Platform, Animated, Keyboard, BackHandler } from 'react-native';
+import { View, WebView, Dimensions, PanResponder, AsyncStorage, AppState, TouchableOpacity, Text, KeyboardAvoidingView, Platform, Animated, Keyboard } from 'react-native';
 import { StackNavigator, SafeAreaView, NavigationActions } from 'react-navigation';
 import { MobileChatView, MobileChatInput } from '../chat/window';
 import styles from './styles';
@@ -14,7 +14,6 @@ const VY_MAX = 0.1;
 class TwitchView extends Component {
     constructor() {
         super();
-        this.state = {height: null, resizing: false};
     }
 
     render() {
@@ -23,7 +22,7 @@ class TwitchView extends Component {
         if (this.props.landscape) { 
             twitchViewStyle.push({ flex: 1 });
         } else {
-            if (this.state.height) { twitchViewStyle.push({ flex: 0, height: this.state.height}); }            
+            if (this.props.height) { twitchViewStyle.push({ flex: 0, height: this.props.height}); }            
         }
 
         return (
@@ -42,7 +41,6 @@ class TwitchView extends Component {
     }
 
     componentDidMount() {
-        this.props.parent.applyPreviousResizeState();
         global.bugsnag.leaveBreadcrumb('TwitchView mounted.');                
     }
 }
@@ -51,8 +49,16 @@ class CardDrawerNavList extends PureComponent {
     constructor(props) {
         super(props);
         this.routes = [
-            { itemText: 'Stream', itemTarget: () => this.props.screenProps.mainView.showStream() },
-            { itemText: 'Chat', itemTarget: () => this.props.screenProps.mainView.hideStream() },
+            { itemText: 'Stream', itemTarget: () => {
+                if (this.props.onShowStream) {
+                    this.props.onShowStream() 
+                }
+            }},
+            { itemText: 'Chat', itemTarget: () => {
+                if (this.props.onHideStream) {
+                    this.props.onHideStream() 
+                }
+            }},
             { itemText: 'Messages', itemTarget: () => this.props.navigation.navigate('MessageView') },
             { itemText: 'Donate', itemTarget: () => this.props.navigation.navigate('DonateView') },
             { itemText: 'Profile', itemTarget: () => this.props.navigation.navigate('ProfileView')}
@@ -72,32 +78,31 @@ class CardDrawer extends Component {
         super(props);
         this.height = null;
         this.offsets = null;
-        this.openedY = this.props.mainView.state.interpolate.max;
-        this.closedY = this.props.mainView.state.interpolate.min;
-        this.translateY = this.props.mainView.state.translateY;
-        this.panY = this.props.mainView.state.panY;
+        this.openedY = this.props.interpolate.max;
+        this.closedY = this.props.interpolate.min;
+        this.translateY = this.props.translateY;
+        this.panY = this.props.panY;
         this.opacityBinding = this.translateY.interpolate({
             inputRange: [
-                this.props.mainView.state.interpolate.max,
-                this.props.mainView.state.interpolate.min
+                this.props.interpolate.max,
+                this.props.interpolate.min
             ],
             outputRange: [1, .1]
         });
         this.handleTopBinding = this.translateY.interpolate({
             inputRange: [
-                this.props.mainView.state.interpolate.max,
-                this.props.mainView.state.interpolate.min
+                this.props.interpolate.max,
+                this.props.interpolate.min
             ],
-            outputRange: [15, 0]
+            outputRange: [25, 0]
         });
         this.handleWidthBinding = this.translateY.interpolate({
             inputRange: [
-                this.props.mainView.state.interpolate.max,
-                this.props.mainView.state.interpolate.min
+                this.props.interpolate.max,
+                this.props.interpolate.min
             ],
             outputRange: [1, 0.6]
         });
-        this.state = {top: 0, keyboardShown: false};
     }
 
     render() {
@@ -110,7 +115,7 @@ class CardDrawer extends Component {
                             translateY: this.translateY
                         }]
                     },
-                    {top: this.state.top}
+                    {top: this.props.top}
                 ]}
                 {...this._panResponder.panHandlers}
             >
@@ -129,27 +134,9 @@ class CardDrawer extends Component {
                     }
                 ]} 
                 />
-                    {this.props.children}
-                    <Animated.View 
-                        style={[
-                            styles.CardDrawerUnderlay,
-                            {
-                                opacity: this.underlayOpacity
-                            }
-                        ]}
-                        pointerEvents='none'
-                    />
+                {this.props.children}
             </Animated.View>            
         )
-    }
-
-    _onLayout(e) {
-        this.height = e.nativeEvent.layout.height;
-        this.offsets = {
-            hidden: -(this.height) + 15, 
-            input: -(this.height) + 50,
-            full: 0
-        }
     }
 
     openDrawer(options) {
@@ -162,12 +149,15 @@ class CardDrawer extends Component {
         }).start(() => {
             this.props.mainView.chat.inputElem.hide();                                
             this._lastOpenValue = 1;
+            if (this.props.onOpen) {
+                this.props.onOpen();
+            }
         });
     }
 
     closeDrawer(options) {
         Animated.spring(this.panY, {
-            toValue: this.props.mainView.state.height,
+            toValue: this.closedY,
             bounciness: 0,
             restSpeedThreshold: 1,
             useNativeDriver: true,
@@ -175,6 +165,9 @@ class CardDrawer extends Component {
         }).start(() => {
             this.props.mainView.chat.inputElem.show();                                        
             this._lastOpenValue = 0;
+            if (this.props.onClose) {
+                this.props.onClose();
+            }
         });
     }
 
@@ -182,20 +175,12 @@ class CardDrawer extends Component {
 
     }
 
-    avoidKeyboard(height) {
-        if ((this.props.mainView.state.height - height) > 100) {
-            this.setState({top: -(this.props.mainView.state.height - height), keyboardShown: true});            
-        } else {
-            this.setState({top: 0, keyboardShown: false});                        
-        }
-    }
-
     componentWillMount() {
         this._panResponder = PanResponder.create({  // Ask to be the responder:
             onStartShouldSetPanResponder: (evt, gestureState) => false, 
             onStartShouldSetPanResponderCapture: (evt, gestureState) => false, 
             onMoveShouldSetPanResponder: (evt, { moveY, dx, dy }) => {
-                if (this.state.keyboardShown) {
+                if (this.props.keyboardShown) {
                     return false;
                 }
                 if (!dx || !dy || Math.abs(dy) < MIN_SWIPE_DISTANCE) {
@@ -210,11 +195,9 @@ class CardDrawer extends Component {
                 }
 
                 if (this._lastOpenValue === 1) {
-                        this._isClosing = true;
-                        return true;
+                    return true;
                 } else {
                     if (dy < 0) {
-                        this._isClosing = false;
                         return true;
                     }
 
@@ -229,7 +212,7 @@ class CardDrawer extends Component {
             ), 
             onPanResponderTerminationRequest: (evt, gestureState) => true, 
             onPanResponderRelease: (evt, { moveY, vy, dx, dy }) => {  // The user has released all touches while this view is the
-                const previouslyOpen = this._isClosing;
+                const previouslyOpen = this._lastOpenValue;
                 const isWithinVelocityThreshold = vy < VY_MAX && vy > -VY_MAX;
 
                 if (!dx || !dy || Math.abs(dy) < MIN_SWIPE_DISTANCE) {
@@ -280,15 +263,24 @@ export default class MainView extends Component {
         super(props);
         this.chat = props.screenProps.chat;
         this.state = {
-            height: null, 
+            height: null,
+            twitchHeight: null, 
             resizing: false, 
             streamShown: true,
+            keyboardShown: false,
+            drawerOpen: false,
+            drawerTop: 0,
+            underlayOpacity: null,
             settings: {
                 mediaModal: null,
                 emoteDirLoseFocus: null
             }
         };
         global.mainview = this;
+        this.chat.loadMobileSettings((settings) => {
+            this.applyMobileSettings(settings);
+        });
+        this.applyPreviousResizeState();
     }
 
     applyMobileSettings(settings) {
@@ -303,7 +295,7 @@ export default class MainView extends Component {
             if (twitchViewHeight !== null) {
                 const resize = Math.floor(Number(twitchViewHeight));
                 global.bugsnag.leaveBreadcrumb('Applying resize state: ' + resize);
-                this.twitchView.setState({ height: resize});
+                this.setState({ twitchHeight: resize });
                 global.bugsnag.leaveBreadcrumb('Resize state applied.');                
             }
         });
@@ -319,68 +311,80 @@ export default class MainView extends Component {
         this.cardDrawer.closeDrawer();        
     }
 
-    test() {
-        this.cardDrawerNav.dispatch(NavigationActions.navigate({routeName: 'ProfileView'}))
-    }
-
     blurInput() {
-        if (this.chat.inputElem && this.chat.inputElem.blur) {
-            this.chat.inputElem.blur();
+        if (this.inputElem && this.inputElem.blur) {
+            this.inputElem.blur();
         }
     }
 
     render() {
+        console.log(this.state);
         let dividerStyle = [styles.TwitchViewDivider];     
         if (this.state.resizing) { 
             dividerStyle.push(styles.DividerResizing); 
         }
         return (
-            <SafeAreaView style={[styles.MainView]} collapsable={false}>
-                <KeyboardAvoidingView
-                    behavior='height'
+            <SafeAreaView style={styles.View}>
+                <View
                     style={[styles.View]}
-                    keyboardVerticalOffset={(Platform.OS === 'android') ? -400 : 0}
                     onLayout={(e) => {
-                        if (this.cardDrawer && this.state.height) {
-                            this.cardDrawer.avoidKeyboard(e.nativeEvent.layout.height);
-                        }
+                        this._onLayout(e.nativeEvent);
                     }}
                 >
-                    <View
-                        style={styles.View}
-                        onLayout={(e) => {
-                            this._onLayout(e.nativeEvent);
-                        }}
-                    >
-                        {(this.state.streamShown) &&
-                            <TwitchView ref={(ref) => this.twitchView = ref} parent={this}/>
-                        }
-
-                        <View style={dividerStyle} />
-                        <View style={styles.TwitchViewDividerHandle} {...this._panResponder.panHandlers} />
-                        {this.props.screenProps.chat.mainwindow.uiElem}
-                    </View>
-                    {this.state.height != null && 
-                        <CardDrawer 
-                            ref={(ref) => this.cardDrawer = ref} 
-                            mainView={this}
-                        >
-                            <MobileChatInput
-                                ref={(ref) => this.chat.inputElem = ref}
-                                chat={this.chat}
-                                animationBinding={{
-                                    binding: this.state.translateY,
-                                    interpolate: [
-                                        this.state.interpolate.min - 100,
-                                        this.state.interpolate.min
-                                    ]
-                                }}
-                            />
-                            <CardDrawerNavList screenProps={{ ...this.props.screenProps, mainView: this }} navigation={this.props.navigation} />
-                        </CardDrawer>
+                    {(this.state.streamShown) &&
+                        <TwitchView 
+                            ref={(ref) => this.twitchView = ref} 
+                            parent={this} 
+                            resizing={this.state.resizing}
+                            height={this.state.twitchHeight}
+                        />
                     }
-                </KeyboardAvoidingView>
-            </SafeAreaView>
+                    <View style={dividerStyle} />
+                    <View style={styles.TwitchViewDividerHandle} {...this._panResponder.panHandlers} />
+                    <KeyboardAvoidingView 
+                        behavior='padding' style={styles.View}
+                        keyboardVerticalOffset={this.state.bottomOffset}
+                    >
+                        {this.props.screenProps.chat.mainwindow.uiElem}
+                    </KeyboardAvoidingView>
+                    <Animated.View 
+                        style={[styles.DrawerUnderlay, {opacity: this.state.underlayOpacity}]} 
+                        pointerEvents={(this.state.drawerOpen) ? 'auto' : 'none'}
+                    />
+                {this.state.height != null && 
+                    <CardDrawer 
+                        ref={(ref) => this.cardDrawer = ref} 
+                        interpolate={this.state.interpolate}
+                        panY={this.state.panY}
+                        translateY={this.state.translateY}
+                        parentHeight={this.state.height}
+                        top={this.state.drawerTop}
+                        keyboardShown={this.state.keyboardShown}     
+                        onShowStream={() => this.showStream()}                    
+                        onHideStream={() => this.hideStream()}   
+                        onOpen={() => this._drawerOpened()}                 
+                        onClose={() => this._drawerClosed()}  
+                    >
+                        <View style={{flexDirection: 'row'}}>
+                                <MobileChatInput
+                                    ref={(ref) => this.inputElem = ref}
+                                    chat={this.chat}
+                                    animationBinding={{
+                                        binding: this.state.translateY,
+                                        interpolate: [
+                                            this.state.interpolate.min - 100,
+                                            this.state.interpolate.min
+                                        ]
+                                    }}
+                                    shown={!this.state.drawerOpen}
+                                    style={{paddingBottom: this.state.bottomOffset}}
+                                />
+                        </View>
+                        <CardDrawerNavList screenProps={{ ...this.props.screenProps, mainView: this }} navigation={this.props.navigation} />
+                    </CardDrawer>
+                }
+            </View>   
+            </SafeAreaView>                         
         );
     }
 
@@ -411,65 +415,87 @@ export default class MainView extends Component {
 
     _beginResize(gestureState) {
         this.setState({ resizing: true });
-        this.twitchView.setState({ resizing: true });
     }
 
     _resize(gestureState) {
-        if (gestureState.moveY > 50 && gestureState.moveY < this.state.height - 50 && this.twitchView) {
-            this.twitchView.setState({ height: gestureState.moveY - ((Platform.OS === 'ios') ? 45 : 10) });
+        if (gestureState.moveY > 50 && gestureState.moveY < this.state.height - 75) {
+            this.setState({ twitchHeight: gestureState.moveY - ((Platform.OS === 'ios') ? 45 : 10) });
         }
     }
 
     _endResize(gestureState) {
-        this.setState({ resizing: false });   
-        let twitchState = {
+        let newState = {
             resizing: false
         }
-        if (gestureState.moveY > 50 && gestureState.moveY < this.state.height - 50) {
-            twitchState.height = gestureState.moveY - ((Platform.OS === 'ios') ? 45 : 10) ;
+        if (gestureState.moveY > 50 && gestureState.moveY < this.state.height - 75) {
+            newState.twitchHeight = gestureState.moveY - ((Platform.OS === 'ios') ? 45 : 10) ;
         }
-        if (this.twitchView) {
-            this.twitchView.setState(twitchState);            
-        }
+        this.setState(newState);            
+    }
+
+    _drawerOpened() {
+        this.setState({drawerOpen: true});
+
+    }
+
+    _drawerClosed() {
+        this.setState({drawerOpen: false});
     }
 
     _onLayout(e) {
         global.bugsnag.leaveBreadcrumb('MainView before onLayout.');  
         const viewHeight = (e.layout.height > e.layout.width) ? e.layout.height : e.layout.width;
+        const bottomOffset = DEVICE_HEIGHT - viewHeight - e.layout.y;
         if (this.state.height === null) {
             const interpolate = {
-                max: viewHeight - 350,
-                min: viewHeight - 90
+                max: viewHeight - 300,
+                min: viewHeight
             };
             const panY = new Animated.Value(viewHeight);
+            const translateY = Animated.diffClamp(panY, interpolate.max, interpolate.min);            
             this.setState({ 
                 height: viewHeight,
                 panY: panY,
-                translateY: Animated.diffClamp(panY, interpolate.max, interpolate.min),
-                interpolate: interpolate
+                translateY: translateY,
+                interpolate: interpolate,
+                bottomOffset: bottomOffset,
+                underlayOpacity: translateY.interpolate({
+                    inputRange: [interpolate.max, interpolate.min],
+                    outputRange: [0.7, 0]
+                })
             });
         }         
         global.bugsnag.leaveBreadcrumb('MainView after onLayout.');                        
     }
 
-    _handleAppStateChange = (nextState) => {
+    _handleAppStateChange(nextState) {
         if (nextState === 'background') {
-            if (this.twitchView && this.twitchView.state.height !== null) {
-                AsyncStorage.setItem('TwitchViewHeight', Math.floor(this.twitchView.state.height).toString());                
+            if (this.state.twitchHeight) {
+                AsyncStorage.setItem('TwitchViewHeight', Math.floor(this.state.twitchHeight).toString());                
             }
             AsyncStorage.setItem('InitRoute', this.props.navigation.state.routeName);
             this.chat.saveMobileSettings();
             this.chat.source.disconnect();
+        } else {
+            this.chat.source.connect("wss://www.destiny.gg/ws");
         }
     }
 
+    _handleKeyboardShown = (e) => {
+        const offset = -(DEVICE_HEIGHT - e.endCoordinates.screenY - this.state.bottomOffset);
+        this.setState({ drawerTop: offset, keyboardShown: true });
+    }
+
+    _handleKeyboardHidden = (e) => {
+        this.setState({ drawerTop: 0, keyboardShown: false });
+    }
+
     componentDidMount() {
-        global.bugsnag.leaveBreadcrumb('MainView mounted.');     
-        this.chat.loadMobileSettings((settings) => {
-            this.applyMobileSettings(settings);
-        });   
-        AppState.addEventListener('change', this._handleAppStateChange);    
-        global.bugsnag.leaveBreadcrumb('Added AppState listener.');     
+        global.bugsnag.leaveBreadcrumb('MainView mounted.');        
+        AppState.addEventListener('change', (state) => this._handleAppStateChange(state));    
+        global.bugsnag.leaveBreadcrumb('Added AppState listener.');                
+        Keyboard.addListener('keyboardDidShow', this._handleKeyboardShown);
+        Keyboard.addListener('keyboardDidHide', this._handleKeyboardHidden);
         BackHandler.addEventListener('hardwareBackPress', () => {
             if (this.props.screenProps.navState === 'MainNav' && 
                 this.cardDrawer && this.cardDrawer._lastOpenValue === 1) {
@@ -477,13 +503,15 @@ export default class MainView extends Component {
                     return true;
             }
             return false;
-        });           
+        });  
     }
 
     componentWillUnmount() {
-        AppState.removeEventListener('change', this._handleAppStateChange);   
-        if (this.twitchView && this.twitchView.state.height !== null) {            
-            AsyncStorage.setItem('TwitchViewHeight', Math.floor(this.twitchView.state.height).toString());        
+        AppState.removeEventListener('change', (state) => this._handleAppStateChange(state));   
+        Keyboard.removeListener('keyboardDidShow', this._handleKeyboardShown);
+        Keyboard.removeListener('keyboardDidHide', this._handleKeyboardHidden);
+        if (this.state.twitchHeight) {            
+            AsyncStorage.setItem('TwitchViewHeight', Math.floor(this.state.twitchHeight).toString());        
         }
     }
 }
