@@ -81,7 +81,7 @@ class EmoteDirectory extends PureComponent {
 export class MobileChatInput extends Component {
     constructor(props) {
         super(props);
-        this.state = {value: "", emoteDirShown: false, emoteFilter: ''};
+        this.state = {value: ""};
         this.opacity = null;
         this.interpolate = null;
         this.input = null;
@@ -89,6 +89,12 @@ export class MobileChatInput extends Component {
 
     componentWillMount() {
         this.bindAnimation(this.props.animationBinding);        
+    }
+
+    componentDidUpdate() {
+        if (this.props.onChange) {
+            this.props.onChange(this.value);
+        }
     }
 
     bindAnimation(config) {
@@ -99,7 +105,7 @@ export class MobileChatInput extends Component {
     }
 
     set(text) {
-        this.setState({ value: text, emoteFilter: text.split(' ').slice(-1)[0] }); 
+        this.setState({ value: text }); 
     }
 
     append(text) {
@@ -140,45 +146,6 @@ export class MobileChatInput extends Component {
         }
     }
 
-    hideEmoteDir() {
-        if (this.state.emoteDirShown) {
-            Animated.timing(
-                this.emoteDir.top,
-                {
-                    duration: 300,
-                    toValue: 0
-                }
-            ).start(() => {
-                this.setState({ emoteDirShown: false });
-            });
-        }
-    }
-
-    toggleEmoteDir() {
-        if (this.state.emoteDirShown) {
-            Animated.timing(
-                this.emoteDir.top,
-                {
-                    duration: 300,
-                    toValue: 0
-                }
-            ).start(() => {
-                this.setState({ emoteDirShown: false });
-            });
-        } else {
-            this.setState({emoteFilter: this.state.value.split(' ').slice(-1)[0]});     
-            Animated.timing(
-                this.emoteDir.top,
-                {
-                    duration: 300,
-                    toValue: -55
-                }
-            ).start(() => {
-                this.setState({ emoteDirShown: true });
-            });
-        }
-    }
-
     render() {
         return (
             <View 
@@ -186,18 +153,7 @@ export class MobileChatInput extends Component {
                     styles.ChatInputOuter 
                 ]} 
                 pointerEvents={(this.props.shown) ? 'auto' : 'none'}
-            >
-                <EmoteDirectory 
-                    onSelect={(emote) => {
-                        this.replace(emote);
-                        if (this.props.chat.mobileSettings.emoteDirLoseFocus) {
-                            this.hideEmoteDir();                            
-                        }
-                    }} 
-                    ref={(ref) => this.emoteDir = ref} 
-                    shown={this.state.emoteDirShown}
-                    filter={this.state.emoteFilter}
-                />                                                                                        
+            >                                                                                      
                 <View style={[styles.ChatInputInner, this.props.style]}>
                     <Animated.View style={[{flex: 1, flexDirection: 'row'}, this.opacity]}>
                         <TouchableOpacity onPress={() => this.toggleEmoteDir()}>

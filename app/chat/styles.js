@@ -83,7 +83,6 @@ const styles = StyleSheet.create({
     },
     ChatInputOuter: { 
         flexDirection: 'column', 
-        paddingTop: 45,
         width: '100%',
         alignSelf: 'center',
     },
@@ -108,9 +107,7 @@ const styles = StyleSheet.create({
     EmoteDirectoryOuter: {
         borderTopLeftRadius: 25,
         borderTopRightRadius: 25,
-        position: 'absolute',
         width: '100%',
-        top: 60,
         height: 70,
         backgroundColor: '#151515',        
     },
