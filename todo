@@ -19,3 +19,5 @@ button to toggle menu
 set maximum chat resize
 
 This makes reading this.state right after calling setState() a potential pitfall. 
+
+move fuggin emote dir into top level, control offset independently...

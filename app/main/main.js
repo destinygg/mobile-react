@@ -1,12 +1,12 @@
 import React, { Component, PureComponent } from 'react';
-import { View, WebView, Dimensions, PanResponder, AsyncStorage, AppState, TouchableOpacity, Text, KeyboardAvoidingView, Platform, Animated, Keyboard } from 'react-native';
+import { View, WebView, Dimensions, PanResponder, AsyncStorage, BackHandler, AppState, TouchableOpacity, Text, KeyboardAvoidingView, Platform, Animated, Keyboard } from 'react-native';
 import { StackNavigator, SafeAreaView, NavigationActions } from 'react-navigation';
 import { MobileChatView, MobileChatInput } from '../chat/window';
 import styles from './styles';
 import { ButtonList } from '../components'
 
 
-const MIN_SWIPE_DISTANCE = 5;
+const MIN_SWIPE_DISTANCE = 2;
 const DEVICE_HEIGHT = parseFloat(Dimensions.get('window').height);
 const THRESHOLD = DEVICE_HEIGHT - 150;
 const VY_MAX = 0.1;
@@ -76,11 +76,13 @@ class CardDrawerNavList extends PureComponent {
 class CardDrawer extends Component {
     constructor(props) {
         super(props);
+        this.state = {keyboardShown: false};
         this.height = null;
         this.offsets = null;
         this.openedY = this.props.interpolate.max;
         this.closedY = this.props.interpolate.min;
         this.translateY = this.props.translateY;
+        this.keyboardShownTranslateY = this.props.keyboardShownTranslateY;
         this.panY = this.props.panY;
         this.opacityBinding = this.translateY.interpolate({
             inputRange: [
@@ -115,7 +117,12 @@ class CardDrawer extends Component {
                             translateY: this.translateY
                         }]
                     },
-                    {top: this.props.top}
+                    (this.state.keyboardShown) ? 
+                        { 
+                            transform: [{
+                                translateY: this.keyboardShownTranslateY
+                            }]
+                        } : null
                 ]}
                 {...this._panResponder.panHandlers}
             >
@@ -142,13 +149,11 @@ class CardDrawer extends Component {
     openDrawer(options) {
         Animated.spring(this.panY, {
             toValue: this.openedY,
-            bounciness: 0,
-            restSpeedThreshold: 0.1,
+            friction: 10,
             useNativeDriver: true,
             ...options,
         }).start(() => {
-            this.props.mainView.chat.inputElem.hide();                                
-            this._lastOpenValue = 1;
+            this._lastOpenValue = true;
             if (this.props.onOpen) {
                 this.props.onOpen();
             }
@@ -158,13 +163,11 @@ class CardDrawer extends Component {
     closeDrawer(options) {
         Animated.spring(this.panY, {
             toValue: this.closedY,
-            bounciness: 0,
-            restSpeedThreshold: 1,
+            friction: 10,
             useNativeDriver: true,
             ...options,
         }).start(() => {
-            this.props.mainView.chat.inputElem.show();                                        
-            this._lastOpenValue = 0;
+            this._lastOpenValue = false;
             if (this.props.onClose) {
                 this.props.onClose();
             }
@@ -179,28 +182,21 @@ class CardDrawer extends Component {
         this._panResponder = PanResponder.create({  // Ask to be the responder:
             onStartShouldSetPanResponder: (evt, gestureState) => false, 
             onStartShouldSetPanResponderCapture: (evt, gestureState) => false, 
-            onMoveShouldSetPanResponder: (evt, { moveY, dx, dy }) => {
-                if (this.props.keyboardShown) {
+            onMoveShouldSetPanResponder: ({ nativeEvent }, { moveY, dx, dy, y0 }) => {
+                if (this.state.keyboardShown) {
                     return false;
-                }
-                if (!dx || !dy || Math.abs(dy) < MIN_SWIPE_DISTANCE) {
-                    return false;
-                }
-                // these prevent the user from dragging the invisible emote dir section
-                if (this._lastOpenValue === 1 && moveY < this.openedY + 20) {
-                    return false;
-                }
-                if (this._lastOpenValue === 0 && moveY < this.closedY + 20) {
-                    return false
                 }
 
-                if (this._lastOpenValue === 1) {
+                if (moveY > this.closedY) {
+                    return false;
+                }
+
+                if (this._lastOpenValue) {
                     return true;
                 } else {
                     if (dy < 0) {
                         return true;
                     }
-
                     return false;
                 }
             }, 
@@ -214,14 +210,14 @@ class CardDrawer extends Component {
             onPanResponderRelease: (evt, { moveY, vy, dx, dy }) => {  // The user has released all touches while this view is the
                 const previouslyOpen = this._lastOpenValue;
                 const isWithinVelocityThreshold = vy < VY_MAX && vy > -VY_MAX;
-
+                
                 if (!dx || !dy || Math.abs(dy) < MIN_SWIPE_DISTANCE) {
                     if (previouslyOpen) {
-                        this.openDrawer({ velocity: (-1) * vy });
+                        this.openDrawer({ velocity: vy });
                     } else {
-                        this.closeDrawer({ velocity: (-1) * vy });
+                        this.closeDrawer({ velocity: vy });
                     }
-                    return false;                    
+                    return;                    
                 }
                 
                 if (
@@ -230,27 +226,60 @@ class CardDrawer extends Component {
                     (isWithinVelocityThreshold &&
                         previouslyOpen)
                 ) {
-                    this.openDrawer({ velocity: (-1) * vy });
+                    console.log(2)                    
+                    this.openDrawer({ velocity: vy });
+                    return;                                        
                 } else if (
                     (vy > 0) ||
                     vy > VY_MAX ||
                     (isWithinVelocityThreshold && !previouslyOpen)
                 ) {
-                    this.closeDrawer({ velocity: (-1) * vy });
+                    console.log(3)                    
+                    this.closeDrawer({ velocity: vy });
+                    return;                                        
                 } else if (previouslyOpen) {
+                    console.log(4)                    
                     this.openDrawer();
+                    return;                                        
                 } else {
+                    console.log(5)                                       
                     this.closeDrawer();
+                    return;                                        
                 }
             }, 
             onPanResponderTerminate: (evt, gestureState) => {  // Another component has become the responder, so this gesture
-                // should be cancelled
             }, 
             onShouldBlockNativeResponder: (evt, gestureState) => {  // Returns whether this component should block native components from becoming the JS
                 // responder. Returns true by default. Is currently only supported on android.
                 return true;
             },
         });
+    }
+
+    _handleKeyboard = (e) => {
+        const offset = e.endCoordinates.screenY - 20;
+        if (offset < DEVICE_HEIGHT - 100) {
+            this.setState({ keyboardShown: true });
+            Animated.spring(this.keyboardShownTranslateY, {
+                toValue: offset,
+                bounciness: 0,
+                speed: 20,
+                useNativeDriver: true
+            }).start();
+        } else {
+            this.closeDrawer();            
+            Animated.spring(this.keyboardShownTranslateY, {
+                toValue: this.closedY,
+                bounciness: 0,
+                speed: 20,
+                useNativeDriver: true
+            }).start(() => this.setState({ keyboardShown: false }));
+        }
+
+    }
+
+    componentDidMount() {
+        Keyboard.addListener('keyboardWillChangeFrame', this._handleKeyboard);
     }
 }
 
@@ -267,9 +296,7 @@ export default class MainView extends Component {
             twitchHeight: null, 
             resizing: false, 
             streamShown: true,
-            keyboardShown: false,
             drawerOpen: false,
-            drawerTop: 0,
             underlayOpacity: null,
             settings: {
                 mediaModal: null,
@@ -343,7 +370,7 @@ export default class MainView extends Component {
                     <View style={styles.TwitchViewDividerHandle} {...this._panResponder.panHandlers} />
                     <KeyboardAvoidingView 
                         behavior='padding' style={styles.View}
-                        keyboardVerticalOffset={this.state.bottomOffset}
+                        keyboardVerticalOffset={this.state.bottomOffset + 10}
                     >
                         {this.props.screenProps.chat.mainwindow.uiElem}
                     </KeyboardAvoidingView>
@@ -357,13 +384,13 @@ export default class MainView extends Component {
                         interpolate={this.state.interpolate}
                         panY={this.state.panY}
                         translateY={this.state.translateY}
+                        keyboardShownTranslateY={this.state.keyboardShownTranslateY}
                         parentHeight={this.state.height}
-                        top={this.state.drawerTop}
-                        keyboardShown={this.state.keyboardShown}     
                         onShowStream={() => this.showStream()}                    
                         onHideStream={() => this.hideStream()}   
                         onOpen={() => this._drawerOpened()}                 
                         onClose={() => this._drawerClosed()}  
+                        bottomOffset={this.state.bottomOffset}
                     >
                         <View style={{flexDirection: 'row'}}>
                                 <MobileChatInput
@@ -457,6 +484,7 @@ export default class MainView extends Component {
                 height: viewHeight,
                 panY: panY,
                 translateY: translateY,
+                keyboardShownTranslateY: new Animated.Value(viewHeight),
                 interpolate: interpolate,
                 bottomOffset: bottomOffset,
                 underlayOpacity: translateY.interpolate({
@@ -481,21 +509,10 @@ export default class MainView extends Component {
         }
     }
 
-    _handleKeyboardShown = (e) => {
-        const offset = -(DEVICE_HEIGHT - e.endCoordinates.screenY - this.state.bottomOffset);
-        this.setState({ drawerTop: offset, keyboardShown: true });
-    }
-
-    _handleKeyboardHidden = (e) => {
-        this.setState({ drawerTop: 0, keyboardShown: false });
-    }
-
     componentDidMount() {
         global.bugsnag.leaveBreadcrumb('MainView mounted.');        
         AppState.addEventListener('change', (state) => this._handleAppStateChange(state));    
         global.bugsnag.leaveBreadcrumb('Added AppState listener.');                
-        Keyboard.addListener('keyboardDidShow', this._handleKeyboardShown);
-        Keyboard.addListener('keyboardDidHide', this._handleKeyboardHidden);
         BackHandler.addEventListener('hardwareBackPress', () => {
             if (this.props.screenProps.navState === 'MainNav' && 
                 this.cardDrawer && this.cardDrawer._lastOpenValue === 1) {
@@ -508,8 +525,7 @@ export default class MainView extends Component {
 
     componentWillUnmount() {
         AppState.removeEventListener('change', (state) => this._handleAppStateChange(state));   
-        Keyboard.removeListener('keyboardDidShow', this._handleKeyboardShown);
-        Keyboard.removeListener('keyboardDidHide', this._handleKeyboardHidden);
+        Keyboard.removeListener('keyboardWillChangeFrame', this._handleKeyboardShown);
         if (this.state.twitchHeight) {            
             AsyncStorage.setItem('TwitchViewHeight', Math.floor(this.state.twitchHeight).toString());        
         }

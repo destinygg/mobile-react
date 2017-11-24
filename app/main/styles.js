@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 25,
         borderTopRightRadius: 25,
         position: 'absolute',
-        marginTop: -110
+        marginTop: -135
     },
     CardDrawerNavList: {
         backgroundColor: '#151515',
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
         width: 100,
         backgroundColor: '#888',
         borderRadius: 2,
-        top: 55,
+        top: 75,
         alignSelf: 'center',
         zIndex: 3000
     },

@@ -29,7 +29,6 @@ class EmoteDirectory extends PureComponent {
     constructor(props) {
         super(props);
         this.emotes = Array.from(emoteImgs.keys()).sort();
-        this.top = new Animated.Value(50);
     }
 
     render() {
@@ -47,13 +46,17 @@ class EmoteDirectory extends PureComponent {
                     );
                 });
         return (
-            <Animated.View style={[
+            <Animated.View 
+                style={[
                     styles.EmoteDirectoryOuter, 
                     (this.props.shown) ? styles.EmoteDirShown : null, 
                     {transform:[{
                         translateY: this.top
                     }]}
-                ]} collapsable={false}>
+                ]} 
+                collapsable={false}
+                pointerEvents={(this.props.shown) ? 'auto' : 'none'}
+            >
                 <View style={styles.EmoteDirectory}>
                     <ScrollView 
                         showsHorizontalScrollIndicator={false} 
@@ -146,7 +149,7 @@ export class MobileChatInput extends Component {
                 this.emoteDir.top,
                 {
                     duration: 300,
-                    toValue: 0,
+                    toValue: 50,
                     useNativeDriver: true
                 }
             ).start(() => {
@@ -161,7 +164,7 @@ export class MobileChatInput extends Component {
                 this.emoteDir.top,
                 {
                     duration: 300,
-                    toValue: 0,
+                    toValue: 50,
                     useNativeDriver: true
                 }
             ).start(() => {
@@ -173,7 +176,8 @@ export class MobileChatInput extends Component {
                 this.emoteDir.top,
                 {
                     duration: 300,
-                    toValue: -55
+                    toValue: 0,
+                    useNativeDriver: true                    
                 }
             ).start(() => {
                 this.setState({ emoteDirShown: true });
