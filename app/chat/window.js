@@ -49,7 +49,7 @@ class EmoteDirectory extends PureComponent {
             <Animated.View style={[
                     styles.EmoteDirectoryOuter,
                     {transform:[{
-                        translateY: this.props.animated
+                        translateY: (this.props.animated) ? this.props.animated : -100
                     }]}
                 ]} 
                 collapsable={false}

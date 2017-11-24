@@ -299,12 +299,14 @@ export default class MainView extends Component {
             drawerOpen: false,
             underlayOpacity: null,
             emoteDirShown: false,
+            emoteDirY: null,
             emoteFilter: '',
             settings: {
                 mediaModal: null,
                 emoteDirLoseFocus: null
             }
         };
+        this.emoteDirInitY = null;
         global.mainview = this;
         this.chat.loadMobileSettings((settings) => {
             this.applyMobileSettings(settings);
@@ -353,7 +355,7 @@ export default class MainView extends Component {
                 this.state.emoteDirY,
                 {
                     duration: 300,
-                    toValue: 0
+                    toValue: this.emoteDirInitY
                 }
             ).start(() => {
                 this.setState({ emoteDirShown: false });
@@ -362,30 +364,36 @@ export default class MainView extends Component {
     }
 
     toggleEmoteDir() {
-        this.cardDrawer.measureInWindow(() => {
-            
-        })
         if (this.state.emoteDirShown) {
             Animated.timing(
                 this.state.emoteDirY,
                 {
                     duration: 300,
-                    toValue: 0
+                    toValue: this.emoteDirInitY
                 }
             ).start(() => {
                 this.setState({ emoteDirShown: false });
             });
         } else {
-            this.setState({emoteFilter: this.state.value.split(' ').slice(-1)[0]});     
-            Animated.timing(
-                this.state.emoteDirY,
-                {
-                    duration: 300,
-                    toValue: -55
-                }
-            ).start(() => {
-                this.setState({ emoteDirShown: true });
-            });
+            this.cardDrawer.measureInWindow((x, y, width, height) => {
+                this.setState(
+                    {
+                        emoteDirY: new Animated.Value(y),
+                        emoteDirShown: true,
+                        emoteFilter: this.state.value.split(' ').slice(-1)[0]
+                    },
+                    () => {
+                        this.emoteDirInitY = y;
+                        Animated.timing(
+                            this.state.emoteDirY,
+                            {
+                                duration: 300,
+                                toValue: y - 40
+                            }
+                        ).start();
+                    }
+                );
+            })
         }
     }
 
@@ -428,17 +436,6 @@ export default class MainView extends Component {
                         pointerEvents={(this.state.drawerOpen) ? 'auto' : 'none'}
                     />
                 {this.state.height != null && 
-                    <EmoteDirectory 
-                        onSelect={(emote) => {
-                            this.inputElem.replace(emote);
-                            if (this.chat.mobileSettings.emoteDirLoseFocus) {
-                                this.hideEmoteDir();                            
-                            }
-                        }} 
-                        ref={(ref) => this.emoteDir = ref} 
-                        filter={this.state.emoteFilter}
-                        animated={this.state.emoteDirY}
-                    />  &&
                     <CardDrawer 
                         ref={(ref) => this.cardDrawer = ref} 
                         interpolate={this.state.interpolate}
@@ -466,10 +463,22 @@ export default class MainView extends Component {
                                     shown={!this.state.drawerOpen}
                                     style={{paddingBottom: this.state.bottomOffset}}
                                     onChange={(val) => this._onInputUpdate(val)}
+                                    onEmoteBtnPress={() => this.toggleEmoteDir()}
                                 />
                         </View>
                         <CardDrawerNavList screenProps={{ ...this.props.screenProps, mainView: this }} navigation={this.props.navigation} />
-                    </CardDrawer>
+                    </CardDrawer> && this.state.emoteDirShown &&
+                    <EmoteDirectory 
+                        onSelect={(emote) => {
+                            this.inputElem.replace(emote);
+                            if (this.chat.mobileSettings.emoteDirLoseFocus) {
+                                this.hideEmoteDir();                            
+                            }
+                        }} 
+                        ref={(ref) => this.emoteDir = ref} 
+                        filter={this.state.emoteFilter}
+                        animated={this.state.emoteDirY}
+                    />
                 }
             </View>   
             </SafeAreaView>                         
