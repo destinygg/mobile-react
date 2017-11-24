@@ -298,6 +298,8 @@ export default class MainView extends Component {
             streamShown: true,
             drawerOpen: false,
             underlayOpacity: null,
+            emoteDirShown: false,
+            emoteFilter: '',
             settings: {
                 mediaModal: null,
                 emoteDirLoseFocus: null
@@ -344,6 +346,53 @@ export default class MainView extends Component {
         }
     }
 
+    
+    hideEmoteDir() {
+        if (this.state.emoteDirShown) {
+            Animated.timing(
+                this.state.emoteDirY,
+                {
+                    duration: 300,
+                    toValue: 0
+                }
+            ).start(() => {
+                this.setState({ emoteDirShown: false });
+            });
+        }
+    }
+
+    toggleEmoteDir() {
+        this.cardDrawer.measureInWindow(() => {
+            
+        })
+        if (this.state.emoteDirShown) {
+            Animated.timing(
+                this.state.emoteDirY,
+                {
+                    duration: 300,
+                    toValue: 0
+                }
+            ).start(() => {
+                this.setState({ emoteDirShown: false });
+            });
+        } else {
+            this.setState({emoteFilter: this.state.value.split(' ').slice(-1)[0]});     
+            Animated.timing(
+                this.state.emoteDirY,
+                {
+                    duration: 300,
+                    toValue: -55
+                }
+            ).start(() => {
+                this.setState({ emoteDirShown: true });
+            });
+        }
+    }
+
+    _onInputUpdate(val) {
+        this.setState({ emoteFilter: val.split(' ').slice(-1)[0] });
+    }
+
     render() {
         console.log(this.state);
         let dividerStyle = [styles.TwitchViewDivider];     
@@ -379,6 +428,17 @@ export default class MainView extends Component {
                         pointerEvents={(this.state.drawerOpen) ? 'auto' : 'none'}
                     />
                 {this.state.height != null && 
+                    <EmoteDirectory 
+                        onSelect={(emote) => {
+                            this.inputElem.replace(emote);
+                            if (this.chat.mobileSettings.emoteDirLoseFocus) {
+                                this.hideEmoteDir();                            
+                            }
+                        }} 
+                        ref={(ref) => this.emoteDir = ref} 
+                        filter={this.state.emoteFilter}
+                        animated={this.state.emoteDirY}
+                    />  &&
                     <CardDrawer 
                         ref={(ref) => this.cardDrawer = ref} 
                         interpolate={this.state.interpolate}
@@ -405,6 +465,7 @@ export default class MainView extends Component {
                                     }}
                                     shown={!this.state.drawerOpen}
                                     style={{paddingBottom: this.state.bottomOffset}}
+                                    onChange={(val) => this._onInputUpdate(val)}
                                 />
                         </View>
                         <CardDrawerNavList screenProps={{ ...this.props.screenProps, mainView: this }} navigation={this.props.navigation} />

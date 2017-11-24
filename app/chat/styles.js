@@ -107,6 +107,7 @@ const styles = StyleSheet.create({
     EmoteDirectoryOuter: {
         borderTopLeftRadius: 25,
         borderTopRightRadius: 25,
+        width: '100%',
         height: 70,
         backgroundColor: '#151515',        
     },

@@ -20,4 +20,4 @@ set maximum chat resize
 
 This makes reading this.state right after calling setState() a potential pitfall. 
 
-move fuggin emote dir into top level, control offset independently...
+only render emotedir when relevant, animate emotedir, keep drawer closed with emotedir open.
