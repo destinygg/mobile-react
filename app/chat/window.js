@@ -29,7 +29,6 @@ class EmoteDirectory extends PureComponent {
     constructor(props) {
         super(props);
         this.emotes = Array.from(emoteImgs.keys()).sort();
-        this.top = new Animated.Value(50);
     }
 
     render() {
@@ -48,10 +47,9 @@ class EmoteDirectory extends PureComponent {
                 });
         return (
             <Animated.View style={[
-                    styles.EmoteDirectoryOuter, 
-                    (this.props.shown) ? styles.EmoteDirShown : null, 
+                    styles.EmoteDirectoryOuter,
                     {transform:[{
-                        translateY: this.top
+                        translateY: this.props.animated
                     }]}
                 ]} collapsable={false}>
                 <View style={styles.EmoteDirectory}>
@@ -156,7 +154,7 @@ export class MobileChatInput extends Component {
             >                                                                                      
                 <View style={[styles.ChatInputInner, this.props.style]}>
                     <Animated.View style={[{flex: 1, flexDirection: 'row'}, this.opacity]}>
-                        <TouchableOpacity onPress={() => this.toggleEmoteDir()}>
+                        <TouchableOpacity onPress={() => this.props.onEmoteBtnPress()}>
                             <Text style={{
                                 fontFamily: 'ionicons',
                                 color: '#888',
@@ -206,7 +204,6 @@ export class MobileChatView extends Component {
         this.state = {
             messages: [],
             extraData: true,
-            emoteDirShown: false,
             mediaModalShown: false
         }
         this.pinned = true;

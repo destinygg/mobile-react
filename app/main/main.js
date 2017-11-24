@@ -314,7 +314,7 @@ export default class MainView extends Component {
     hideEmoteDir() {
         if (this.state.emoteDirShown) {
             Animated.timing(
-                this.emoteDir.top,
+                this.state.emoteDirY,
                 {
                     duration: 300,
                     toValue: 0
@@ -326,9 +326,12 @@ export default class MainView extends Component {
     }
 
     toggleEmoteDir() {
+        this.cardDrawer.measureInWindow(() => {
+            
+        })
         if (this.state.emoteDirShown) {
             Animated.timing(
-                this.emoteDir.top,
+                this.state.emoteDirY,
                 {
                     duration: 300,
                     toValue: 0
@@ -339,7 +342,7 @@ export default class MainView extends Component {
         } else {
             this.setState({emoteFilter: this.state.value.split(' ').slice(-1)[0]});     
             Animated.timing(
-                this.emoteDir.top,
+                this.state.emoteDirY,
                 {
                     duration: 300,
                     toValue: -55
@@ -397,8 +400,8 @@ export default class MainView extends Component {
                             }
                         }} 
                         ref={(ref) => this.emoteDir = ref} 
-                        shown={this.state.emoteDirShown}
                         filter={this.state.emoteFilter}
+                        animated={this.state.emoteDirY}
                     />  &&
                     <CardDrawer 
                         ref={(ref) => this.cardDrawer = ref} 
