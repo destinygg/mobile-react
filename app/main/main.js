@@ -1,7 +1,7 @@
 import React, { Component, PureComponent } from 'react';
 import { View, WebView, Dimensions, PanResponder, AsyncStorage, BackHandler, AppState, TouchableOpacity, Text, KeyboardAvoidingView, Platform, Animated, Keyboard } from 'react-native';
 import { StackNavigator, SafeAreaView, NavigationActions } from 'react-navigation';
-import { MobileChatView, MobileChatInput } from '../chat/window';
+import { MobileChatView, MobileChatInput, EmoteDirectory } from '../chat/window';
 import styles from './styles';
 import { ButtonList } from '../components'
 
@@ -59,9 +59,9 @@ class CardDrawerNavList extends PureComponent {
                     this.props.onHideStream() 
                 }
             }},
-            { itemText: 'Messages', itemTarget: () => this.props.navigation.navigate('MessageView') },
-            { itemText: 'Donate', itemTarget: () => this.props.navigation.navigate('DonateView') },
-            { itemText: 'Profile', itemTarget: () => this.props.navigation.navigate('ProfileView')}
+            { itemText: 'Messages', itemTarget: () => this.props.navigation.navigate('MessageView', {backHandler: this.props.navigation.goBack}) },
+            { itemText: 'Donate', itemTarget: () => this.props.navigation.navigate('DonateView', {backHandler: this.props.navigation.goBack}) },
+            { itemText: 'Profile', itemTarget: () => this.props.navigation.navigate('ProfileView', {backHandler: this.props.navigation.goBack})}
         ];
     }
     render() {
@@ -76,7 +76,6 @@ class CardDrawerNavList extends PureComponent {
 class CardDrawer extends Component {
     constructor(props) {
         super(props);
-        this.state = {keyboardShown: false};
         this.height = null;
         this.offsets = null;
         this.openedY = this.props.interpolate.max;
@@ -96,7 +95,7 @@ class CardDrawer extends Component {
                 this.props.interpolate.max,
                 this.props.interpolate.min
             ],
-            outputRange: [25, 0]
+            outputRange: [20, 0]
         });
         this.handleWidthBinding = this.translateY.interpolate({
             inputRange: [
@@ -117,7 +116,7 @@ class CardDrawer extends Component {
                             translateY: this.translateY
                         }]
                     },
-                    (this.state.keyboardShown) ? 
+                    (this.props.keyboardShown) ? 
                         { 
                             transform: [{
                                 translateY: this.keyboardShownTranslateY
@@ -183,22 +182,15 @@ class CardDrawer extends Component {
             onStartShouldSetPanResponder: (evt, gestureState) => false, 
             onStartShouldSetPanResponderCapture: (evt, gestureState) => false, 
             onMoveShouldSetPanResponder: ({ nativeEvent }, { moveY, dx, dy, y0 }) => {
-                if (this.state.keyboardShown) {
+                if (this.props.keyboardShown) {
                     return false;
                 }
 
-                if (moveY > this.closedY) {
+                if (Math.abs(dy) < MIN_SWIPE_DISTANCE) {
                     return false;
                 }
 
-                if (this._lastOpenValue) {
-                    return true;
-                } else {
-                    if (dy < 0) {
-                        return true;
-                    }
-                    return false;
-                }
+                return true;
             }, 
             onMoveShouldSetPanResponderCapture: (evt, { moveY, dx, dy }) => false, 
             onPanResponderGrant: (evt, gestureState) => {  // The gesture has started. Show visual feedback so the user knows
@@ -211,7 +203,7 @@ class CardDrawer extends Component {
                 const previouslyOpen = this._lastOpenValue;
                 const isWithinVelocityThreshold = vy < VY_MAX && vy > -VY_MAX;
                 
-                if (!dx || !dy || Math.abs(dy) < MIN_SWIPE_DISTANCE) {
+                if (!dy || Math.abs(dy) < MIN_SWIPE_DISTANCE) {
                     if (previouslyOpen) {
                         this.openDrawer({ velocity: vy });
                     } else {
@@ -226,7 +218,6 @@ class CardDrawer extends Component {
                     (isWithinVelocityThreshold &&
                         previouslyOpen)
                 ) {
-                    console.log(2)                    
                     this.openDrawer({ velocity: vy });
                     return;                                        
                 } else if (
@@ -234,15 +225,12 @@ class CardDrawer extends Component {
                     vy > VY_MAX ||
                     (isWithinVelocityThreshold && !previouslyOpen)
                 ) {
-                    console.log(3)                    
                     this.closeDrawer({ velocity: vy });
                     return;                                        
                 } else if (previouslyOpen) {
-                    console.log(4)                    
                     this.openDrawer();
                     return;                                        
                 } else {
-                    console.log(5)                                       
                     this.closeDrawer();
                     return;                                        
                 }
@@ -254,32 +242,6 @@ class CardDrawer extends Component {
                 return true;
             },
         });
-    }
-
-    _handleKeyboard = (e) => {
-        const offset = e.endCoordinates.screenY - 20;
-        if (offset < DEVICE_HEIGHT - 100) {
-            this.setState({ keyboardShown: true });
-            Animated.spring(this.keyboardShownTranslateY, {
-                toValue: offset,
-                bounciness: 0,
-                speed: 20,
-                useNativeDriver: true
-            }).start();
-        } else {
-            this.closeDrawer();            
-            Animated.spring(this.keyboardShownTranslateY, {
-                toValue: this.closedY,
-                bounciness: 0,
-                speed: 20,
-                useNativeDriver: true
-            }).start(() => this.setState({ keyboardShown: false }));
-        }
-
-    }
-
-    componentDidMount() {
-        Keyboard.addListener('keyboardWillChangeFrame', this._handleKeyboard);
     }
 }
 
@@ -300,6 +262,7 @@ export default class MainView extends Component {
             underlayOpacity: null,
             emoteDirShown: false,
             emoteDirY: null,
+            keyboardShown: false,
             emoteFilter: '',
             settings: {
                 mediaModal: null,
@@ -308,10 +271,6 @@ export default class MainView extends Component {
         };
         this.emoteDirInitY = null;
         global.mainview = this;
-        this.chat.loadMobileSettings((settings) => {
-            this.applyMobileSettings(settings);
-        });
-        this.applyPreviousResizeState();
     }
 
     applyMobileSettings(settings) {
@@ -352,10 +311,11 @@ export default class MainView extends Component {
     hideEmoteDir() {
         if (this.state.emoteDirShown) {
             Animated.timing(
-                this.state.emoteDirY,
+                this.state.emoteDirOffset,
                 {
                     duration: 300,
-                    toValue: this.emoteDirInitY
+                    toValue: 0,
+                    useNativeDriver: true
                 }
             ).start(() => {
                 this.setState({ emoteDirShown: false });
@@ -366,34 +326,31 @@ export default class MainView extends Component {
     toggleEmoteDir() {
         if (this.state.emoteDirShown) {
             Animated.timing(
-                this.state.emoteDirY,
+                this.state.emoteDirOffset,
                 {
                     duration: 300,
-                    toValue: this.emoteDirInitY
+                    toValue: 0,
+                    useNativeDriver: true
                 }
             ).start(() => {
                 this.setState({ emoteDirShown: false });
             });
         } else {
-            this.cardDrawer.measureInWindow((x, y, width, height) => {
-                this.setState(
-                    {
-                        emoteDirY: new Animated.Value(y),
-                        emoteDirShown: true,
-                        emoteFilter: this.state.value.split(' ').slice(-1)[0]
-                    },
-                    () => {
-                        this.emoteDirInitY = y;
-                        Animated.timing(
-                            this.state.emoteDirY,
-                            {
-                                duration: 300,
-                                toValue: y - 40
-                            }
-                        ).start();
-                    }
-                );
-            })
+            this.setState(
+                {
+                    emoteDirShown: true
+                },
+                () => {
+                    Animated.timing(
+                        this.state.emoteDirOffset,
+                        {
+                            duration: 300,
+                            toValue: -45,
+                            useNativeDriver: true
+                        }
+                    ).start();
+                }
+            );
         }
     }
 
@@ -402,7 +359,6 @@ export default class MainView extends Component {
     }
 
     render() {
-        console.log(this.state);
         let dividerStyle = [styles.TwitchViewDivider];     
         if (this.state.resizing) { 
             dividerStyle.push(styles.DividerResizing); 
@@ -427,7 +383,7 @@ export default class MainView extends Component {
                     <View style={styles.TwitchViewDividerHandle} {...this._panResponder.panHandlers} />
                     <KeyboardAvoidingView 
                         behavior='padding' style={styles.View}
-                        keyboardVerticalOffset={this.state.bottomOffset + 10}
+                        keyboardVerticalOffset={this.state.bottomOffset + 15}
                     >
                         {this.props.screenProps.chat.mainwindow.uiElem}
                     </KeyboardAvoidingView>
@@ -435,39 +391,45 @@ export default class MainView extends Component {
                         style={[styles.DrawerUnderlay, {opacity: this.state.underlayOpacity}]} 
                         pointerEvents={(this.state.drawerOpen) ? 'auto' : 'none'}
                     />
-                {this.state.height != null && 
+                {this.state.height != null &&
                     <CardDrawer 
                         ref={(ref) => this.cardDrawer = ref} 
                         interpolate={this.state.interpolate}
                         panY={this.state.panY}
                         translateY={this.state.translateY}
+                        keyboardShown={this.state.keyboardShown}
                         keyboardShownTranslateY={this.state.keyboardShownTranslateY}
-                        parentHeight={this.state.height}
-                        onShowStream={() => this.showStream()}                    
-                        onHideStream={() => this.hideStream()}   
+                        parentHeight={this.state.height}  
                         onOpen={() => this._drawerOpened()}                 
                         onClose={() => this._drawerClosed()}  
                         bottomOffset={this.state.bottomOffset}
                     >
                         <View style={{flexDirection: 'row'}}>
-                                <MobileChatInput
-                                    ref={(ref) => this.inputElem = ref}
-                                    chat={this.chat}
-                                    animationBinding={{
-                                        binding: this.state.translateY,
-                                        interpolate: [
-                                            this.state.interpolate.min - 100,
-                                            this.state.interpolate.min
-                                        ]
-                                    }}
-                                    shown={!this.state.drawerOpen}
-                                    style={{paddingBottom: this.state.bottomOffset}}
-                                    onChange={(val) => this._onInputUpdate(val)}
-                                    onEmoteBtnPress={() => this.toggleEmoteDir()}
-                                />
+                            <MobileChatInput
+                                ref={(ref) => this.inputElem = ref}
+                                chat={this.chat}
+                                animationBinding={{
+                                    binding: this.state.translateY,
+                                    interpolate: [
+                                        this.state.interpolate.min - 100,
+                                        this.state.interpolate.min
+                                    ]
+                                }}
+                                shown={!this.state.drawerOpen}
+                                style={{paddingBottom: this.state.bottomOffset}}
+                                onChange={(val) => this._onInputUpdate(val)}
+                                onEmoteBtnPress={() => this.toggleEmoteDir()}
+                            />
                         </View>
-                        <CardDrawerNavList screenProps={{ ...this.props.screenProps, mainView: this }} navigation={this.props.navigation} />
-                    </CardDrawer> && this.state.emoteDirShown &&
+                        <CardDrawerNavList 
+                            screenProps={{ ...this.props.screenProps, mainView: this }} 
+                            navigation={this.props.navigation} 
+                            onShowStream={() => this.showStream()}                    
+                            onHideStream={() => this.hideStream()} 
+                        />
+                    </CardDrawer>
+                }
+                {this.state.height != null &&
                     <EmoteDirectory 
                         onSelect={(emote) => {
                             this.inputElem.replace(emote);
@@ -477,9 +439,12 @@ export default class MainView extends Component {
                         }} 
                         ref={(ref) => this.emoteDir = ref} 
                         filter={this.state.emoteFilter}
-                        animated={this.state.emoteDirY}
+                        animated={(this.state.keyboardShown) ? 
+                                    this.state.keyboardShownEmoteDirY :
+                                    this.state.emoteDirY
+                        }
                     />
-                }
+                 }
             </View>   
             </SafeAreaView>                         
         );
@@ -545,16 +510,23 @@ export default class MainView extends Component {
         const bottomOffset = DEVICE_HEIGHT - viewHeight - e.layout.y;
         if (this.state.height === null) {
             const interpolate = {
-                max: viewHeight - 300,
+                max: viewHeight - 250 - bottomOffset,
                 min: viewHeight
             };
             const panY = new Animated.Value(viewHeight);
-            const translateY = Animated.diffClamp(panY, interpolate.max, interpolate.min);            
+            const keyboardShownY = new Animated.Value(viewHeight);
+            const keyboardShownTranslateY = Animated.add(keyboardShownY, new Animated.Value(-(bottomOffset)));
+            const translateY = Animated.diffClamp(panY, interpolate.max, interpolate.min);    
+            const emoteDirOffset = new Animated.Value(0);        
             this.setState({ 
                 height: viewHeight,
                 panY: panY,
                 translateY: translateY,
-                keyboardShownTranslateY: new Animated.Value(viewHeight),
+                emoteDirOffset: emoteDirOffset,
+                emoteDirY: Animated.add(translateY, emoteDirOffset),
+                keyboardShownEmoteDirY: Animated.add(keyboardShownTranslateY, emoteDirOffset),
+                keyboardShownY: keyboardShownY,
+                keyboardShownTranslateY: keyboardShownTranslateY,
                 interpolate: interpolate,
                 bottomOffset: bottomOffset,
                 underlayOpacity: translateY.interpolate({
@@ -566,22 +538,55 @@ export default class MainView extends Component {
         global.bugsnag.leaveBreadcrumb('MainView after onLayout.');                        
     }
 
-    _handleAppStateChange(nextState) {
+    _handleAppStateChange = (nextState) => {
         if (nextState === 'background') {
             if (this.state.twitchHeight) {
                 AsyncStorage.setItem('TwitchViewHeight', Math.floor(this.state.twitchHeight).toString());                
             }
-            AsyncStorage.setItem('InitRoute', this.props.navigation.state.routeName);
+            AsyncStorage.setItem('InitRoute', (this.state.streamShown) ? 'Main' : 'Chat');
             this.chat.saveMobileSettings();
             this.chat.source.disconnect();
-        } else {
+        } else if (nextState === 'active') {
             this.chat.source.connect("wss://www.destiny.gg/ws");
         }
     }
 
+    _handleKeyboard = (e) => {
+        const offset = e.endCoordinates.screenY - 20;
+        if (offset < DEVICE_HEIGHT - 100) {
+            this.setState({ keyboardShown: true });
+            Animated.spring(this.state.keyboardShownY, {
+                toValue: offset,
+                bounciness: 0,
+                speed: 20,
+                useNativeDriver: true
+            }).start();
+        } else {
+            this.cardDrawer.closeDrawer();            
+            Animated.spring(this.state.keyboardShownY, {
+                toValue: this.state.interpolate.min + this.state.bottomOffset,
+                bounciness: 0,
+                speed: 20,
+                useNativeDriver: true
+            }).start(() => this.setState({ keyboardShown: false }));
+        }
+
+    }
+
     componentDidMount() {
-        global.bugsnag.leaveBreadcrumb('MainView mounted.');        
-        AppState.addEventListener('change', (state) => this._handleAppStateChange(state));    
+        global.bugsnag.leaveBreadcrumb('MainView mounted.');     
+        Keyboard.addListener('keyboardWillChangeFrame', this._handleKeyboard);        
+        AsyncStorage.getItem("InitRoute").then((route) => {
+            switch (route) {
+                case 'Chat': 
+                    this.setState({streamShown: false});
+                    break;
+                case 'Messages':
+                    this.props.navigation.navigate('MessageView', {backHandler: this.props.navigation.goBack});
+                    break;
+            }
+        });   
+        AppState.addEventListener('change', this._handleAppStateChange);    
         global.bugsnag.leaveBreadcrumb('Added AppState listener.');                
         BackHandler.addEventListener('hardwareBackPress', () => {
             if (this.props.screenProps.navState === 'MainNav' && 
@@ -591,10 +596,14 @@ export default class MainView extends Component {
             }
             return false;
         });  
+        this.chat.loadMobileSettings((settings) => {
+            this.applyMobileSettings(settings);
+        });
+        this.applyPreviousResizeState();
     }
 
     componentWillUnmount() {
-        AppState.removeEventListener('change', (state) => this._handleAppStateChange(state));   
+        AppState.removeEventListener('change', this._handleAppStateChange);   
         Keyboard.removeListener('keyboardWillChangeFrame', this._handleKeyboardShown);
         if (this.state.twitchHeight) {            
             AsyncStorage.setItem('TwitchViewHeight', Math.floor(this.state.twitchHeight).toString());        

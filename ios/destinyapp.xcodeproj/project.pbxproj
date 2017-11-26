@@ -1223,7 +1223,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = gg.destiny.mobile;
+				PRODUCT_BUNDLE_IDENTIFIER = gg.destiny.mobileapp;
 				PRODUCT_NAME = destinyapp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1250,7 +1250,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = gg.destiny.mobile;
+				PRODUCT_BUNDLE_IDENTIFIER = gg.destiny.mobileapp;
 				PRODUCT_NAME = destinyapp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";

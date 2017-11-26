@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, FlatList, ScrollView, WebView, Button, Platform, ActivityIndicator, Alert, TouchableHighlight, KeyboardAvoidingView, AsyncStorage } from 'react-native';
-import { StackNavigator, NavigationActions, SafeAreaView } from 'react-navigation';
+import { StackNavigator, NavigationActions, SafeAreaView, HeaderBackButton } from 'react-navigation';
 import { NavList, NavListItem, FormItem, UserAgreement, ListButton } from '../components';
 import AboutView from '../about/about'
 import styles from './styles';
@@ -459,8 +459,13 @@ class SettingsView extends FormView {
 }
 
 class ProfileView extends Component {
-    static navigationOptions = {
-        title: 'Profile',
+    static navigationOptions = ({ navigation }) => {
+        const { params = {} } = navigation.state;
+
+        return {
+            title: 'Profile',        
+            headerLeft: <HeaderBackButton title='Back' onPress={() => params.backHandler(null)} />
+        }
     };
     render() {
         this.listItems = [

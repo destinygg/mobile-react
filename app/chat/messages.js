@@ -412,7 +412,7 @@ class ChatUserMessage extends ChatMessage {
 
         const user = (this.continued) ?
                     null : 
-                    <UserBadge user={this.user} onPress={(username) => this.window.chat.appendInputText(username)}>{buildFeatures(this.user)}</UserBadge>;
+                    <UserBadge user={this.user} onPress={(username) => this.window.appendInputText(username)}>{buildFeatures(this.user)}</UserBadge>;
         return this.wrap(
             buildTime(this), user, ctrl, buildMessageTxt(chat, this)
         );

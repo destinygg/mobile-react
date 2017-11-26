@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import { View, FlatList, Text, TouchableHighlight, AsyncStorage, AppState, Button, ScrollView, KeyboardAvoidingView, ActivityIndicator, TextInput, StyleSheet, Alert, Platform, TouchableOpacity } from 'react-native';
 import { TextInputListItem } from '../components';
-import { StackNavigator, NavigationActions, SafeAreaView } from 'react-navigation';
+import { StackNavigator, NavigationActions, SafeAreaView, HeaderBackButton } from 'react-navigation';
 import styles from './styles';
 
 const MOMENT_FORMAT = {
@@ -287,6 +287,7 @@ class MessageView extends Component {
         const { params = {}, routeName } = navigation.state;
         return ({
             title: 'Messages',
+            headerLeft: <HeaderBackButton title='Back' onPress={() => params.backHandler(null)} />,            
             headerRight: <ComposeButton onPress={params.composeHandler ? params.composeHandler : () => null} />
         });
     }
@@ -304,7 +305,7 @@ class MessageView extends Component {
 
     _handleAppStateChange = (nextState) => {
         if (nextState === 'background') {
-            AsyncStorage.setItem('InitRoute', this.props.navigation.state.routeName);
+            AsyncStorage.setItem('InitRoute', 'Messages');
         }
     }
 
@@ -345,6 +346,10 @@ class MessageView extends Component {
     componentDidMount() {
         this.props.navigation.setParams({ composeHandler: () => this.compose() });
         AppState.addEventListener('change', this._handleAppStateChange);          
+    }
+
+    componentWillUnmount() {
+        AppState.removeEventListener('change', this._handleAppStateChange);          
     }
 
     render() {

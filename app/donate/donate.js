@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, ScrollView, Text, TextInput, WebView, Platform, Button } from 'react-native';
-import { StackNavigator, NavigationActions, SafeAreaView } from 'react-navigation';
+import { StackNavigator, NavigationActions, SafeAreaView, HeaderBackButton } from 'react-navigation';
 import { TextInputListItem, UserAgreement } from '../components';
 import styles from '../styles';
 
@@ -60,11 +60,12 @@ Try again later.');
     }
 }
 
-class DonateView extends Component {
+class DonateView extends Component {    
     static navigationOptions = ({ navigation }) => {
         const { params = {} } = navigation.state;
         return ({
             title: 'Donate',
+            headerLeft: <HeaderBackButton title='Back' onPress={() => params.backHandler(null)} />,    
             headerRight: <View style={styles.navbarRight}>
                             <Button title='Pay' onPress={params.sendHandler ? params.sendHandler : () => null} />
                         </View>

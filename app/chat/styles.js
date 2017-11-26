@@ -19,6 +19,7 @@ const styles = StyleSheet.create({
     },
     MsgText: {
         color: '#ccc',
+        backgroundColor: 'transparent',
         fontSize: 12,
         lineHeight: 18               
     },
@@ -61,6 +62,7 @@ const styles = StyleSheet.create({
     UserBadge: {
        fontWeight: '600',
        color: '#cacaca',
+       backgroundColor: 'transparent',
        fontSize: 12,
        marginLeft: 10
     },
@@ -75,41 +77,54 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 12,
         color: "#ccc",
-        borderRadius: 15,
-        paddingLeft: 12,
-        paddingRight: 12,
+        borderColor: "#222",
+        backgroundColor: "#181818",
+        borderWidth: StyleSheet.hairlineWidth,
+        borderRadius: 16,
+        paddingLeft: 15,
+        paddingRight: 15,
         marginLeft: 5,
-        marginRight: 10,
+        marginTop: 10,
+        marginRight: 15,
+        paddingTop: 2,
+        height: 34
     },
-    ChatInputOuter: { 
-        flexDirection: 'column', 
-        width: '100%',
-        alignSelf: 'center',
-    },
-    ChatInputInner: {
+    ChatInputOuter: {
         flexDirection: 'row',
         zIndex: 2000,
         backgroundColor: '#151515',
         borderTopLeftRadius: 25,
         borderTopRightRadius: 25,
-        marginTop: 5,
         paddingTop: 8,
         paddingLeft: 5,
-        paddingRight: 5
+        paddingRight: 5,
+        width: '100%'
+    },
+    ChatInputInner: {
+        flex: 1, 
+        flexDirection: 'row',
+        marginTop: 2
     },
     Emote: {
         marginTop: 2,
         height: (Platform.OS === 'ios') ? 15 : 25,
         width: 25,
         resizeMode: 'contain',
-        overflow: 'visible'
+        overflow: 'visible',
+        backgroundColor: 'transparent'
     },
     EmoteDirectoryOuter: {
         borderTopLeftRadius: 25,
         borderTopRightRadius: 25,
-        width: '100%',
         height: 70,
         backgroundColor: '#151515',        
+        marginTop: -65
+    },
+    EmoteDirOuterOuter: {
+        width: '100%', 
+        paddingLeft: 5, 
+        paddingRight: 5, 
+        position: 'absolute'
     },
     EmoteDirectory: {
         paddingLeft: 15,
@@ -124,12 +139,14 @@ const styles = StyleSheet.create({
     Flair: {
         height: (Platform.OS === 'ios') ? 10 : 15,
         width: (Platform.OS === 'ios') ? 10 : 15,
-        resizeMode: 'contain'
+        resizeMode: 'contain',
+        backgroundColor: 'transparent'
     },
     Time: {
         fontSize: 10,
         color: '#888',
         fontWeight: '200',
+        backgroundColor: 'transparent'
     },
     PinnedFooter: {
         color: '#444', 

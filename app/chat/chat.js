@@ -3,6 +3,29 @@ import MobileWindow from './window';
 import {MessageTypes, MobileMessageBuilder as MessageBuilder} from './messages'
 import {AsyncStorage} from 'react-native';
 
+const settingsdefault = new Map([
+    ['schemaversion', 1],
+    ['showtime', false],
+    ['hideflairicons', false],
+    ['profilesettings', false],
+    ['timestampformat', 'HH:mm'],
+    ['maxlines', 250],
+    ['notificationwhisper', false],
+    ['notificationhighlight', false],
+    ['highlight', true], // todo rename this to `highlightself` or something
+    ['customhighlight', []],
+    ['highlightnicks', []],
+    ['taggednicks', []],
+    ['showremoved', false],
+    ['showhispersinchat', false],
+    ['ignorenicks', []],
+    ['focusmentioned', false],
+    ['notificationtimeout', true],
+    ['ignorementions', false],
+    ['autocompletehelper', false],
+    ['taggedvisibility', false]
+])
+
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -75,6 +98,28 @@ export class MobileChat extends Chat {
 
     saveSettings() {
 
+    }
+
+    withSettings(settings){
+        // If authed and #settings.profilesettings=true use #settings
+        // Else use whats in LocalStorage#chat.settings
+        let stored = this.authenticated && settings.get('profilesettings') ? settings : new Map([]);
+        // Loop through settings and apply any settings found in the #stored data
+        if(stored.size > 0) {
+            [...this.settings.keys()]
+                .filter(k => stored.get(k) !== undefined && stored.get(k) !== null)
+                .forEach(k => this.settings.set(k, stored.get(k)));
+        }
+        // Upgrade if schema is out of date
+        const oldversion = parseInt(stored.get('schemaversion') || -1);
+        const newversion = settingsdefault.get('schemaversion');
+        if(oldversion !== -1 && newversion !== oldversion) {
+            Settings.upgrade(this, oldversion, newversion);
+        }
+
+        this.taggednicks = new Map(this.settings.get('taggednicks'));
+        this.ignoring = new Set(this.settings.get('ignorenicks'));
+        return this;
     }
 
     onPRIVMSG(data) {

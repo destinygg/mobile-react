@@ -25,7 +25,7 @@ const mediaExts = [
     'mov', 'mp4', 'm4v', 'mpg', 'mpeg', '3gp'
 ];
 
-class EmoteDirectory extends PureComponent {
+export class EmoteDirectory extends PureComponent {
     constructor(props) {
         super(props);
         this.emotes = Array.from(emoteImgs.keys()).sort();
@@ -35,7 +35,7 @@ class EmoteDirectory extends PureComponent {
         const children = 
             this.emotes
                 .filter((emote) => {
-                    return (emote.toLowerCase().indexOf(this.props.filter) === 0);
+                    return (emote.toLowerCase().indexOf(this.props.filter.toLowerCase()) === 0);
                 }).map((emote) => {
                     return (
                         <TouchableOpacity style={{ marginLeft: 5, marginRight: 5, flex: 1, justifyContent: 'center' }} key={emote} onPress={() => this.props.onSelect(emote)}>
@@ -47,28 +47,29 @@ class EmoteDirectory extends PureComponent {
                 });
         return (
             <Animated.View style={[
-                    styles.EmoteDirectoryOuter,
+                    styles.EmoteDirOuterOuter,
                     {transform:[{
-                        translateY: (this.props.animated) ? this.props.animated : -100
+                        translateY: (this.props.animated) ? this.props.animated : 0
                     }]}
                 ]} 
                 collapsable={false}
-                pointerEvents={(this.props.shown) ? 'auto' : 'none'}
             >
-                <View style={styles.EmoteDirectory}>
-                    <ScrollView 
-                        showsHorizontalScrollIndicator={false} 
-                        horizontal={true} 
-                        keyboardShouldPersistTaps={'always'}
-                        onContentSizeChange={() => {
-                            if (this.scrollView && this.scrollView.scrollTo) {
-                                this.scrollView.scrollTo({ x: 0, animated: false });
-                            }
-                        }}
-                        ref={ref => this.scrollView = ref}
-                    >
-                        {children}
-                    </ScrollView>
+                <View style={styles.EmoteDirectoryOuter}>
+                    <View style={styles.EmoteDirectory}>
+                        <ScrollView 
+                            showsHorizontalScrollIndicator={false} 
+                            horizontal={true} 
+                            keyboardShouldPersistTaps={'always'}
+                            onContentSizeChange={() => {
+                                if (this.scrollView && this.scrollView.scrollTo) {
+                                    this.scrollView.scrollTo({ x: 0, animated: false });
+                                }
+                            }}
+                            ref={ref => this.scrollView = ref}
+                        >
+                            {children}
+                        </ScrollView>
+                    </View>
                 </View>
             </Animated.View>
         )
@@ -92,12 +93,6 @@ export class MobileChatInput extends Component {
         this.bindAnimation(this.props.animationBinding);        
     }
 
-    componentDidUpdate() {
-        if (this.props.onChange) {
-            this.props.onChange(this.value);
-        }
-    }
-
     bindAnimation(config) {
         this.opacity = {opacity: config.binding.interpolate({
             inputRange: config.interpolate,
@@ -107,6 +102,9 @@ export class MobileChatInput extends Component {
 
     set(text) {
         this.setState({ value: text }); 
+        if (this.props.onChange) {
+            this.props.onChange(text);
+        }
     }
 
     append(text) {
@@ -150,39 +148,35 @@ export class MobileChatInput extends Component {
     render() {
         return (
             <View 
-                style={[
-                    styles.ChatInputOuter 
-                ]} 
+                style={[styles.ChatInputOuter, this.props.style]}
                 pointerEvents={(this.props.shown) ? 'auto' : 'none'}
-            >                                                                                      
-                <View style={[styles.ChatInputInner, this.props.style]}>
-                    <Animated.View style={[{flex: 1, flexDirection: 'row'}, this.opacity]}>
-                        <TouchableOpacity onPress={() => this.props.onEmoteBtnPress()}>
-                            <Text style={{
-                                fontFamily: 'ionicons',
-                                color: '#888',
-                                fontSize: 30,
-                                paddingLeft: 10,
-                                paddingRight: 10,
-                                paddingTop: 10,
-                                paddingBottom: 10
-                            }}>
-                                &#xf38e;
-                            </Text>
-                        </TouchableOpacity>
-                        <TextInput
-                            style={styles.ChatInput}
-                            placeholder={'Write something...'}
-                            placeholderTextColor="#888"
-                            onChangeText={(text) => this.set(text)}
-                            onSubmitEditing={() => this.send()}
-                            ref={ref => this.input = ref}
-                            underlineColorAndroid='#222'
-                            value={this.state.value}
-                            keyboardAppearance='dark'
-                        />
-                    </Animated.View>
-                </View>
+            >
+                <Animated.View style={[styles.ChatInputInner, this.opacity]}>
+                    <TouchableOpacity onPress={() => this.props.onEmoteBtnPress()}>
+                        <Text style={{
+                            fontFamily: 'ionicons',
+                            color: '#888',
+                            fontSize: 30,
+                            paddingLeft: 15,
+                            paddingRight: 10,
+                            paddingTop: 12,
+                            paddingBottom: 10
+                        }}>
+                            &#xf38e;
+                        </Text>
+                    </TouchableOpacity>
+                    <TextInput
+                        style={styles.ChatInput}
+                        placeholder={'Write something...'}
+                        placeholderTextColor="#888"
+                        onChangeText={(text) => this.set(text)}
+                        onSubmitEditing={() => this.send()}
+                        ref={ref => this.input = ref}
+                        underlineColorAndroid='#222'
+                        value={this.state.value}
+                        keyboardAppearance='dark'
+                    />
+                </Animated.View>
             </View>
         )
     }
@@ -193,11 +187,13 @@ export class MobileChatInput extends Component {
 
     componentDidMount() {
         global.bugsnag.leaveBreadcrumb('Text input mounted.');   
-        Keyboard.addListener('keyboardDidHide', this._handleKeyboardHidden);             
+        //Keyboard.addListener('keyboardDidHide', this._handleKeyboardHidden);
+        this.props.chat.mainwindow.bindMobileInput(this);     
     }
 
     componentWillUnmount() {
-        Keyboard.removeListener('keyboardDidHide', this._handleKeyboardHidden);
+        //Keyboard.removeListener('keyboardDidHide', this._handleKeyboardHidden);
+        this.props.chat.mainwindow.unbindMobileInput();             
     }
 }
 
@@ -314,6 +310,7 @@ export default class MobileWindow extends EventEmitter {
         this.messageKey = 0;
         this.ui = null;
         this.background = false;
+        this.mobileInput = undefined;
     }
 
     openLink(uri) {
@@ -347,6 +344,20 @@ export default class MobileWindow extends EventEmitter {
         }
     }
 
+    appendInputText(text) {
+        if (this.mobileInput) {
+            this.mobileInput.append(text);
+        }
+    }
+
+    bindMobileInput(input) {
+        this.mobileInput = input;
+    }
+
+    unbindMobileInput() {
+        this.mobileInput = undefined;
+    }
+
     getMessageKey() {
         const key = this.messageKey;
         this.messageKey++;
@@ -366,7 +377,11 @@ export default class MobileWindow extends EventEmitter {
         this.tag = chat.taggednicks.get(normalized) || tagcolors[Math.floor(Math.random() * tagcolors.length)]
         chat.addWindow(normalized, this)
         this.chat = chat;
-        this.uiElem = <MobileChatView chat={this.chat} window={this} ref={(ref) => this.ui = ref} />;   
+        this.uiElem = <MobileChatView 
+                        chat={this.chat} 
+                        window={this} 
+                        ref={(ref) => this.ui = ref} 
+                      />;   
         return this
     }
 
@@ -446,38 +461,4 @@ export default class MobileWindow extends EventEmitter {
         }
     }
 
-}
-
-export class ChatViewWrapper extends Component {
-    static navigationOptions = {
-        title: 'Chat',
-    };
-
-    constructor(props) {
-        super(props);
-        if (this.props.screenProps.init === true) {
-            this.props.screenProps.init = false;
-            AsyncStorage.getItem("InitRoute").then((route) => {
-                if (['MainView', 'ChatView', 'MessageView'].indexOf(route) != -1) {
-                    this.props.navigation.navigate(route);                
-                }
-            });
-        }
-    }
-
-    _handleAppStateChange = (nextState) => {
-        if (nextState === 'background') {
-            AsyncStorage.setItem('InitRoute', this.props.navigation.state.routeName);
-        }
-    }
-
-    render() {
-        return (
-            <SafeAreaView style={[styles.View]}>{this.props.screenProps.chat.mainwindow.uiElem}</SafeAreaView>
-        )
-    }
-
-    componentDidMount() {
-        AppState.addEventListener('change', this._handleAppStateChange);          
-    }
 }
