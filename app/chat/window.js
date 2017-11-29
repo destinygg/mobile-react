@@ -165,17 +165,21 @@ export class MobileChatInput extends Component {
                             &#xf38e;
                         </Text>
                     </TouchableOpacity>
-                    <TextInput
-                        style={styles.ChatInput}
-                        placeholder={'Write something...'}
-                        placeholderTextColor="#888"
-                        onChangeText={(text) => this.set(text)}
-                        onSubmitEditing={() => this.send()}
-                        ref={ref => this.input = ref}
-                        underlineColorAndroid='#222'
-                        value={this.state.value}
-                        keyboardAppearance='dark'
-                    />
+                    <View style={styles.ChatInputInnerInner}>
+                        <TextInput
+                            style={styles.ChatInput}
+                            placeholder={'Write something...'}
+                            placeholderTextColor="#888"
+                            onChangeText={(text) => this.set(text)}
+                            onSubmitEditing={() => this.send()}
+                            ref={ref => this.input = ref}
+                            underlineColorAndroid='transparent'
+                            value={this.state.value}
+                            keyboardAppearance='dark'
+                            onFocus={this.props.onFocus}
+                            onBlur={this.props.onBlur}
+                        />
+                    </View>
                 </Animated.View>
             </View>
         )
@@ -187,12 +191,12 @@ export class MobileChatInput extends Component {
 
     componentDidMount() {
         global.bugsnag.leaveBreadcrumb('Text input mounted.');   
-        //Keyboard.addListener('keyboardDidHide', this._handleKeyboardHidden);
+        Keyboard.addListener('keyboardDidHide', this._handleKeyboardHidden);
         this.props.chat.mainwindow.bindMobileInput(this);     
     }
 
     componentWillUnmount() {
-        //Keyboard.removeListener('keyboardDidHide', this._handleKeyboardHidden);
+        Keyboard.removeListener('keyboardDidHide', this._handleKeyboardHidden);
         this.props.chat.mainwindow.unbindMobileInput();             
     }
 }

@@ -77,16 +77,6 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 12,
         color: "#ccc",
-        borderColor: "#222",
-        backgroundColor: "#181818",
-        borderWidth: StyleSheet.hairlineWidth,
-        borderRadius: 16,
-        paddingLeft: 15,
-        paddingRight: 15,
-        marginLeft: 5,
-        marginTop: 10,
-        marginRight: 15,
-        paddingTop: 2,
         height: 34
     },
     ChatInputOuter: {
@@ -105,6 +95,19 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginTop: 2
     },
+    ChatInputInnerInner: {
+        borderColor: "#222",
+        backgroundColor: "#181818",
+        borderWidth: StyleSheet.hairlineWidth,
+        borderRadius: (Platform.OS === 'ios') ? 17 : 19,
+        paddingLeft: 15,
+        paddingRight: 15,
+        marginLeft: 5,
+        marginTop: 10,
+        marginRight: 15,
+        flex: 1,
+        height: (Platform.OS === 'ios') ? 34 : 38
+    },
     Emote: {
         marginTop: 2,
         height: (Platform.OS === 'ios') ? 15 : 25,
@@ -117,8 +120,7 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 25,
         borderTopRightRadius: 25,
         height: 70,
-        backgroundColor: '#151515',        
-        marginTop: -65
+        backgroundColor: '#151515'     
     },
     EmoteDirOuterOuter: {
         width: '100%', 

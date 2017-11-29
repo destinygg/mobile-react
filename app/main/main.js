@@ -329,7 +329,7 @@ export default class MainView extends Component {
                 this.state.emoteDirOffset,
                 {
                     duration: 300,
-                    toValue: 0,
+                    toValue: -65,
                     useNativeDriver: true
                 }
             ).start(() => {
@@ -345,7 +345,7 @@ export default class MainView extends Component {
                         this.state.emoteDirOffset,
                         {
                             duration: 300,
-                            toValue: -45,
+                            toValue: -110,
                             useNativeDriver: true
                         }
                     ).start();
@@ -419,6 +419,8 @@ export default class MainView extends Component {
                                 style={{paddingBottom: this.state.bottomOffset}}
                                 onChange={(val) => this._onInputUpdate(val)}
                                 onEmoteBtnPress={() => this.toggleEmoteDir()}
+                                onFocus={() => this._keyboardShown()}
+                                onBlur={() => this._keyboardHidden()}
                             />
                         </View>
                         <CardDrawerNavList 
@@ -517,7 +519,7 @@ export default class MainView extends Component {
             const keyboardShownY = new Animated.Value(viewHeight);
             const keyboardShownTranslateY = Animated.add(keyboardShownY, new Animated.Value(-(bottomOffset)));
             const translateY = Animated.diffClamp(panY, interpolate.max, interpolate.min);    
-            const emoteDirOffset = new Animated.Value(0);        
+            const emoteDirOffset = new Animated.Value(-65);        
             this.setState({ 
                 height: viewHeight,
                 panY: panY,
@@ -551,31 +553,39 @@ export default class MainView extends Component {
         }
     }
 
-    _handleKeyboard = (e) => {
-        const offset = e.endCoordinates.screenY - 20;
-        if (offset < DEVICE_HEIGHT - 100) {
-            this.setState({ keyboardShown: true });
-            Animated.spring(this.state.keyboardShownY, {
-                toValue: offset,
-                bounciness: 0,
-                speed: 20,
-                useNativeDriver: true
-            }).start();
-        } else {
-            this.cardDrawer.closeDrawer();            
-            Animated.spring(this.state.keyboardShownY, {
-                toValue: this.state.interpolate.min + this.state.bottomOffset,
-                bounciness: 0,
-                speed: 20,
-                useNativeDriver: true
-            }).start(() => this.setState({ keyboardShown: false }));
+    _keyboardShown() {
+        this.setState({ keyboardShown: true });
+        if (this.keyboardOffset === undefined) {
+            return;
         }
+        Animated.spring(this.state.keyboardShownY, {
+            toValue: this.keyboardOffset,
+            bounciness: 0,
+            speed: 20,
+            useNativeDriver: true
+        }).start();
+    }
 
+    _keyboardHidden() {
+        this.cardDrawer.closeDrawer();
+        Animated.spring(this.state.keyboardShownY, {
+            toValue: this.state.interpolate.min + this.state.bottomOffset,
+            bounciness: 0,
+            speed: 20,
+            useNativeDriver: true
+        }).start(() => this.setState({ keyboardShown: false }));
+    }
+
+    _handleKeyboard = (e) => {
+        if (this.keyboardOffset === undefined) {
+            this.keyboardOffset = e.endCoordinates.screenY - 20;
+            this._keyboardShown();
+        }
     }
 
     componentDidMount() {
         global.bugsnag.leaveBreadcrumb('MainView mounted.');     
-        Keyboard.addListener('keyboardWillChangeFrame', this._handleKeyboard);        
+        Keyboard.addListener('keyboardDidShow', this._handleKeyboard);        
         AsyncStorage.getItem("InitRoute").then((route) => {
             switch (route) {
                 case 'Chat': 
@@ -604,7 +614,7 @@ export default class MainView extends Component {
 
     componentWillUnmount() {
         AppState.removeEventListener('change', this._handleAppStateChange);   
-        Keyboard.removeListener('keyboardWillChangeFrame', this._handleKeyboardShown);
+        Keyboard.removeListener('keyboardDidShow', this._handleKeyboard);
         if (this.state.twitchHeight) {            
             AsyncStorage.setItem('TwitchViewHeight', Math.floor(this.state.twitchHeight).toString());        
         }
