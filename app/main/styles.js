@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 25,
         borderTopRightRadius: 25,
         position: 'absolute',
-        marginTop: -65,
+        marginTop: -67,
         marginLeft: 5,
         marginRight: 5
     },

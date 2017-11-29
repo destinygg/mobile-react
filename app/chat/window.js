@@ -157,9 +157,9 @@ export class MobileChatInput extends Component {
                             fontFamily: 'ionicons',
                             color: '#888',
                             fontSize: 30,
-                            paddingLeft: 15,
+                            paddingLeft: 12,
                             paddingRight: 10,
-                            paddingTop: 12,
+                            paddingTop: 15,
                             paddingBottom: 10
                         }}>
                             &#xf38e;
