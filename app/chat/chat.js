@@ -113,9 +113,6 @@ export class MobileChat extends Chat {
         // Upgrade if schema is out of date
         const oldversion = parseInt(stored.get('schemaversion') || -1);
         const newversion = settingsdefault.get('schemaversion');
-        if(oldversion !== -1 && newversion !== oldversion) {
-            Settings.upgrade(this, oldversion, newversion);
-        }
 
         this.taggednicks = new Map(this.settings.get('taggednicks'));
         this.ignoring = new Set(this.settings.get('ignorenicks'));
