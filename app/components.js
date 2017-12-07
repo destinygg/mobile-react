@@ -2,6 +2,71 @@ import React, { Component } from 'react';
 import { View, Text, TextInput, Picker, Modal, Button, TouchableHighlight, StyleSheet, Platform, Switch, WebView } from 'react-native';
 import styles from './styles';
 
+export class BottomDrawer extends Component {
+    constructor(props) {
+        super(props);
+        this.lastVelocity = 0;
+        this.contentY = null;
+    }
+    _onDrag(nativeEvent) {
+        if (nativeEvent.contentOffset.y < this.minOpenDragY &&
+          nativeEvent.velocity.y < this.minOpenDragVelocity) {
+            this.openDrawer();
+        } else {
+            this.closeDrawer();
+        }
+    }
+    _onMomentum(nativeEvent) {
+        if (nativeEvent.contentOffset.y < this.minOpenMomentumY &&
+          nativeEvent.velocity.y < this.minOpenMomentumVelocity) {
+              this.openDrawer(nativeEvent.velocity.y);
+        } else {
+            this.closeDrawer(nativeEvent.velocity.y);            
+        }
+    }
+    _onStart(nativeEvent) {
+        if (this.contentY !== null && 
+          nativeEvent.contentOffset.y < this.contentY) {
+            return false;
+        } else {
+            return true;            
+        }
+    }
+    openDrawer(velocity) {
+        if (velocity === undefined) {
+            velocity = (this.props.defaultVelocity === undefined) ? 
+                    1.25 :
+                    this.props.defaultVelocity;
+        }
+        this.scrollView.scrollTo({y: this.openY, velocity: velocity});
+    }
+    closeDrawer(velocity) {
+        if (velocity === undefined) {
+            velocity = this.defaultVelocity;
+        }
+        this.scrollView.scrollTo({y: this.openY, velocity: velocity});
+    }
+    render() {
+        return (
+            <ScrollView
+                scrollEnabled={this.props.locked}
+                scrollsToTop={false}
+                showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
+                onMomentumScrollBegin={(e) => this._onMomentum(e.nativeEvent)}
+                onScrollEndDrag={(e) => this._onDrag(e.nativeEvent)}
+                onContentSizeChange={(width, height) => {
+                    this.contentY = height;
+                }}
+                onStartShouldSetResponder={(e) => this._onStart(e.nativeEvent)}
+                contentContainerStyle={{paddingTop: this.contentY - this.props.showingOffset}}
+            >
+                {this.props.children}
+            </ScrollView>
+        )
+    }
+}
+
 export class ListButton extends Component {
     render() {
         let outerStyle = [styles.ListItemOuter];
