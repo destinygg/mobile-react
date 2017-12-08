@@ -232,6 +232,7 @@ export class MobileChatView extends Component {
                     }}
                     onScroll={(e) => this._onScroll(e)}
                     inverted={true}
+                    scrollsToTop={false}
                 />
                 <Modal
                     animationType='slide'

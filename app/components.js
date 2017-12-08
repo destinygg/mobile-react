@@ -5,47 +5,86 @@ import styles from './styles';
 export class BottomDrawer extends Component {
     constructor(props) {
         super(props);
+        this.open = false;
         this.lastVelocity = 0;
-        this.contentY = null;
+        this.contentHeight = null;
     }
+    
     _onDrag(nativeEvent) {
-        if (nativeEvent.contentOffset.y < this.minOpenDragY &&
-          nativeEvent.velocity.y < this.minOpenDragVelocity) {
-            this.openDrawer();
-        } else {
-            this.closeDrawer();
+        if (nativeEvent.velocity.y < 0) { // maybe open
+            if (this.open) {
+                this.openDrawer();
+            } else {
+                if (Math.abs(nativeEvent.velocity.y) > this.minDragVelocity &&
+                    nativeEvent.contentOffset.y > this.minDragY) {
+                    this.openDrawer();
+                } else {
+                    this.closeDrawer();
+                }
+            }
+        } else { // maybe close
+            if (!this.open) {
+                this.closeDrawer();
+            } else {
+                if (Math.abs(nativeEvent.velocity.y) > this.minDragVelocity &&
+                    nativeEvent.contentOffset.y < this.contentHeight - this.minDragY) {
+                    this.closeDrawer();
+                } else {
+                    this.openDrawer();
+                }
+            }
         }
     }
+
     _onMomentum(nativeEvent) {
-        if (nativeEvent.contentOffset.y < this.minOpenMomentumY &&
-          nativeEvent.velocity.y < this.minOpenMomentumVelocity) {
-              this.openDrawer(nativeEvent.velocity.y);
-        } else {
-            this.closeDrawer(nativeEvent.velocity.y);            
+        if (nativeEvent.velocity.y < 0) { // maybe open
+            if (this.open) {
+                this.openDrawer();
+            } else {
+                if (Math.abs(nativeEvent.velocity.y) > this.minMomentumVelocity &&
+                  nativeEvent.contentOffset.y > this.minMomentumY) {
+                    this.openDrawer();
+                } else {
+                    this.closeDrawer();
+                }
+            }
+        } else { // maybe close
+            if (!this.open) {
+                this.closeDrawer();
+            } else {
+                if (Math.abs(nativeEvent.velocity.y) > this.minMomentumVelocity &&
+                  nativeEvent.contentOffset.y < this.contentHeight - this.minMomentumY) {
+                    this.closeDrawer();
+                } else {
+                    this.openDrawer();
+                }
+            }
         }
     }
+
     _onStart(nativeEvent) {
-        if (this.contentY !== null && 
-          nativeEvent.contentOffset.y < this.contentY) {
+        if (this.contentHeight == null) {
+            return false;
+        }
+        if (nativeEvent.contentOffset.y < this.getContentOffset()) {
             return false;
         } else {
             return true;            
         }
     }
-    openDrawer(velocity) {
-        if (velocity === undefined) {
-            velocity = (this.props.defaultVelocity === undefined) ? 
-                    1.25 :
-                    this.props.defaultVelocity;
-        }
-        this.scrollView.scrollTo({y: this.openY, velocity: velocity});
+
+    openDrawer() {
+        this.scrollView.scrollToEnd({animated: true});
     }
-    closeDrawer(velocity) {
-        if (velocity === undefined) {
-            velocity = this.defaultVelocity;
-        }
-        this.scrollView.scrollTo({y: this.openY, velocity: velocity});
+
+    closeDrawer() {
+        this.scrollView.scrollTo({y: 0, animated: true});
     }
+
+    getContentOffset() {
+        return SCREEN_HEIGHT - this.props.showingOffset;
+    }
+
     render() {
         return (
             <ScrollView
@@ -56,10 +95,10 @@ export class BottomDrawer extends Component {
                 onMomentumScrollBegin={(e) => this._onMomentum(e.nativeEvent)}
                 onScrollEndDrag={(e) => this._onDrag(e.nativeEvent)}
                 onContentSizeChange={(width, height) => {
-                    this.contentY = height;
+                    this.contentHeight = height;
                 }}
                 onStartShouldSetResponder={(e) => this._onStart(e.nativeEvent)}
-                contentContainerStyle={{paddingTop: this.contentY - this.props.showingOffset}}
+                contentContainerStyle={{paddingTop: getContentOffset()}}
             >
                 {this.props.children}
             </ScrollView>
