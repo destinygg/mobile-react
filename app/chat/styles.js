@@ -88,7 +88,6 @@ const styles = StyleSheet.create({
         paddingTop: 8,
         paddingLeft: 5,
         paddingRight: 5,
-        width: '100%'
     },
     ChatInputInner: {
         flex: 1, 
@@ -126,7 +125,6 @@ const styles = StyleSheet.create({
         width: '100%', 
         paddingLeft: 5, 
         paddingRight: 5, 
-        position: 'absolute'
     },
     EmoteDirectory: {
         paddingLeft: 15,

@@ -1,6 +1,7 @@
 import React, { Component, PureComponent } from 'react';
 import { View, WebView, Dimensions, PanResponder, AsyncStorage, BackHandler, AppState, TouchableOpacity, Text, KeyboardAvoidingView, Platform, Animated, Keyboard } from 'react-native';
 import { StackNavigator, SafeAreaView, NavigationActions } from 'react-navigation';
+import { TouchThroughView, TouchThroughWrapper } from 'react-native-touch-through-view';
 import { MobileChatView, MobileChatInput, EmoteDirectory } from '../chat/window';
 import styles from './styles';
 import { ButtonList, BottomDrawer } from '../components'
@@ -26,7 +27,7 @@ class TwitchView extends Component {
         if (this.props.landscape) { 
             twitchViewStyle.push({ flex: 1 });
         } else {
-            if (this.props.height) { twitchViewStyle.push({ flex: 0, height: this.props.height}); }            
+            if (this.props.height) { twitchViewStyle.push({ flex: 0, height: 200}); }            
         }
 
         return (
@@ -367,70 +368,62 @@ export default class MainView extends Component {
         if (this.state.resizing) { 
             dividerStyle.push(styles.DividerResizing); 
         }
+        console.log(this.state.twitchHeight);
         return (
-            <SafeAreaView style={styles.View}>
+            <SafeAreaView style={{flex: 1}}>
                 <View
-                    style={[styles.View]}
+                    style={{position: 'absolute', width: '100%'}}
                     onLayout={(e) => {
                         this._onLayout(e.nativeEvent);
                     }}
                 >
-                    {(this.state.streamShown) &&
-                        <TwitchView 
-                            ref={(ref) => this.twitchView = ref} 
-                            parent={this} 
-                            resizing={this.state.resizing}
-                            height={this.state.twitchHeight}
-                        />
-                    }
-                    <View style={dividerStyle} />
-                    <View style={styles.TwitchViewDividerHandle} {...this._panResponder.panHandlers} />
-                    <KeyboardAvoidingView 
-                        behavior='padding' style={styles.View}
-                        keyboardVerticalOffset={this.state.bottomOffset + 15}
-                    >
-                        {this.props.screenProps.chat.mainwindow.uiElem}
-                    </KeyboardAvoidingView>
-                    <Animated.View 
-                        style={[styles.DrawerUnderlay, {opacity: this.state.underlayOpacity}]} 
-                        pointerEvents={(this.state.drawerOpen) ? 'auto' : 'none'}
-                    />
-                {this.state.height != null &&
-                    <BottomDrawer 
-                        ref={(ref) => this.cardDrawer = ref} 
-                        onOpen={() => this._drawerOpened()}                 
-                        onClose={() => this._drawerClosed()}  
-                        showingOffset={this.state.bottomOffset}
-                    >
-                        <View style={{flexDirection: 'row'}}>
-                            <MobileChatInput
-                                ref={(ref) => this.inputElem = ref}
-                                chat={this.chat}
-                                animationBinding={{
-                                    binding: this.state.translateY,
-                                    interpolate: [
-                                        this.state.interpolate.min - 100,
-                                        this.state.interpolate.min
-                                    ]
-                                }}
-                                shown={!this.state.drawerOpen}
-                                style={{paddingBottom: this.state.bottomOffset}}
-                                onChange={(val) => this._onInputUpdate(val)}
-                                onEmoteBtnPress={() => this.toggleEmoteDir()}
-                                onFocus={() => this._keyboardShown()}
-                                onBlur={() => this._keyboardHidden()}
+                        {(this.state.streamShown) &&
+                            <TwitchView 
+                                ref={(ref) => this.twitchView = ref} 
+                                parent={this} 
+                                resizing={this.state.resizing}
                             />
-                        </View>
-                        <CardDrawerNavList 
-                            screenProps={{ ...this.props.screenProps, mainView: this }} 
-                            navigation={this.props.navigation} 
-                            onShowStream={() => this.showStream()}                    
-                            onHideStream={() => this.hideStream()} 
-                        />
-                    </BottomDrawer>
+                        }
+                        <View style={dividerStyle} />
+                        <View style={styles.TwitchViewDividerHandle} {...this._panResponder.panHandlers} />
+                        {this.props.screenProps.chat.mainwindow.uiElem}
+                </View>
+                {this.state.height != null &&
+                    <TouchThroughWrapper
+                        style={{flex: 1}}
+                    >
+                        <BottomDrawer 
+                            ref={(ref) => this.cardDrawer = ref} 
+                            onOpen={() => this._drawerOpened()}                 
+                            onClose={() => this._drawerClosed()}  
+                            showingOffset={100}
+                        >                    
+                            <TouchThroughView style={{height: 492, width: '100%'}} />                                                                                    
+                                <MobileChatInput
+                                    ref={(ref) => this.inputElem = ref}
+                                    chat={this.chat}
+                                    animationBinding={{
+                                        binding: this.state.translateY,
+                                        interpolate: [
+                                            this.state.interpolate.min - 100,
+                                            this.state.interpolate.min
+                                        ]
+                                    }}
+                                    shown={!this.state.drawerOpen}
+                                    onChange={(val) => this._onInputUpdate(val)}
+                                    onEmoteBtnPress={() => this.toggleEmoteDir()}
+                                    onFocus={() => this._keyboardShown()}
+                                    onBlur={() => this._keyboardHidden()}
+                                />
+                            <CardDrawerNavList 
+                                screenProps={{ ...this.props.screenProps, mainView: this }} 
+                                navigation={this.props.navigation} 
+                                onShowStream={() => this.showStream()}                    
+                                onHideStream={() => this.hideStream()} 
+                            />
+                        </BottomDrawer>
+                    </TouchThroughWrapper>
                 }
-
-            </View>   
             </SafeAreaView>                         
         );
     }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, TextInput, Picker, Modal, Button, TouchableHighlight, StyleSheet, Platform, Switch, WebView, ScrollView, Dimensions } from 'react-native';
+import { TouchThroughView } from 'react-native-touch-through-view';
 import styles from './styles';
 
 const SCREEN_HEIGHT = parseFloat(Dimensions.get('window').height);
@@ -93,9 +94,6 @@ export class BottomDrawer extends Component {
 
     render() {
         return (
-            <View
-                style={[styles.BottomDrawer]}
-            >
                 <ScrollView
                     ref={ref => this.scrollView = ref}
                     scrollEnabled={this.props.locked}
@@ -107,13 +105,9 @@ export class BottomDrawer extends Component {
                     onContentSizeChange={(width, height) => {
                         this.contentHeight = height;
                     }}
-                    onStartShouldSetResponder={(e) => this._onStart(e.nativeEvent)}
-                    pointerEvents={'box-none'}    
-                    style={{paddingTop: 300}}                
                 >
                     {this.props.children}
                 </ScrollView>
-            </View>
         )
     }
 }

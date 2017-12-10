@@ -11,9 +11,9 @@
 		"moment": "~2.19",
 		"react": "^16.0.0",
 		"react-native": "^0.49.5",
-		"react-native-touch-through-view": "file:../react-native-touch-through-view",
 		"react-navigation": "^1.0.0-beta.17",
-		"throttle-debounce": "~1.0.1"
+		"throttle-debounce": "~1.0.1",
+		"react-native-touch-through-view": "file:react-native-touch-through-view"
 	},
 	"devDependencies": {
 		"babel-jest": "21.2.0",
