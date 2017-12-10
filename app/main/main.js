@@ -3,7 +3,7 @@ import { View, WebView, Dimensions, PanResponder, AsyncStorage, BackHandler, App
 import { StackNavigator, SafeAreaView, NavigationActions } from 'react-navigation';
 import { MobileChatView, MobileChatInput, EmoteDirectory } from '../chat/window';
 import styles from './styles';
-import { ButtonList } from '../components'
+import { ButtonList, BottomDrawer } from '../components'
 
 
 const MIN_SWIPE_DISTANCE = 2;
@@ -392,17 +392,11 @@ export default class MainView extends Component {
                         pointerEvents={(this.state.drawerOpen) ? 'auto' : 'none'}
                     />
                 {this.state.height != null &&
-                    <CardDrawer 
+                    <BottomDrawer 
                         ref={(ref) => this.cardDrawer = ref} 
-                        interpolate={this.state.interpolate}
-                        panY={this.state.panY}
-                        translateY={this.state.translateY}
-                        keyboardShown={this.state.keyboardShown}
-                        keyboardShownTranslateY={this.state.keyboardShownTranslateY}
-                        parentHeight={this.state.height}  
                         onOpen={() => this._drawerOpened()}                 
                         onClose={() => this._drawerClosed()}  
-                        bottomOffset={this.state.bottomOffset}
+                        showingOffset={this.state.bottomOffset}
                     >
                         <View style={{flexDirection: 'row'}}>
                             <MobileChatInput
@@ -429,24 +423,9 @@ export default class MainView extends Component {
                             onShowStream={() => this.showStream()}                    
                             onHideStream={() => this.hideStream()} 
                         />
-                    </CardDrawer>
+                    </BottomDrawer>
                 }
-                {this.state.height != null &&
-                    <EmoteDirectory 
-                        onSelect={(emote) => {
-                            this.inputElem.replace(emote);
-                            if (this.chat.mobileSettings.emoteDirLoseFocus) {
-                                this.hideEmoteDir();                            
-                            }
-                        }} 
-                        ref={(ref) => this.emoteDir = ref} 
-                        filter={this.state.emoteFilter}
-                        animated={(this.state.keyboardShown) ? 
-                                    this.state.keyboardShownEmoteDirY :
-                                    this.state.emoteDirY
-                        }
-                    />
-                 }
+
             </View>   
             </SafeAreaView>                         
         );
@@ -600,7 +579,7 @@ export default class MainView extends Component {
         global.bugsnag.leaveBreadcrumb('Added AppState listener.');                
         BackHandler.addEventListener('hardwareBackPress', () => {
             if (this.props.screenProps.navState === 'MainNav' && 
-                this.cardDrawer && this.cardDrawer._lastOpenValue === 1) {
+                this.cardDrawer && this.cardDrawer.open) {
                     this.cardDrawer.closeDrawer();
                     return true;
             }

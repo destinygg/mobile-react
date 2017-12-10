@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, Picker, Modal, Button, TouchableHighlight, StyleSheet, Platform, Switch, WebView } from 'react-native';
+import { View, Text, TextInput, Picker, Modal, Button, TouchableHighlight, StyleSheet, Platform, Switch, WebView, ScrollView, Dimensions } from 'react-native';
 import styles from './styles';
+
+const SCREEN_HEIGHT = parseFloat(Dimensions.get('window').height);
 
 export class BottomDrawer extends Component {
     constructor(props) {
@@ -8,6 +10,7 @@ export class BottomDrawer extends Component {
         this.open = false;
         this.lastVelocity = 0;
         this.contentHeight = null;
+        this.scrollView = null;
     }
     
     _onDrag(nativeEvent) {
@@ -63,6 +66,7 @@ export class BottomDrawer extends Component {
     }
 
     _onStart(nativeEvent) {
+        console.log('ayylmao');
         if (this.contentHeight == null) {
             return false;
         }
@@ -74,11 +78,13 @@ export class BottomDrawer extends Component {
     }
 
     openDrawer() {
-        this.scrollView.scrollToEnd({animated: true});
+        //this.scrollView && this.scrollView.scrollToEnd({animated: true});
+        this.props.onOpen();
     }
 
     closeDrawer() {
-        this.scrollView.scrollTo({y: 0, animated: true});
+        //this.scrollView && this.scrollView.scrollTo({y: 0, animated: true});
+        this.props.onClose();
     }
 
     getContentOffset() {
@@ -87,21 +93,27 @@ export class BottomDrawer extends Component {
 
     render() {
         return (
-            <ScrollView
-                scrollEnabled={this.props.locked}
-                scrollsToTop={false}
-                showsHorizontalScrollIndicator={false}
-                showsVerticalScrollIndicator={false}
-                onMomentumScrollBegin={(e) => this._onMomentum(e.nativeEvent)}
-                onScrollEndDrag={(e) => this._onDrag(e.nativeEvent)}
-                onContentSizeChange={(width, height) => {
-                    this.contentHeight = height;
-                }}
-                onStartShouldSetResponder={(e) => this._onStart(e.nativeEvent)}
-                contentContainerStyle={{paddingTop: getContentOffset()}}
+            <View
+                style={[styles.BottomDrawer]}
             >
-                {this.props.children}
-            </ScrollView>
+                <ScrollView
+                    ref={ref => this.scrollView = ref}
+                    scrollEnabled={this.props.locked}
+                    scrollsToTop={false}
+                    showsHorizontalScrollIndicator={false}
+                    showsVerticalScrollIndicator={false}
+                    onMomentumScrollBegin={(e) => this._onMomentum(e.nativeEvent)}
+                    onScrollEndDrag={(e) => this._onDrag(e.nativeEvent)}
+                    onContentSizeChange={(width, height) => {
+                        this.contentHeight = height;
+                    }}
+                    onStartShouldSetResponder={(e) => this._onStart(e.nativeEvent)}
+                    pointerEvents={'box-none'}    
+                    style={{paddingTop: 300}}                
+                >
+                    {this.props.children}
+                </ScrollView>
+            </View>
         )
     }
 }
