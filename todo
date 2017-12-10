@@ -21,3 +21,6 @@ set maximum chat resize
 This makes reading this.state right after calling setState() a potential pitfall. 
 
 only render emotedir when relevant, animate emotedir, keep drawer closed with emotedir open.
+
+this damn native java exception -- try having the menu drawer close in a callback when stream/chat mode changed, rather than
+at the same time.

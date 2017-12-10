@@ -101,8 +101,8 @@ android {
         applicationId "gg.destiny.mobile"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 7
-        versionName "2.3"
+        versionCode 8
+        versionName "2.4"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -148,6 +148,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-touch-through-view')
     compile project(':bugsnag-react-native')
     compile fileTree(dir: "libs", include: ["*.jar"])
     compile "com.android.support:appcompat-v7:23.0.1"

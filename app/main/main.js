@@ -7,7 +7,11 @@ import { ButtonList } from '../components'
 
 
 const MIN_SWIPE_DISTANCE = 2;
-const DEVICE_HEIGHT = parseFloat(Dimensions.get('window').height);
+const DEVICE_HEIGHT = (function() {
+    const dims = Dimensions.get('window');
+    const ret = (dims.height > dims.width) ? dims.height : dims.width  
+    return parseFloat(ret);
+}());
 const THRESHOLD = DEVICE_HEIGHT - 150;
 const VY_MAX = 0.1;
 
