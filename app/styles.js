@@ -27,6 +27,12 @@ export const inheritedStyles = {
         marginBottom: 10,        
         marginLeft: 15        
     },
+    BottomDrawer: {
+        position: 'absolute',
+        top: 0,
+        height: '100%',
+        width: '100%'
+    },
     FormItem: {
         color: "#FFF",
         paddingTop: 10,
