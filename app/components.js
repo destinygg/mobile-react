@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, Picker, Modal, Button, TouchableHighlight, StyleSheet, Platform, Switch, WebView, ScrollView, Dimensions } from 'react-native';
+import { View, Text, TextInput, Picker, Modal, Button, TouchableHighlight, StyleSheet, Animated, Platform, Switch, WebView, ScrollView, Dimensions } from 'react-native';
 import { TouchThroughView } from 'react-native-touch-through-view';
 import styles from './styles';
 
@@ -8,10 +8,14 @@ const SCREEN_HEIGHT = parseFloat(Dimensions.get('window').height);
 export class BottomDrawer extends Component {
     constructor(props) {
         super(props);
+        this.state = {open: false};
         this.open = false;
         this.lastVelocity = 0;
         this.contentHeight = null;
         this.scrollView = null;
+        this.scrollY = new Animated.Value(0);
+        this.scrollYNegative = Animated.multiply(this.scrollY, new Animated.Value(-1));
+        this.paddingHeight = 0;
     }
     
     _onDrag(nativeEvent) {
@@ -92,22 +96,41 @@ export class BottomDrawer extends Component {
         return SCREEN_HEIGHT - this.props.showingOffset;
     }
 
+    _onScroll(e) {
+        if (e.nativeEvent.contentOffset.y > 0) {
+            this.setState({open: true});
+        } else {
+            this.setState({open: false});            
+        }
+    }
+
     render() {
         return (
-                <ScrollView
-                    ref={ref => this.scrollView = ref}
-                    scrollEnabled={this.props.locked}
-                    scrollsToTop={false}
-                    showsHorizontalScrollIndicator={false}
-                    showsVerticalScrollIndicator={false}
-                    onMomentumScrollBegin={(e) => this._onMomentum(e.nativeEvent)}
-                    onScrollEndDrag={(e) => this._onDrag(e.nativeEvent)}
-                    onContentSizeChange={(width, height) => {
-                        this.contentHeight = height;
-                    }}
-                >
-                    {this.props.children}
-                </ScrollView>
+            <View style={{top: -400, width: '100%'}}>
+                        <Animated.ScrollView
+                        scrollsToTop={false}
+                        showsHorizontalScrollIndicator={false}
+                        showsVerticalScrollIndicator={false}
+                        onMomentumScrollBegin={(e) => this._onMomentum(e.nativeEvent)}
+                        onScrollEndDrag={(e) => this._onDrag(e.nativeEvent)}
+                        onContentSizeChange={(width, height) => {
+                            this.contentHeight = height;
+                        }}
+                        onScroll={Animated.event(
+                            [{ nativeEvent: { contentOffset: { y: this.scrollY } }}],
+                            { useNativeDriver: true, listener: (e) => this._onScroll(e) }
+                        )}     
+                        scrollEventThrottle={1}
+                        style={{
+                            height: 500,
+                            width: '100%',
+                            zIndex: (this.state.open) ? 6000 : -1
+                        }} 
+                    >              
+                        <View style={{height: 400}} />
+                        {this.props.children}
+                    </Animated.ScrollView>
+            </View>
         )
     }
 }

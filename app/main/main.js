@@ -372,7 +372,7 @@ export default class MainView extends Component {
         return (
             <SafeAreaView style={{flex: 1}}>
                 <View
-                    style={{position: 'absolute', width: '100%'}}
+                    style={{width: '100%', height: DEVICE_HEIGHT - 130}}
                     onLayout={(e) => {
                         this._onLayout(e.nativeEvent);
                     }}
@@ -389,16 +389,13 @@ export default class MainView extends Component {
                         {this.props.screenProps.chat.mainwindow.uiElem}
                 </View>
                 {this.state.height != null &&
-                    <TouchThroughWrapper
-                        style={{flex: 1}}
-                    >
+
                         <BottomDrawer 
                             ref={(ref) => this.cardDrawer = ref} 
                             onOpen={() => this._drawerOpened()}                 
                             onClose={() => this._drawerClosed()}  
                             showingOffset={100}
                         >                    
-                            <TouchThroughView style={{height: 492, width: '100%'}} />                                                                                    
                                 <MobileChatInput
                                     ref={(ref) => this.inputElem = ref}
                                     chat={this.chat}
@@ -422,7 +419,6 @@ export default class MainView extends Component {
                                 onHideStream={() => this.hideStream()} 
                             />
                         </BottomDrawer>
-                    </TouchThroughWrapper>
                 }
             </SafeAreaView>                         
         );
