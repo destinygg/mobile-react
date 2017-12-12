@@ -15,7 +15,10 @@ export class BottomDrawer extends Component {
         this.scrollView = null;
         this.scrollY = new Animated.Value(0);
         this.scrollYNegative = Animated.multiply(this.scrollY, new Animated.Value(-1));
-        this.paddingHeight = 0;
+        this.paddingHeight = 400;
+        this.scrollViewHeight = 500;
+        this.minDragVelocity = 0.3;
+        this.minMomentumVelocity = 0.5;
     }
     
     _onDrag(nativeEvent) {
@@ -35,7 +38,7 @@ export class BottomDrawer extends Component {
                 this.closeDrawer();
             } else {
                 if (Math.abs(nativeEvent.velocity.y) > this.minDragVelocity &&
-                    nativeEvent.contentOffset.y < this.contentHeight - this.minDragY) {
+                    nativeEvent.contentOffset.y < (this.contentHeight - this.scrollViewHeight) - this.minDragY) {
                     this.closeDrawer();
                 } else {
                     this.openDrawer();
@@ -61,7 +64,7 @@ export class BottomDrawer extends Component {
                 this.closeDrawer();
             } else {
                 if (Math.abs(nativeEvent.velocity.y) > this.minMomentumVelocity &&
-                  nativeEvent.contentOffset.y < this.contentHeight - this.minMomentumY) {
+                  nativeEvent.contentOffset.y < (this.contentHeight - this.scrollViewHeight) - this.minMomentumY) {
                     this.closeDrawer();
                 } else {
                     this.openDrawer();
@@ -71,15 +74,7 @@ export class BottomDrawer extends Component {
     }
 
     _onStart(nativeEvent) {
-        console.log('ayylmao');
-        if (this.contentHeight == null) {
-            return false;
-        }
-        if (nativeEvent.contentOffset.y < this.getContentOffset()) {
-            return false;
-        } else {
-            return true;            
-        }
+        this.setState({open: true});        
     }
 
     openDrawer() {
@@ -96,38 +91,31 @@ export class BottomDrawer extends Component {
         return SCREEN_HEIGHT - this.props.showingOffset;
     }
 
-    _onScroll(e) {
-        if (e.nativeEvent.contentOffset.y > 0) {
-            this.setState({open: true});
-        } else {
-            this.setState({open: false});            
-        }
-    }
-
     render() {
         return (
-            <View style={{top: -400, width: '100%'}}>
+            <View style={{top: -(this.paddingHeight), width: '100%'}}>
                         <Animated.ScrollView
                         scrollsToTop={false}
                         showsHorizontalScrollIndicator={false}
                         showsVerticalScrollIndicator={false}
                         onMomentumScrollBegin={(e) => this._onMomentum(e.nativeEvent)}
                         onScrollEndDrag={(e) => this._onDrag(e.nativeEvent)}
+                        onScrollBeginDrag={(e) => this._onStart()}
                         onContentSizeChange={(width, height) => {
                             this.contentHeight = height;
                         }}
                         onScroll={Animated.event(
                             [{ nativeEvent: { contentOffset: { y: this.scrollY } }}],
-                            { useNativeDriver: true, listener: (e) => this._onScroll(e) }
+                            { useNativeDriver: true }
                         )}     
                         scrollEventThrottle={1}
                         style={{
-                            height: 500,
+                            height: this.scrollViewHeight,
                             width: '100%',
                             zIndex: (this.state.open) ? 6000 : -1
                         }} 
                     >              
-                        <View style={{height: 400}} />
+                        <View style={{height: this.paddingHeight}} />
                         {this.props.children}
                     </Animated.ScrollView>
             </View>
