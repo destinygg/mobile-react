@@ -51,16 +51,6 @@ const styles = StyleSheet.create({
         paddingTop: 10,
         marginTop: -5
     },
-    DrawerHandle: {
-        position: 'absolute',
-        height: 4,
-        width: 100,
-        backgroundColor: '#888',
-        borderRadius: 2,
-        top: 8,
-        alignSelf: 'center',
-        zIndex: 3000,
-    },
     DrawerUnderlay: {
         position: 'absolute',
         height: '100%',

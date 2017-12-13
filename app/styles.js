@@ -110,6 +110,16 @@ export const inheritedStyles = {
     },
     navbarRight: {
         marginRight: (Platform.OS == 'ios') ? 5 : 15
+    },
+    DrawerHandle: {
+        position: 'absolute',
+        height: 4,
+        width: 100,
+        backgroundColor: '#888',
+        borderRadius: 2,
+        top: 8,
+        alignSelf: 'center',
+        zIndex: 3000,
     }
 }
 

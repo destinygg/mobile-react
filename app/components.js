@@ -14,7 +14,6 @@ export class BottomDrawer extends Component {
         this.scrollView = null;
         this.scrollY = new Animated.Value(0);
         this.scrollYNegative = Animated.multiply(this.scrollY, new Animated.Value(-1));
-        this.paddingHeight = 380;
         this.scrollViewHeight = 500;
         this.minMomentumVelocity = 0;
         this.minMomentumY = 50;
@@ -36,6 +35,7 @@ export class BottomDrawer extends Component {
     }
     
     _onDrag(nativeEvent) {
+        console.log(nativeEvent);
         if (nativeEvent.velocity.y < 0) { // maybe open
                 if (nativeEvent.contentOffset.y > this.minDragY) {
                     this.openDrawer();
@@ -92,7 +92,7 @@ export class BottomDrawer extends Component {
 
     render() {
         return (
-            <View style={{top: -(this.paddingHeight), width: '100%'}}>
+            <View style={{top: -(this.props.paddingHeight), width: '100%'}}>
                         <Animated.ScrollView
                         ref={(ref) => this.scrollView = ref}
                         scrollsToTop={false}
@@ -115,7 +115,7 @@ export class BottomDrawer extends Component {
                             zIndex: (this.state.open) ? 6000 : -1
                         }} 
                     >              
-                        <View style={{height: this.paddingHeight}} />
+                        <View style={{height: this.props.paddingHeight}} />
                         <Animated.View style={[
                             styles.DrawerHandle, 
                             {
@@ -127,7 +127,7 @@ export class BottomDrawer extends Component {
                                     {
                                         scaleX: this.handleWidthBinding
                                     },
-                                ],
+                                ]
                             }
                         ]} 
                         />

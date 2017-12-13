@@ -124,6 +124,9 @@ const styles = StyleSheet.create({
         width: '100%', 
         paddingLeft: 5, 
         paddingRight: 5, 
+        position: 'absolute',
+        zIndex: 1500,
+        top: 0
     },
     EmoteDirectory: {
         paddingLeft: 15,

@@ -267,6 +267,7 @@ export default class MainView extends Component {
             emoteDirShown: false,
             emoteDirY: null,
             keyboardShown: false,
+            drawerPaddingHeight: 380,
             emoteFilter: '',
             settings: {
                 mediaModal: null,
@@ -333,7 +334,7 @@ export default class MainView extends Component {
                 this.state.emoteDirOffset,
                 {
                     duration: 300,
-                    toValue: -65,
+                    toValue: 0,
                     useNativeDriver: true
                 }
             ).start(() => {
@@ -349,7 +350,7 @@ export default class MainView extends Component {
                         this.state.emoteDirOffset,
                         {
                             duration: 300,
-                            toValue: -110,
+                            toValue: -45,
                             useNativeDriver: true
                         }
                     ).start();
@@ -360,6 +361,10 @@ export default class MainView extends Component {
 
     _onInputUpdate(val) {
         this.setState({ emoteFilter: val.split(' ').slice(-1)[0] });
+    }
+
+    _onEmoteChosen(emote) {
+        this.inputElem && this.inputElem.replace && this.inputElem.replace(emote);
     }
 
     render() {
@@ -393,18 +398,19 @@ export default class MainView extends Component {
                             ref={(ref) => this.cardDrawer = ref} 
                             onOpen={() => this._drawerOpened()}                 
                             onClose={() => this._drawerClosed()}  
-                            showingOffset={100}
-                        >                    
+                            paddingHeight={this.state.drawerPaddingHeight}
+                            posSpy={this.state.drawerPosSpy}
+                        >                  
+                            <EmoteDirectory
+                                animated={this.props.emoteDirOffset}
+                                filter={this.props.emoteFilter}
+                                topOffset={this.state.drawerPaddingHeight}
+                                onSelect={(emote) => this._onEmoteChosen(emote)}
+                            />
                                 <MobileChatInput
                                     ref={(ref) => this.inputElem = ref}
                                     chat={this.chat}
-                                    animationBinding={{
-                                        binding: this.state.translateY,
-                                        interpolate: [
-                                            this.state.interpolate.min - 100,
-                                            this.state.interpolate.min
-                                        ]
-                                    }}
+                                    opacityBinding={this.props.chatInputOpacity}
                                     shown={!this.state.drawerOpen}
                                     onChange={(val) => this._onInputUpdate(val)}
                                     onEmoteBtnPress={() => this.toggleEmoteDir()}
@@ -483,28 +489,24 @@ export default class MainView extends Component {
         const bottomOffset = DEVICE_HEIGHT - viewHeight - e.layout.y;
         if (this.state.height === null) {
             const interpolate = {
-                max: viewHeight - 250 - bottomOffset,
-                min: viewHeight
+                min: 0,
+                max: 261
             };
-            const panY = new Animated.Value(viewHeight);
-            const keyboardShownY = new Animated.Value(viewHeight);
-            const keyboardShownTranslateY = Animated.add(keyboardShownY, new Animated.Value(-(bottomOffset)));
-            const translateY = Animated.diffClamp(panY, interpolate.max, interpolate.min);    
-            const emoteDirOffset = new Animated.Value(-65);        
+            const emoteDirOffset = new Animated.Value(0);        
+            const drawerPosSpy = new Animated.Value(0);
             this.setState({ 
                 height: viewHeight,
-                panY: panY,
-                translateY: translateY,
                 emoteDirOffset: emoteDirOffset,
-                emoteDirY: Animated.add(translateY, emoteDirOffset),
-                keyboardShownEmoteDirY: Animated.add(keyboardShownTranslateY, emoteDirOffset),
-                keyboardShownY: keyboardShownY,
-                keyboardShownTranslateY: keyboardShownTranslateY,
+                drawerPosSpy: drawerPosSpy,
                 interpolate: interpolate,
                 bottomOffset: bottomOffset,
-                underlayOpacity: translateY.interpolate({
-                    inputRange: [interpolate.max, interpolate.min],
-                    outputRange: [0.7, 0]
+                underlayOpacity: drawerPosSpy.interpolate({
+                    inputRange: [interpolate.min, interpolate.max],
+                    outputRange: [0, 0.7]
+                }),
+                chatInputOpacity: drawerPosSpy.interpolate({
+                    inputRange: [interpolate.min, interpolate.max],
+                    outputRange: [0, 1]                    
                 })
             });
         }         
@@ -524,39 +526,8 @@ export default class MainView extends Component {
         }
     }
 
-    _keyboardShown() {
-        this.setState({ keyboardShown: true });
-        if (this.keyboardOffset === undefined) {
-            return;
-        }
-        Animated.spring(this.state.keyboardShownY, {
-            toValue: this.keyboardOffset,
-            bounciness: 0,
-            speed: 20,
-            useNativeDriver: true
-        }).start();
-    }
-
-    _keyboardHidden() {
-        this.cardDrawer.closeDrawer();
-        Animated.spring(this.state.keyboardShownY, {
-            toValue: this.state.interpolate.min + this.state.bottomOffset,
-            bounciness: 0,
-            speed: 20,
-            useNativeDriver: true
-        }).start(() => this.setState({ keyboardShown: false }));
-    }
-
-    _handleKeyboard = (e) => {
-        if (this.keyboardOffset === undefined) {
-            this.keyboardOffset = e.endCoordinates.screenY - 20;
-            this._keyboardShown();
-        }
-    }
-
     componentDidMount() {
         global.bugsnag.leaveBreadcrumb('MainView mounted.');     
-        Keyboard.addListener('keyboardDidShow', this._handleKeyboard);        
         AsyncStorage.getItem("InitRoute").then((route) => {
             switch (route) {
                 case 'Chat': 
@@ -585,7 +556,6 @@ export default class MainView extends Component {
 
     componentWillUnmount() {
         AppState.removeEventListener('change', this._handleAppStateChange);   
-        Keyboard.removeListener('keyboardDidShow', this._handleKeyboard);
         if (this.state.twitchHeight) {            
             AsyncStorage.setItem('TwitchViewHeight', Math.floor(this.state.twitchHeight).toString());        
         }

@@ -54,7 +54,7 @@ export class EmoteDirectory extends PureComponent {
                 ]} 
                 collapsable={false}
             >
-                <View style={styles.EmoteDirectoryOuter}>
+                <View style={[styles.EmoteDirectoryOuter, {top: this.props.topOffset}]}>
                     <View style={styles.EmoteDirectory}>
                         <ScrollView 
                             showsHorizontalScrollIndicator={false} 
@@ -87,17 +87,6 @@ export class MobileChatInput extends Component {
         this.opacity = null;
         this.interpolate = null;
         this.input = null;
-    }
-
-    componentWillMount() {
-        this.bindAnimation(this.props.animationBinding);        
-    }
-
-    bindAnimation(config) {
-        this.opacity = {opacity: config.binding.interpolate({
-            inputRange: config.interpolate,
-            outputRange: [0, 1]
-        })};
     }
 
     set(text) {
@@ -151,7 +140,7 @@ export class MobileChatInput extends Component {
                 style={[styles.ChatInputOuter, this.props.style]}
                 pointerEvents={(this.props.shown) ? 'auto' : 'none'}
             >
-                <Animated.View style={[styles.ChatInputInner, this.opacity]}>
+                <Animated.View style={[styles.ChatInputInner, {opacity: this.props.opacityBinding}]}>
                     <TouchableOpacity onPress={() => this.props.onEmoteBtnPress()}>
                         <Text style={{
                             fontFamily: 'ionicons',
