@@ -1,7 +1,6 @@
 import React, { Component, PureComponent } from 'react';
 import { View, WebView, Dimensions, PanResponder, AsyncStorage, BackHandler, AppState, TouchableOpacity, Text, KeyboardAvoidingView, Platform, Animated, Keyboard } from 'react-native';
 import { StackNavigator, SafeAreaView, NavigationActions } from 'react-navigation';
-import { TouchThroughView, TouchThroughWrapper } from 'react-native-touch-through-view';
 import { MobileChatView, MobileChatInput, EmoteDirectory } from '../chat/window';
 import styles from './styles';
 import { ButtonList, BottomDrawer } from '../components'
@@ -370,9 +369,9 @@ export default class MainView extends Component {
         }
         console.log(this.state.twitchHeight);
         return (
-            <SafeAreaView style={{flex: 1}}>
+            <SafeAreaView style={styles.View}>
                 <View
-                    style={{width: '100%', height: DEVICE_HEIGHT - 130}}
+                    style={{width: '100%', height: DEVICE_HEIGHT - 95, paddingBottom: 5}}
                     onLayout={(e) => {
                         this._onLayout(e.nativeEvent);
                     }}

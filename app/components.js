@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { View, Text, TextInput, Picker, Modal, Button, TouchableHighlight, StyleSheet, Animated, Platform, Switch, WebView, ScrollView, Dimensions } from 'react-native';
-import { TouchThroughView } from 'react-native-touch-through-view';
 import styles from './styles';
 
 const SCREEN_HEIGHT = parseFloat(Dimensions.get('window').height);
@@ -15,62 +14,59 @@ export class BottomDrawer extends Component {
         this.scrollView = null;
         this.scrollY = new Animated.Value(0);
         this.scrollYNegative = Animated.multiply(this.scrollY, new Animated.Value(-1));
-        this.paddingHeight = 400;
+        this.paddingHeight = 380;
         this.scrollViewHeight = 500;
-        this.minDragVelocity = 0.3;
-        this.minMomentumVelocity = 0.5;
+        this.minMomentumVelocity = 0;
+        this.minMomentumY = 50;
+        this.minDragY = 30;
+        this.handleTopBinding = this.scrollY.interpolate({
+            inputRange: [
+                0,
+                300
+            ],
+            outputRange: [20, 0]
+        });
+        this.handleWidthBinding = this.scrollY.interpolate({
+            inputRange: [
+                0,
+                300
+            ],
+            outputRange: [1, 0.6]
+        });
     }
     
     _onDrag(nativeEvent) {
         if (nativeEvent.velocity.y < 0) { // maybe open
-            if (this.open) {
-                this.openDrawer();
-            } else {
-                if (Math.abs(nativeEvent.velocity.y) > this.minDragVelocity &&
-                    nativeEvent.contentOffset.y > this.minDragY) {
+                if (nativeEvent.contentOffset.y > this.minDragY) {
                     this.openDrawer();
                 } else {
                     this.closeDrawer();
                 }
-            }
         } else { // maybe close
-            if (!this.open) {
-                this.closeDrawer();
-            } else {
-                if (Math.abs(nativeEvent.velocity.y) > this.minDragVelocity &&
-                    nativeEvent.contentOffset.y < (this.contentHeight - this.scrollViewHeight) - this.minDragY) {
+            console.log('ondragmaybeclose');
+                if (nativeEvent.contentOffset.y < (this.contentHeight - this.scrollViewHeight) - this.minDragY) {
                     this.closeDrawer();
                 } else {
                     this.openDrawer();
                 }
-            }
         }
     }
 
     _onMomentum(nativeEvent) {
-        if (nativeEvent.velocity.y < 0) { // maybe open
-            if (this.open) {
-                this.openDrawer();
-            } else {
-                if (Math.abs(nativeEvent.velocity.y) > this.minMomentumVelocity &&
-                  nativeEvent.contentOffset.y > this.minMomentumY) {
+        /*if (nativeEvent.velocity.y < 0) { // maybe open
+                console.log('onmomentummaybeopen')
+                if (nativeEvent.contentOffset.y > this.minMomentumY) {
                     this.openDrawer();
                 } else {
                     this.closeDrawer();
                 }
-            }
         } else { // maybe close
-            if (!this.open) {
-                this.closeDrawer();
-            } else {
-                if (Math.abs(nativeEvent.velocity.y) > this.minMomentumVelocity &&
-                  nativeEvent.contentOffset.y < (this.contentHeight - this.scrollViewHeight) - this.minMomentumY) {
+                if (nativeEvent.contentOffset.y < (this.contentHeight - this.scrollViewHeight) - this.minMomentumY) {
                     this.closeDrawer();
                 } else {
                     this.openDrawer();
                 }
-            }
-        }
+        }*/
     }
 
     _onStart(nativeEvent) {
@@ -78,13 +74,16 @@ export class BottomDrawer extends Component {
     }
 
     openDrawer() {
-        //this.scrollView && this.scrollView.scrollToEnd({animated: true});
+        this.scrollView && this.scrollView._component &&
+          this.scrollView._component.scrollToEnd({animated: true});
         this.props.onOpen();
     }
 
     closeDrawer() {
-        //this.scrollView && this.scrollView.scrollTo({y: 0, animated: true});
+        this.scrollView && this.scrollView._component &&
+          this.scrollView._component.scrollTo({y: 0, animated: true});
         this.props.onClose();
+        setTimeout(() => this.setState({open: false}), 200);
     }
 
     getContentOffset() {
@@ -95,12 +94,13 @@ export class BottomDrawer extends Component {
         return (
             <View style={{top: -(this.paddingHeight), width: '100%'}}>
                         <Animated.ScrollView
+                        ref={(ref) => this.scrollView = ref}
                         scrollsToTop={false}
                         showsHorizontalScrollIndicator={false}
                         showsVerticalScrollIndicator={false}
                         onMomentumScrollBegin={(e) => this._onMomentum(e.nativeEvent)}
-                        onScrollEndDrag={(e) => this._onDrag(e.nativeEvent)}
                         onScrollBeginDrag={(e) => this._onStart()}
+                        onScrollEndDrag={(e) => this._onDrag(e.nativeEvent)}
                         onContentSizeChange={(width, height) => {
                             this.contentHeight = height;
                         }}
@@ -116,6 +116,21 @@ export class BottomDrawer extends Component {
                         }} 
                     >              
                         <View style={{height: this.paddingHeight}} />
+                        <Animated.View style={[
+                            styles.DrawerHandle, 
+                            {
+                                opacity: this.opacityBinding,
+                                transform: [
+                                    {
+                                        translateY: this.handleTopBinding,
+                                    },
+                                    {
+                                        scaleX: this.handleWidthBinding
+                                    },
+                                ],
+                            }
+                        ]} 
+                        />
                         {this.props.children}
                     </Animated.ScrollView>
             </View>
