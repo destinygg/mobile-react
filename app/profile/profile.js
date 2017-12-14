@@ -188,12 +188,12 @@ class SubscriptionItem extends Component {
                 '#0060ff' :
             (this.props.displayName === "Tier II") ?
                 '#488ce7' :
-            (this.props.displayName === "Tier I") ?
+            (this.props.displayName === "Tier I" || this.props.displayName === "Twitch") ?
                 '#488ce7' :
                 null;
         return (
             <TouchableHighlight
-                onPress={() => this.props.onSelect(this.props.subId, this.props.displayName, this.props.duration)}
+                onPress={() => this.props.onSelect && this.props.onSelect(this.props.subId, this.props.displayName, this.props.duration)}
                 style={[styles.SubscriptionItem, {borderColor: tierColor}]}
                 onPressIn={() => this.setState({press: true})} 
                 onPressOut={() => this.setState({press: false})} 
@@ -203,9 +203,17 @@ class SubscriptionItem extends Component {
                 <View style={{alignItems: 'flex-start', justifyContent:'space-between', flex: 1}}>
                     <View style={{alignItems: 'flex-start'}}>
                         <Text style={[styles.SubscriptionTitle, (this.state.press) ? {color: '#000'} : null]}>{this.props.displayName}</Text>
-                        <Text style={[styles.SubscriptionSubtitle, (this.props.duration === '3mo') ? styles.ThreeMonth : null, (this.state.press) ? {color: '#000', borderColor: '#000'} : null ]}>{this.props.duration}</Text>
+                        <Text style={[
+                            styles.SubscriptionSubtitle, 
+                            (this.props.duration === '3mo' || this.props.alreadySubscribed) ? styles.ThreeMonth : null, 
+                            (this.state.press) ? {color: '#000', borderColor: '#000'} : null 
+                        ]}>
+                            {this.props.duration}
+                        </Text>
                     </View>
-                    <Text style={[styles.SubscriptionPrice, (this.state.press) ? {color: '#000'} : null]}>{this.props.price}</Text>
+                    {!this.props.alreadySubscribed &&
+                        <Text style={[styles.SubscriptionPrice, (this.state.press) ? {color: '#000'} : null]}>{this.props.price}</Text>                    
+                    }
                 </View>
             </TouchableHighlight>
         )
@@ -223,29 +231,58 @@ class SubscriptionView extends Component {
     }
 
     render() {
-        return (
-            <SafeAreaView style={styles.View}>
-                <ScrollView style={styles.SubscriptionView}>
-                    <Text style={styles.ChooseTitle}>Choose subscription.</Text>
-                    <View style={styles.SubscriptionRow}>
-                        <SubscriptionItem subId="1-MONTH-SUB4" displayName="Tier IV" duration="1mo" price="$40" onSelect={(id, name, duration) => this._onSelect(id, name, duration)} />
-                        <SubscriptionItem subId="3-MONTH-SUB4" displayName="Tier IV" duration="3mo" price="$96" onSelect={(id, name, duration) => this._onSelect(id, name, duration)} />
-                    </View>
-                    <View style={styles.SubscriptionRow}>
-                        <SubscriptionItem subId="1-MONTH-SUB3" displayName="Tier III" duration="1mo" price="$20" onSelect={(id, name, duration) => this._onSelect(id, name, duration)} />
-                        <SubscriptionItem subId="3-MONTH-SUB3" displayName="Tier III" duration="3mo" price="$48" onSelect={(id, name, duration) => this._onSelect(id, name, duration)} />
-                    </View>
-                    <View style={styles.SubscriptionRow}>
-                        <SubscriptionItem subId="1-MONTH-SUB2" displayName="Tier II" duration="1mo" price="$10" onSelect={(id, name, duration) => this._onSelect(id, name, duration)} />
-                        <SubscriptionItem subId="3-MONTH-SUB2" displayName="Tier II" duration="3mo" price="$24" onSelect={(id, name, duration) => this._onSelect(id, name, duration)} />
-                    </View>
-                    <View style={styles.SubscriptionRow}>
-                        <SubscriptionItem subId="1-MONTH-SUB" displayName="Tier I" duration="1mo" price="$5" onSelect={(id, name, duration) => this._onSelect(id, name, duration)} />
-                        <SubscriptionItem subId="3-MONTH-SUB" displayName="Tier I" duration="3mo" price="$12" onSelect={(id, name, duration) => this._onSelect(id, name, duration)} />
-                    </View>
-                </ScrollView>
-            </SafeAreaView>
-        )
+        const features = this.props.screenProps.chat.me.features;
+
+        if (features.indexOf('subscriber') === -1) {
+            return (
+                <SafeAreaView style={styles.View}>
+                    <ScrollView style={styles.SubscriptionView}>
+                        <Text style={styles.ChooseTitle}>Choose subscription.</Text>
+                        <View style={styles.SubscriptionRow}>
+                            <SubscriptionItem subId="1-MONTH-SUB4" displayName="Tier IV" duration="1mo" price="$40" onSelect={(id, name, duration) => this._onSelect(id, name, duration)} />
+                            <SubscriptionItem subId="3-MONTH-SUB4" displayName="Tier IV" duration="3mo" price="$96" onSelect={(id, name, duration) => this._onSelect(id, name, duration)} />
+                        </View>
+                        <View style={styles.SubscriptionRow}>
+                            <SubscriptionItem subId="1-MONTH-SUB3" displayName="Tier III" duration="1mo" price="$20" onSelect={(id, name, duration) => this._onSelect(id, name, duration)} />
+                            <SubscriptionItem subId="3-MONTH-SUB3" displayName="Tier III" duration="3mo" price="$48" onSelect={(id, name, duration) => this._onSelect(id, name, duration)} />
+                        </View>
+                        <View style={styles.SubscriptionRow}>
+                            <SubscriptionItem subId="1-MONTH-SUB2" displayName="Tier II" duration="1mo" price="$10" onSelect={(id, name, duration) => this._onSelect(id, name, duration)} />
+                            <SubscriptionItem subId="3-MONTH-SUB2" displayName="Tier II" duration="3mo" price="$24" onSelect={(id, name, duration) => this._onSelect(id, name, duration)} />
+                        </View>
+                        <View style={styles.SubscriptionRow}>
+                            <SubscriptionItem subId="1-MONTH-SUB" displayName="Tier I" duration="1mo" price="$5" onSelect={(id, name, duration) => this._onSelect(id, name, duration)} />
+                            <SubscriptionItem subId="3-MONTH-SUB" displayName="Tier I" duration="3mo" price="$12" onSelect={(id, name, duration) => this._onSelect(id, name, duration)} />
+                        </View>
+                    </ScrollView>
+                </SafeAreaView>
+            )
+        } else {
+            let subscribedItem;
+
+            if (features.indexOf('flair8') != -1) {
+                subscribedItem = <SubscriptionItem displayName="Tier IV" duration="Subscribed" alreadySubscribed={true} />;
+            } else if (features.indexOf('flair3') != -1) {
+                subscribedItem = <SubscriptionItem displayName="Tier III" duration="Subscribed" alreadySubscribed={true} />;
+            } else if (features.indexOf('flair1') != -1) {
+                subscribedItem = <SubscriptionItem displayName="Tier II" duration="Subscribed" alreadySubscribed={true} />;
+            } else if (features.indexOf('flair13') != -1) {
+                subscribedItem = <SubscriptionItem displayName="Tier I" duration="Subscribed" alreadySubscribed={true} />;
+            } else if (features.indexOf('flair9') != -1) {
+                subscribedItem = <SubscriptionItem displayName="Twitch" duration="Subscribed" alreadySubscribed={true} />;
+            }
+            return (
+                <SafeAreaView style={styles.View}>
+                    <ScrollView style={styles.SubscriptionView}>
+                        <Text style={styles.ChooseTitle}>Subscribed</Text>
+                        <Text style={styles.ChooseSubtitle}>Visit site in browser to manage subscription.</Text>
+                        <View style={styles.SubscribedTile}>
+                            {subscribedItem}
+                        </View>  
+                    </ScrollView>
+                </SafeAreaView>
+            )
+        }
     }
 }
 

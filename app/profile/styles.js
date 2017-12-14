@@ -28,6 +28,20 @@ const styles = StyleSheet.create({
         marginBottom: 10,        
         marginLeft: 15     
     },
+    ChooseSubtitle: {
+        fontWeight: '500',
+        color: '#fff',
+        marginTop: 10,
+        marginLeft: 15
+    },
+    SubscribedTile: {
+        alignContent: 'center',
+        marginTop: 25,
+        elevation: 4,
+        shadowColor: '#000',
+        shadowOpacity: 0.7,
+        shadowRadius: 5
+    },
     SubscriptionRow: {
         flex: 1,
         flexDirection: 'row',
