@@ -31,7 +31,7 @@ export const inheritedStyles = {
         position: 'absolute',
         top: 0,
         height: '100%',
-        width: '100%'
+        width: '100%',
     },
     FormItem: {
         color: "#FFF",
@@ -112,14 +112,13 @@ export const inheritedStyles = {
         marginRight: (Platform.OS == 'ios') ? 5 : 15
     },
     DrawerHandle: {
-        position: 'absolute',
         height: 4,
         width: 100,
         backgroundColor: '#888',
         borderRadius: 2,
-        top: 8,
         alignSelf: 'center',
         zIndex: 3000,
+        top: 12
     }
 }
 

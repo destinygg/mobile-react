@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, Picker, Modal, Button, TouchableHighlight, StyleSheet, Animated, Platform, Switch, WebView, ScrollView, Dimensions } from 'react-native';
+import { View, Text, TextInput, Picker, Modal, Button, TouchableHighlight, StyleSheet, Animated, Keyboard, TouchableWithoutFeedback, Platform, Switch, WebView, ScrollView, KeyboardAvoidingView, Dimensions } from 'react-native';
 import styles from './styles';
 
 const SCREEN_HEIGHT = parseFloat(Dimensions.get('window').height);
@@ -7,12 +7,12 @@ const SCREEN_HEIGHT = parseFloat(Dimensions.get('window').height);
 export class BottomDrawer extends Component {
     constructor(props) {
         super(props);
-        this.state = {open: false};
+        this.state = {onTop: false};
         this.open = false;
         this.lastVelocity = 0;
         this.contentHeight = null;
         this.scrollView = null;
-        this.scrollY = new Animated.Value(0);
+        this.scrollY = this.props.posSpy;
         this.scrollYNegative = Animated.multiply(this.scrollY, new Animated.Value(-1));
         this.scrollViewHeight = 500;
         this.minMomentumVelocity = 0;
@@ -21,21 +21,27 @@ export class BottomDrawer extends Component {
         this.handleTopBinding = this.scrollY.interpolate({
             inputRange: [
                 0,
-                300
+                265
             ],
-            outputRange: [20, 0]
+            outputRange: [0, 10]
         });
         this.handleWidthBinding = this.scrollY.interpolate({
             inputRange: [
                 0,
-                300
+                265
             ],
-            outputRange: [1, 0.6]
+            outputRange: [0.6, 1]
         });
+        this.opacityBinding = this.scrollY.interpolate({
+            inputRange: [
+                0,
+                265
+            ],
+            outputRange: [0.4, 1]
+        })
     }
     
     _onDrag(nativeEvent) {
-        console.log(nativeEvent);
         if (nativeEvent.velocity.y < 0) { // maybe open
                 if (nativeEvent.contentOffset.y > this.minDragY) {
                     this.openDrawer();
@@ -43,7 +49,6 @@ export class BottomDrawer extends Component {
                     this.closeDrawer();
                 }
         } else { // maybe close
-            console.log('ondragmaybeclose');
                 if (nativeEvent.contentOffset.y < (this.contentHeight - this.scrollViewHeight) - this.minDragY) {
                     this.closeDrawer();
                 } else {
@@ -70,11 +75,12 @@ export class BottomDrawer extends Component {
     }
 
     _onStart(nativeEvent) {
-        this.setState({open: true});        
+        this.setState({onTop: true});        
     }
 
     openDrawer() {
         this.scrollView && this.scrollView._component &&
+          this.setState({ onTop: true }) &&
           this.scrollView._component.scrollToEnd({animated: true});
         this.props.onOpen();
     }
@@ -83,22 +89,42 @@ export class BottomDrawer extends Component {
         this.scrollView && this.scrollView._component &&
           this.scrollView._component.scrollTo({y: 0, animated: true});
         this.props.onClose();
-        setTimeout(() => this.setState({open: false}), 200);
+        setTimeout(() => this.setState({onTop: false}), 200);
     }
 
     getContentOffset() {
         return SCREEN_HEIGHT - this.props.showingOffset;
     }
 
+    toTop() {
+        this.setState({ fixed: true });
+    }
+
+    toBottom() {
+        this.setState({ fixed: false });        
+    }
+
+    keyboardShown() {
+        this.setState({ fixed: true, keyboardShown: true });
+    }
+    
+    keyboardHidden() {
+        this.setState({ fixed: false, keyboardShown: false });        
+    }
+
     render() {
         return (
-            <View style={{top: -(this.props.paddingHeight), width: '100%'}}>
+            <KeyboardAvoidingView 
+                style={{top: -(this.props.paddingHeight), width: '100%'}}
+                behavior={'position'}
+            >
                         <Animated.ScrollView
                         ref={(ref) => this.scrollView = ref}
                         scrollsToTop={false}
+                        scrollEnabled={!this.state.fixed}
                         showsHorizontalScrollIndicator={false}
                         showsVerticalScrollIndicator={false}
-                        onMomentumScrollBegin={(e) => this._onMomentum(e.nativeEvent)}
+                        //onMomentumScrollBegin={(e) => this._onMomentum(e.nativeEvent)}
                         onScrollBeginDrag={(e) => this._onStart()}
                         onScrollEndDrag={(e) => this._onDrag(e.nativeEvent)}
                         onContentSizeChange={(width, height) => {
@@ -112,10 +138,15 @@ export class BottomDrawer extends Component {
                         style={{
                             height: this.scrollViewHeight,
                             width: '100%',
-                            zIndex: (this.state.open) ? 6000 : -1
+                            zIndex: (this.state.onTop || this.state.fixed) ? 6000 : -1
                         }} 
+                        keyboardShouldPersistTaps={'always'}
                     >              
-                        <View style={{height: this.props.paddingHeight}} />
+                        <TouchableWithoutFeedback 
+                            onPress={() => Keyboard.dismiss()}
+                        >
+                            <View style={{ height: this.props.paddingHeight }} />
+                        </TouchableWithoutFeedback>
                         <Animated.View style={[
                             styles.DrawerHandle, 
                             {
@@ -133,7 +164,7 @@ export class BottomDrawer extends Component {
                         />
                         {this.props.children}
                     </Animated.ScrollView>
-            </View>
+            </KeyboardAvoidingView>
         )
     }
 }

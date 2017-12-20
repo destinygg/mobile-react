@@ -339,8 +339,10 @@ export default class MainView extends Component {
                 }
             ).start(() => {
                 this.setState({ emoteDirShown: false });
+                this.cardDrawer.toBottom();
             });
         } else {
+            this.cardDrawer.toTop();            
             this.setState(
                 {
                     emoteDirShown: true
@@ -402,20 +404,20 @@ export default class MainView extends Component {
                             posSpy={this.state.drawerPosSpy}
                         >                  
                             <EmoteDirectory
-                                animated={this.props.emoteDirOffset}
-                                filter={this.props.emoteFilter}
+                                animated={this.state.emoteDirOffset}
+                                filter={this.state.emoteFilter}
                                 topOffset={this.state.drawerPaddingHeight}
                                 onSelect={(emote) => this._onEmoteChosen(emote)}
                             />
                                 <MobileChatInput
                                     ref={(ref) => this.inputElem = ref}
                                     chat={this.chat}
-                                    opacityBinding={this.props.chatInputOpacity}
+                                    opacityBinding={this.state.chatInputOpacity}
                                     shown={!this.state.drawerOpen}
                                     onChange={(val) => this._onInputUpdate(val)}
                                     onEmoteBtnPress={() => this.toggleEmoteDir()}
-                                    onFocus={() => this._keyboardShown()}
-                                    onBlur={() => this._keyboardHidden()}
+                                    onFocus={() => this.cardDrawer.toTop()}
+                                    onBlur={() => this.cardDrawer.toBottom()}
                                 />
                             <CardDrawerNavList 
                                 screenProps={{ ...this.props.screenProps, mainView: this }} 
@@ -490,7 +492,7 @@ export default class MainView extends Component {
         if (this.state.height === null) {
             const interpolate = {
                 min: 0,
-                max: 261
+                max: 265
             };
             const emoteDirOffset = new Animated.Value(0);        
             const drawerPosSpy = new Animated.Value(0);
@@ -506,7 +508,7 @@ export default class MainView extends Component {
                 }),
                 chatInputOpacity: drawerPosSpy.interpolate({
                     inputRange: [interpolate.min, interpolate.max],
-                    outputRange: [0, 1]                    
+                    outputRange: [1, 0]                    
                 })
             });
         }         

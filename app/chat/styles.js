@@ -122,11 +122,7 @@ const styles = StyleSheet.create({
     },
     EmoteDirOuterOuter: {
         width: '100%', 
-        paddingLeft: 5, 
-        paddingRight: 5, 
-        position: 'absolute',
-        zIndex: 1500,
-        top: 0
+        position: 'absolute'
     },
     EmoteDirectory: {
         paddingLeft: 15,

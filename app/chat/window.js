@@ -48,13 +48,16 @@ export class EmoteDirectory extends PureComponent {
         return (
             <Animated.View style={[
                     styles.EmoteDirOuterOuter,
-                    {transform:[{
-                        translateY: (this.props.animated) ? this.props.animated : 0
-                    }]}
+                    {
+                        transform:[{
+                            translateY: (this.props.animated) ? this.props.animated : 0
+                        }],
+                        top: this.props.topOffset
+                    }
                 ]} 
                 collapsable={false}
             >
-                <View style={[styles.EmoteDirectoryOuter, {top: this.props.topOffset}]}>
+                <View style={[styles.EmoteDirectoryOuter]}>
                     <View style={styles.EmoteDirectory}>
                         <ScrollView 
                             showsHorizontalScrollIndicator={false} 
@@ -135,6 +138,7 @@ export class MobileChatInput extends Component {
     }
 
     render() {
+        console.log(this.props.opacityBinding);
         return (
             <View 
                 style={[styles.ChatInputOuter, this.props.style]}
