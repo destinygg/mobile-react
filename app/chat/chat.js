@@ -119,6 +119,24 @@ export class MobileChat extends Chat {
         return this;
     }
 
+    applySettings(save = true) {
+        if (save) this.saveSettings();
+
+        // Ignore Regex
+        const ignores = Array.from(this.ignoring.values()).map(Chat.makeSafeForRegex);
+        this.ignoreregex = ignores.length > 0 ? new RegExp(`\\b(?:${ignores.join('|')})\\b`, 'i') : null;
+
+        // Highlight Regex
+        const cust = [...(this.settings.get('customhighlight') || [])].filter(a => a !== '');
+        const nicks = [...(this.settings.get('highlightnicks') || [])].filter(a => a !== '');
+        this.regexhighlightself = this.user.nick ? new RegExp(`\\b(?:${this.user.nick})\\b`, 'i') : null;
+        this.regexhighlightcustom = cust.length > 0 ? new RegExp(`\\b(?:${cust.join('|')})\\b`, 'i') : null;
+        this.regexhighlightnicks = nicks.length > 0 ? new RegExp(`\\b(?:${nicks.join('|')})\\b`, 'i') : null;
+
+        // Update maxlines
+        [...this.windows].forEach(w => w.maxlines = this.settings.get('maxlines'));
+    }
+
     onPRIVMSG(data) {
         const normalized = data.nick.toLowerCase()
         if (!this.ignored(normalized, data.data)) {

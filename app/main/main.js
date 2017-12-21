@@ -339,7 +339,7 @@ export default class MainView extends Component {
                 }
             ).start(() => {
                 this.setState({ emoteDirShown: false });
-                this.cardDrawer.toBottom();
+                if (!this.state.inputFocused) this.cardDrawer.toBottom();
             });
         } else {
             this.cardDrawer.toTop();            
@@ -388,7 +388,7 @@ export default class MainView extends Component {
                                 ref={(ref) => this.twitchView = ref} 
                                 parent={this} 
                                 resizing={this.state.resizing}
-                                height={this.props.twitchHeight}
+                                height={this.state.twitchHeight}
                             />
                         }
                         <View style={dividerStyle} />
@@ -417,15 +417,20 @@ export default class MainView extends Component {
                                     shown={!this.state.drawerOpen}
                                     onChange={(val) => this._onInputUpdate(val)}
                                     onEmoteBtnPress={() => this.toggleEmoteDir()}
-                                    onFocus={() => this.cardDrawer.toTop()}
-                                    onBlur={() => this.cardDrawer.toBottom()}
+                                    onFocus={() => this._inputFocused()}
+                                    onBlur={() => this._inputBlurred()}
                                 />
-                            <CardDrawerNavList 
-                                screenProps={{ ...this.props.screenProps, mainView: this }} 
-                                navigation={this.props.navigation} 
-                                onShowStream={() => this.showStream()}                    
-                                onHideStream={() => this.hideStream()} 
-                            />
+                            {!this.state.inputFocused &&
+                                <CardDrawerNavList
+                                    screenProps={{ ...this.props.screenProps, mainView: this }}
+                                    navigation={this.props.navigation}
+                                    onShowStream={() => this.showStream()}
+                                    onHideStream={() => this.hideStream()}
+                                />
+                            }
+                            {this.state.inputFocused &&
+                                <View style={{height: 100, backgroundColor: '#151515'}} />
+                            }
                         </BottomDrawer>
                 }
             </SafeAreaView>                         
@@ -484,6 +489,16 @@ export default class MainView extends Component {
 
     _drawerClosed() {
         this.setState({drawerOpen: false});
+    }
+
+    _inputFocused() {
+        this.cardDrawer.toTop();
+        this.setState({inputFocused: true});
+    }
+
+    _inputBlurred() {
+        this.cardDrawer.toBottom();
+        this.setState({ inputFocused: false });        
     }
 
     _onLayout(e) {

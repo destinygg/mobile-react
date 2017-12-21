@@ -17,9 +17,9 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 10,
         width: 200,
-        alignSelf: 'flex-end',
+        alignSelf: 'center',
         marginBottom: 25,
-        marginTop: 75,
+        marginTop: 25,
         marginRight: 10
     },
     AboutDevInner: {

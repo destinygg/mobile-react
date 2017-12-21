@@ -115,10 +115,14 @@ export class BottomDrawer extends Component {
     render() {
         return (
             <KeyboardAvoidingView 
-                style={{top: -(this.props.paddingHeight), width: '100%'}}
+                style={{
+                    top: -(this.props.paddingHeight), 
+                    width: '100%',
+                    zIndex: (this.state.onTop || this.state.fixed) ? 6000 : -1                    
+                }}
                 behavior={'position'}
             >
-                        <Animated.ScrollView
+                    <Animated.ScrollView
                         ref={(ref) => this.scrollView = ref}
                         scrollsToTop={false}
                         scrollEnabled={!this.state.fixed}
@@ -138,9 +142,9 @@ export class BottomDrawer extends Component {
                         style={{
                             height: this.scrollViewHeight,
                             width: '100%',
-                            zIndex: (this.state.onTop || this.state.fixed) ? 6000 : -1
                         }} 
                         keyboardShouldPersistTaps={'always'}
+                        overScrollMode={'never'}
                     >              
                         <TouchableWithoutFeedback 
                             onPress={() => Keyboard.dismiss()}

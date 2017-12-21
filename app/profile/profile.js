@@ -524,7 +524,7 @@ class ProfileView extends Component {
                         first={true} 
                         last={true} 
                         onPress={() => this.props.navigation.navigate('About')} 
-                        style={{marginTop: 75}}
+                        style={{marginTop: 50}}
                     />
                 </ScrollView>
             </SafeAreaView>
