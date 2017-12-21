@@ -26,7 +26,7 @@ class TwitchView extends Component {
         if (this.props.landscape) { 
             twitchViewStyle.push({ flex: 1 });
         } else {
-            if (this.props.height) { twitchViewStyle.push({ flex: 0, height: 200}); }            
+            if (this.props.height) { twitchViewStyle.push({ flex: 0, height: this.props.height}); }            
         }
 
         return (
@@ -388,6 +388,7 @@ export default class MainView extends Component {
                                 ref={(ref) => this.twitchView = ref} 
                                 parent={this} 
                                 resizing={this.state.resizing}
+                                height={this.props.twitchHeight}
                             />
                         }
                         <View style={dividerStyle} />
