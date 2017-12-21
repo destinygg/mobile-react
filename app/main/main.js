@@ -63,10 +63,12 @@ class CardDrawerNavList extends PureComponent {
                     this.props.onHideStream() 
                 }
             }},
-            { itemText: 'Messages', itemTarget: () => this.props.navigation.navigate('MessageView', {backHandler: this.props.navigation.goBack}) },
-            { itemText: 'Donate', itemTarget: () => this.props.navigation.navigate('DonateView', {backHandler: this.props.navigation.goBack}) },
-            { itemText: 'Profile', itemTarget: () => this.props.navigation.navigate('ProfileView', {backHandler: this.props.navigation.goBack})}
+            { itemText: 'Messages', itemTarget: () => this.props.navigation.navigate('MessageView', {backHandler: this.props.navigation.goBack}) }
         ];
+        if (Platform.OS != 'ios') {
+            this.routes.push({ itemText: 'Donate', itemTarget: () => this.props.navigation.navigate('DonateView', { backHandler: this.props.navigation.goBack }) });
+        }
+        this.routes.push({ itemText: 'Profile', itemTarget: () => this.props.navigation.navigate('ProfileView', { backHandler: this.props.navigation.goBack }) });
     }
     render() {
         return (
@@ -391,8 +393,12 @@ export default class MainView extends Component {
                                 height={this.state.twitchHeight}
                             />
                         }
-                        <View style={dividerStyle} />
-                        <View style={styles.TwitchViewDividerHandle} {...this._panResponder.panHandlers} />
+                        {(this.state.streamShown) &&
+                            <View style={dividerStyle} />
+                        }
+                        {(this.state.streamShown) &&                        
+                            <View style={styles.TwitchViewDividerHandle} {...this._panResponder.panHandlers} />
+                        }
                         {this.props.screenProps.chat.mainwindow.uiElem}
                 </View>
                 {this.state.height != null &&

@@ -42,7 +42,7 @@ export class BottomDrawer extends Component {
     }
     
     _onDrag(nativeEvent) {
-        if (nativeEvent.velocity.y < 0) { // maybe open
+        if (!this.state.open) { // maybe open
                 if (nativeEvent.contentOffset.y > this.minDragY) {
                     this.openDrawer();
                 } else {
@@ -79,9 +79,10 @@ export class BottomDrawer extends Component {
     }
 
     openDrawer() {
-        this.scrollView && this.scrollView._component &&
-          this.setState({ onTop: true }) &&
-          this.scrollView._component.scrollToEnd({animated: true});
+        if (this.scrollView && this.scrollView._component) {
+            this.setState({ onTop: true, open: true });
+            this.scrollView._component.scrollToEnd({animated: true});
+        }
         this.props.onOpen();
     }
 
@@ -89,7 +90,7 @@ export class BottomDrawer extends Component {
         this.scrollView && this.scrollView._component &&
           this.scrollView._component.scrollTo({y: 0, animated: true});
         this.props.onClose();
-        setTimeout(() => this.setState({onTop: false}), 200);
+        setTimeout(() => this.setState({onTop: false, open: false}), 200);
     }
 
     getContentOffset() {

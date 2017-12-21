@@ -507,9 +507,11 @@ class ProfileView extends Component {
     render() {
         this.listItems = [
             { itemText: 'Account', itemTarget: 'Account' },
-            { itemText: 'Subscription', itemTarget: 'Subscription' },
-            { itemText: 'Settings', itemTarget: 'Settings' }
         ];
+        if (Platform.OS != 'ios') {
+            this.listItems.push({ itemText: 'Subscription', itemTarget: 'Subscription' });
+        }
+        this.listItems.push({ itemText: 'Settings', itemTarget: 'Settings' });
         const created = moment(this.props.screenProps.chat.me.createdDate);
         return (
             <SafeAreaView style={styles.View}>
