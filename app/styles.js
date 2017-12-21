@@ -118,7 +118,7 @@ export const inheritedStyles = {
         borderRadius: 2,
         alignSelf: 'center',
         zIndex: 3000,
-        top: 12
+        top: 10
     }
 }
 

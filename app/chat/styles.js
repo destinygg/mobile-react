@@ -90,8 +90,7 @@ const styles = StyleSheet.create({
     },
     ChatInputInner: {
         flex: 1, 
-        flexDirection: 'row',
-        marginTop: 2
+        flexDirection: 'row'
     },
     ChatInputInnerInner: {
         borderColor: "#222",
