@@ -418,6 +418,7 @@ export class FormItem extends Component {
                 />
             )
         } else if (this.props.item.type === "select") {
+            global.bugsnag.leaveBreadcrumb("Getting display text for country: " + this.props.value);
             const displayText = this.props.item.selectOptions.filter((item) => {
                 return item.value === this.props.value;
             });
