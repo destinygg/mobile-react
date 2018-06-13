@@ -1,31 +1,39 @@
 import React, { Component } from 'react';
-import { View, ScrollView, Text, TextInput, WebView, Platform, Button } from 'react-native';
-import { StackNavigator, NavigationActions, SafeAreaView, HeaderBackButton } from 'react-navigation';
+import { View, ScrollView, Text, TextInput, WebView, Platform, Button, Alert } from 'react-native';
+import { StackNavigator, NavigationActions, SafeAreaView, HeaderBackButton, NavigationScreenProps, NavigationProp, NavigationScreenProp } from 'react-navigation';
 import { TextInputListItem, UserAgreement } from '../components';
 import styles from '../styles';
 
-class DonateWebView extends Component {
+interface DonateWebViewParams {
+    amount: string;
+    message: string;
+}
+
+class DonateWebView extends Component<NavigationScreenProps<DonateWebViewParams>, {webViewHtml?: string}> {
     static navigationOptions = {
         drawerLockMode: 'locked-closed'
     };
 
-    constructor(props) {
+    constructor(props: NavigationScreenProps<DonateWebViewParams>) {
         super(props);
-        this.state = { webViewHtml: null };
+
         const { navigation } = this.props;
 
-        const formData = {
-            amount: navigation.state.params.amount,
-            message: navigation.state.params.message,
+        const formData: {[key: string]: string} = {
+            amount: navigation.state.params!.amount,
+            message: navigation.state.params!.message,
+        };
+
+        this.state = { webViewHtml:  
+            Object.keys(formData).map((key) => {
+                return encodeURIComponent(key) + '=' + encodeURIComponent(formData[key]);
+            }).join('&').replace(/%20/g, '+')
         };
 
         /* fetch() + pass html string into webview doesn't work, as
            paypal doesn't like the change in useragent.  construct
            formdata manually.
         */
-        this.body = Object.keys(formData).map((key) => {
-            return encodeURIComponent(key) + '=' + encodeURIComponent(formData[key]);
-        }).join('&').replace(/%20/g, '+');
     }
 
     render() {
@@ -34,12 +42,12 @@ class DonateWebView extends Component {
                 source={{
                     uri: `https://www.destiny.gg/donate`,
                     method: 'POST',
-                    body: this.body
+                    body: this.state.webViewHtml
                 }}
                 startInLoadingState={true}
                 style={{ backgroundColor: '#000' }}
                 onNavigationStateChange={e => {
-                    if (e.loading == false && e.url.indexOf('destiny.gg') != -1) {
+                    if (e.loading == false && e.url && e.url.indexOf('destiny.gg') != -1) {
                         if (e.url.indexOf('error') != -1) {
                             Alert.alert('Error', 'Could not complete donation. \
 Try again later.');
@@ -60,9 +68,14 @@ Try again later.');
     }
 }
 
-class DonateView extends Component {    
-    static navigationOptions = ({ navigation }) => {
-        const { params = {} } = navigation.state;
+interface DonateViewParams {
+    sendHandler: {(): any};
+    backHandler: {(): any};
+}
+
+class DonateView extends Component<NavigationScreenProps<DonateViewParams>, {amount: string, message: string}> {    
+    static navigationOptions = ({ navigation }: any) => {
+        const { params }: {params: DonateViewParams} = navigation.state;
         return ({
             title: 'Donate',
             headerLeft: <HeaderBackButton title='Back' onPress={() => params.backHandler(null)} />,    
@@ -72,9 +85,9 @@ class DonateView extends Component {
         });
     }
 
-    constructor(props) {
+    constructor(props: NavigationScreenProps<DonateViewParams>) {
         super(props);
-        this.state = { amount: 0, message: "" };
+        this.state = { amount: "", message: "" };
     }
 
     send() {
