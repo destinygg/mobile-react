@@ -24,13 +24,13 @@ export class AuthView extends Component<NavigationScreenProps<{}>> {
 
     render() {
         const listItems = [
-            { itemText: 'Twitch', itemTarget: () => this._onProviderSelect('twitch') },
+            { name: 'Twitch', onPress: () => this._onProviderSelect('twitch') },
             /* Google is no-go right now.  They don't allow embedded useragents to
                use their oauth implementation.
-            { itemText: 'Google', itemTarget: () => this._onProviderSelect('google') }, */
-            { itemText: 'Twitter', itemTarget: () => this._onProviderSelect('twitter') },
-            { itemText: 'Reddit', itemTarget: () => this._onProviderSelect('reddit') },
-            { itemText: 'Discord', itemTarget: () => this._onProviderSelect('discord') }
+            { name: 'Google', onPress: () => this._onProviderSelect('google') }, */
+            { name: 'Twitter', onPress: () => this._onProviderSelect('twitter') },
+            { name: 'Reddit', onPress: () => this._onProviderSelect('reddit') },
+            { name: 'Discord', onPress: () => this._onProviderSelect('discord') }
         ];
 
         return (

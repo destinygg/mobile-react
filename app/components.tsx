@@ -1,12 +1,19 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, Picker, Modal, Button, TouchableHighlight,  Platform, Switch, WebView} from 'react-native';
-import styles from './styles';
+import { View, Text, TextInput, Picker, Modal, Button, TouchableHighlight, Switch, WebView, ViewStyle, ActivityIndicator} from 'react-native';
+import styles from 'styles';
 
+export interface ListButtonProps {
+    name: string;
+    onPress?: {(): any};
+    first?: boolean;
+    last?: boolean;
+    style?: ViewStyle;
+}
 
-export class ListButton extends Component {
+export class ListButton extends Component<ListButtonProps> {
     render() {
-        let outerStyle = [styles.ListItemOuter];
-        let innerStyle = [styles.ListItemInner];
+        const outerStyle: ViewStyle[] = [styles.ListItemOuter];
+        const innerStyle: ViewStyle[] = [styles.ListItemInner];
 
         if (this.props.first) { 
             outerStyle.push(styles.firstInList); 
@@ -22,10 +29,10 @@ export class ListButton extends Component {
         }
 
         return (
-            <TouchableHighlight onPress={() => this.props.onPress()} style={outerStyle}>
+            <TouchableHighlight onPress={this.props.onPress} style={outerStyle}>
                 <View style={innerStyle}>
                     <Text style={styles.ListItemText}>
-                        {this.props.text}
+                        {this.props.name}
                     </Text>
                 </View>
             </TouchableHighlight>
@@ -33,14 +40,26 @@ export class ListButton extends Component {
     }
 }
 
-export class TextInputListItem extends Component {
-    constructor(props) {
+interface TextInputListItemProps {
+    name: string;
+    value: string;
+    onChange?: {(name: string, val: string): any};
+    placeholder?: string;
+    first?: boolean;
+    last?: boolean;
+    readOnly?: boolean;
+    multiline?: boolean;
+    maxLength?: number;
+}
+
+export class TextInputListItem extends Component<TextInputListItemProps> {
+    constructor(props: TextInputListItemProps) {
         super(props);
         this.state = { value: this.props.value };
     }
     render() {
-        let outerStyle = [styles.ListItemOuter];
-        let innerStyle = [styles.FormItem];
+        let outerStyle: ViewStyle[] = [styles.ListItemOuter];
+        let innerStyle: ViewStyle[] = [styles.FormItem];
 
         if (this.props.first) {
             outerStyle.push(styles.firstInList);
@@ -63,13 +82,13 @@ export class TextInputListItem extends Component {
             <View style={outerStyle}>
                 <TextInput
                     style={innerStyle}
-                    value={this.state.value}
+                    value={this.props.value}
                     placeholder={this.props.placeholder}
                     placeholderTextColor={'#888'}
                     editable={(this.props.readOnly) === true ? false : true}
                     onChangeText={(value) => {
                         this.setState({ value: value });
-                        this.props.onChange(this.props.name, value);
+                        this.props.onChange && this.props.onChange(this.props.name, value);
                     }}
                     underlineColorAndroid='#222'
                     multiline={this.props.multiline}
@@ -81,17 +100,21 @@ export class TextInputListItem extends Component {
     }
 }
 
-export class ButtonList extends Component {
+interface ButtonListProps {
+    listItems: ListButtonProps[];
+}
+
+export class ButtonList extends Component<ButtonListProps> {
     render() {
         const children = this.props.listItems.map((item, index, array) => {
             return (
                 <ListButton
-                    text={item.itemText}
-                    onPress={() => item.itemTarget()}
+                    name={item.name}
+                    onPress={item.onPress}
                     key={index}
                     first={index === 0}
                     last={index === (array.length - 1)}
-                    style={this.props.listButtonStyle}
+                    style={item.style}
                 />
             );
         });
@@ -104,16 +127,17 @@ export class ButtonList extends Component {
     }
 }
 
-export class NavList extends ButtonList {
-    _onPressItem(itemTarget) {
-        this.props.navigation.navigate(itemTarget);
-    }
+interface NavListProps extends ButtonListProps {
+    onPress: {(target: ListButtonProps): any};
+}
+
+export class NavList extends Component<NavListProps> {
     render() {
         const children = this.props.listItems.map((item, index, array) => {
             return (
                 <ListButton
-                    text={item.itemText}
-                    onPress={() => this._onPressItem(item.itemTarget)}
+                    name={item.name}
+                    onPress={() => this.props.onPress(item)}
                     key={index}
                     first={index === 0}
                     last={index === (array.length - 1)}
@@ -129,15 +153,32 @@ export class NavList extends ButtonList {
     }
 }
 
-export class SelectModal extends Component {
-    constructor(props) {
+interface SelectModalItem {
+    name: string;
+    value: string;
+}
+
+interface SelectModalProps {
+    name: string;
+    value: string;
+    onSelect: {(name: string, value: string): any};
+    selectOptions: SelectModalItem[];
+}
+
+interface SelectModalState {
+    shown: boolean;
+    value: string;
+}
+
+export class SelectModal extends Component<SelectModalProps, SelectModalState> {
+    constructor(props: SelectModalProps) {
         super(props);
         this.state = { shown: false, value: this.props.value };
     }
 
-    _onSelect() {
-        this.props.onSelect(this.props.name, this.state.value);
-        this.setState({ shown: false });
+    _onSelect(name: string, value: string) {
+        this.props.onSelect(name, value);
+        this.hide();
     }
 
     show() {
@@ -172,7 +213,6 @@ export class SelectModal extends Component {
                             onValueChange={(itemValue, itemIndex) => {
                                 this.setState({ value: itemValue });
                             }}
-                            style={(Platform.OS == 'android') ? {color: '#fff'} : null}
                             itemStyle={styles.text}
                         >
                             {selectOptions}
@@ -184,7 +224,7 @@ export class SelectModal extends Component {
     }
 }
 
-class LoadingOverlay extends Component {
+export class LoadingOverlay extends Component {
     render() {
         return(
             <View style={{ width: '100%', height: '100%', position: 'absolute', alignItems: 'center' }}>
@@ -197,10 +237,15 @@ class LoadingOverlay extends Component {
     }
 }
 
-class ListSwitch extends Component {
-    constructor(props) {
-        super(props);
-    }
+interface ListSwitchProps {
+    first?: boolean;
+    last?: boolean;
+    name: string;
+    value: boolean;
+    onChange: {(name: string, val: boolean): any};
+}
+
+class ListSwitch extends Component<ListSwitchProps> {
     render() {
         let outerStyle = [styles.ListItemOuter];
         let innerStyle = [styles.ListItemInner];
@@ -216,7 +261,7 @@ class ListSwitch extends Component {
         return (
             <View style={outerStyle}>
                 <View style={[innerStyle, styles.ListSwitch]}>
-                    <Text style={styles.ListItemText}>{this.props.text}</Text>
+                    <Text style={styles.ListItemText}>{this.props.name}</Text>
                     <Switch onValueChange={(value) => this.props.onChange(this.props.name, value)} value={this.props.value} />
                 </View>
             </View>
@@ -224,10 +269,25 @@ class ListSwitch extends Component {
     }
 }
 
-export class FormItem extends Component {
-    constructor(props) {
-        super(props);
+interface FormItemProps {
+    item: {
+        name: string;
+        readOnly?: boolean;
+        placeholder?: string;
+        multiline?: boolean;
+        maxLength?: number;
+        type: "text" | "select" | "switch";
+        selectOptions?: SelectModalItem[];
+        spacer?: boolean;
     }
+    value: any;
+    onChange: {(name: string, value: any): any};
+    first?: boolean;
+    last?: boolean;
+}
+
+export class FormItem extends Component<FormItemProps> {
+    selectModal: SelectModal | null = null;
     render() {
         let children = [];
 
@@ -247,14 +307,15 @@ export class FormItem extends Component {
                 />
             )
         } else if (this.props.item.type === "select") {
+            // @ts-ignore
             global.bugsnag.leaveBreadcrumb("Getting display text for country: " + this.props.value);
-            const displayText = this.props.item.selectOptions.filter((item) => {
+            const displayText = this.props.item.selectOptions!.filter((item) => {
                 return item.value === this.props.value;
             });
             children.push(
                 <ListButton
-                    text={displayText[0].name}
-                    onPress={() => this.selectModal.show()}
+                    name={displayText[0].name}
+                    onPress={() => this.selectModal && this.selectModal.show()}
                     key={this.props.item.name}
                     first={this.props.first}
                     last={this.props.last}                    
@@ -264,7 +325,7 @@ export class FormItem extends Component {
                 <SelectModal
                     name={this.props.item.name}                                
                     ref={(component) => this.selectModal = component}
-                    selectOptions={this.props.item.selectOptions}
+                    selectOptions={this.props.item.selectOptions!}
                     onSelect={this.props.onChange}
                     value={this.props.value}
                     key={this.props.item.name + "Modal"}                    
@@ -273,7 +334,6 @@ export class FormItem extends Component {
         } else if (this.props.item.type == "switch") {
             children.push(
                 <ListSwitch
-                    text={this.props.item.tag}
                     name={this.props.item.name}
                     value={this.props.value}
                     onChange={this.props.onChange}
@@ -303,7 +363,7 @@ export class UserAgreement extends Component {
     }
     render() {
         return (
-            <WebView source={{ url: 'https://www.destiny.gg/agreement' }} />
+            <WebView source={{ uri: 'https://www.destiny.gg/agreement' }} />
         )
     }
 }

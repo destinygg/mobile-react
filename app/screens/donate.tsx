@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { View, ScrollView, Text, TextInput, WebView, Platform, Button, Alert } from 'react-native';
-import { StackNavigator, NavigationActions, SafeAreaView, HeaderBackButton, NavigationScreenProps, NavigationProp, NavigationScreenProp } from 'react-navigation';
-import { TextInputListItem, UserAgreement } from '../components';
-import styles from '../styles';
+import { View, ScrollView, Text, WebView, Platform, Button, Alert } from 'react-native';
+import { StackNavigator, NavigationActions, SafeAreaView, HeaderBackButton, NavigationScreenProps } from 'react-navigation';
+import { TextInputListItem, UserAgreement } from 'components';
+import styles from 'styles';
 
 interface DonateWebViewParams {
     amount: string;
@@ -78,7 +78,7 @@ class DonateView extends Component<NavigationScreenProps<DonateViewParams>, {amo
         const { params }: {params: DonateViewParams} = navigation.state;
         return ({
             title: 'Donate',
-            headerLeft: <HeaderBackButton title='Back' onPress={() => params.backHandler(null)} />,    
+            headerLeft: <HeaderBackButton title='Back' onPress={() => params.backHandler()} />,    
             headerRight: <View style={styles.navbarRight}>
                             <Button title='Pay' onPress={params.sendHandler ? params.sendHandler : () => null} />
                         </View>
@@ -95,7 +95,10 @@ class DonateView extends Component<NavigationScreenProps<DonateViewParams>, {amo
     }
 
     componentDidMount() {
-        this.props.navigation.setParams({ sendHandler: () => this.send() });
+        this.props.navigation.setParams({ 
+            sendHandler: () => this.send(), 
+            backHandler: this.props.navigation.state.params!.backHandler 
+        });
     }
 
     _showUserAgreement() {
@@ -108,6 +111,7 @@ class DonateView extends Component<NavigationScreenProps<DonateViewParams>, {amo
                 <ScrollView style={{ paddingTop: 25 }}>
                     <TextInputListItem
                         name='amount'
+                        value={this.state.amount}
                         placeholder='Amount (USD)'
                         onChange={(name, value) => this.setState({ amount: value })}
                         key='amount'
@@ -115,6 +119,7 @@ class DonateView extends Component<NavigationScreenProps<DonateViewParams>, {amo
                     />
                     <TextInputListItem
                         name='message'
+                        value={this.state.message}
                         placeholder='Write your message!'
                         onChange={(name, value) => this.setState({ message: value })}
                         key='message'

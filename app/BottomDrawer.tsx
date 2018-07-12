@@ -1,5 +1,6 @@
 import { Animated, Dimensions, NativeScrollEvent, TouchableWithoutFeedback, View, KeyboardAvoidingView, Keyboard, NativeSyntheticEvent } from "react-native";
 import React, { Component } from "react";
+import styles from "styles";
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
@@ -134,7 +135,7 @@ export class BottomDrawer extends Component<BottomDrawerProps, {onTop: boolean, 
                         showsHorizontalScrollIndicator={false}
                         showsVerticalScrollIndicator={false}
                         //onMomentumScrollBegin={(e) => this._onMomentum(e.nativeEvent)}
-                        onScrollBeginDrag={(e: NativeSyntheticEvent<NativeScrollEvent>) => this._onStart()}
+                        onScrollBeginDrag={(e: NativeSyntheticEvent<NativeScrollEvent>) => this._onStart(e.nativeEvent)}
                         onScrollEndDrag={(e: NativeSyntheticEvent<NativeScrollEvent>) => this._onDrag(e.nativeEvent)}
                         onContentSizeChange={(width: number, height: number) => {
                             this.contentHeight = height;

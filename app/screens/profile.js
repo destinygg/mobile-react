@@ -506,12 +506,12 @@ class ProfileView extends Component {
     };
     render() {
         this.listItems = [
-            { itemText: 'Account', itemTarget: 'Account' },
+            { name: 'Account' },
         ];
         if (Platform.OS != 'ios') {
-            this.listItems.push({ itemText: 'Subscription', itemTarget: 'Subscription' });
+            this.listItems.push({ name: 'Subscription' });
         }
-        this.listItems.push({ itemText: 'Settings', itemTarget: 'Settings' });
+        this.listItems.push({ name: 'Settings' });
         const created = moment(this.props.screenProps.chat.me.createdDate);
         return (
             <SafeAreaView style={styles.View}>
@@ -520,9 +520,11 @@ class ProfileView extends Component {
                         <Text style={styles.ProfileName}>{this.props.screenProps.chat.user.username}</Text>
                         <Text style={styles.ProfileCreated}>{'Member since: ' + created.format('dddd, D MMMM YYYY')}</Text>
                     </View>
-                    <NavList listItems={this.listItems} navigation={this.props.navigation}/>
+                    <NavList listItems={this.listItems} onPress={(item) => {
+                        this.props.navigation.navigate(item.name)
+                    }}/>
                     <ListButton 
-                        text='About' 
+                        name='About'
                         first={true} 
                         last={true} 
                         onPress={() => this.props.navigation.navigate('About')} 

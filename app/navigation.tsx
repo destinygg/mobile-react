@@ -1,10 +1,10 @@
-import { StackNavigator, DrawerNavigator } from 'react-navigation';
-import { AuthView, AuthWebView } from './auth/auth'
-import InitView from 'init/init'
-import MainView from 'main/main'
-import ProfileNav from 'profile/profile';
-import MessageNav from 'messages/messages';
-import DonateNav from 'donate/donate';
+import { StackNavigator } from 'react-navigation';
+import { AuthView, AuthWebView } from 'screens/auth'
+import InitView from 'screens/init'
+import MainView from 'screens/main'
+import ProfileNav from 'screens/profile';
+import MessageNav from 'screens/messages';
+import DonateNav from 'screens/donate';
 
 const InitNav = StackNavigator({
     InitView: { screen: InitView },

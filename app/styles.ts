@@ -122,8 +122,6 @@ export const inheritedStyles = {
     }
 }
 
-const styles = StyleSheet.create({
-    ...inheritedStyles
-});
+const styles = StyleSheet.create(inheritedStyles as any);
 
 export default styles;

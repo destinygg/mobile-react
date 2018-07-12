@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { ScrollView, View, Text, TouchableHighlight, Linking } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
-import styles from './styles';
+import styles, { h2 } from 'styles';
 
-export default class AboutView extends Component {
+export default class AboutView extends Component<{}, {badgePressed: boolean}> {
     static navigationOptions = {
         title: 'About'
     }
 
-    constructor(props) {
+    constructor(props: any) {
         super(props);
         this.state = {badgePressed: false};
     }
@@ -25,8 +25,17 @@ export default class AboutView extends Component {
                     style={{marginLeft: 15, marginRight: 15}}
                 >
                     <View>
-                        <Text style={styles.AboutHeader}>License</Text>                    
-                        <Text style={styles.AboutBody}>
+                        <Text style={{
+                                color: '#888',
+                                fontSize: h2,
+                                fontWeight: '600',
+                                marginTop: 15
+                        }}>
+                            License
+                        </Text>                    
+                        <Text style={{
+                            color: '#888'
+                        }}>
                             "destiny.gg app" is licensed as proprietary software.
                             All intellectual property, source code, and "destiny.gg" media assets
                             are the property of destiny.gg LLC.  3rd party content of any sort
@@ -38,15 +47,39 @@ export default class AboutView extends Component {
                             No warranty express or implied is provided.  This software
                             is provided "as-is".
                         </Text>
-                        <TouchableHighlight style={styles.AboutDev}
+                        <TouchableHighlight style={{
+                            backgroundColor: '#fff',
+                            padding: 10,
+                            borderRadius: 10,
+                            width: 200,
+                            alignSelf: 'center',
+                            marginBottom: 25,
+                            marginTop: 25,
+                            marginRight: 10
+                        }}
                             onPressIn={() => this.setState({ badgePressed: true })}
                             onPressOut={() => this.setState({ badgePressed: false })}
                             delayPressOut={100}
                             onPress={() => this._devBadgePress()}
                         >
-                            <View style={[styles.AboutDevInner, (badgePressed) ? styles.badgePressedBorder : null]}>
-                                <Text style={[styles.AboutDevHeader, (badgePressed) ? styles.badgePressed : null]}>cako.io</Text>
-                                <Text style={[styles.AboutDevBody, (badgePressed) ? styles.badgePressed : null]}>
+                            <View style={{
+                                borderWidth: 3,
+                                padding: 15,
+                                borderColor: (badgePressed) ? '#fff': '#000'   
+                            }}>
+                                <Text style={{
+                                    fontSize: 36,
+                                    fontWeight: '400',
+                                    marginBottom: 10,
+                                    color: (badgePressed) ? '#fff' : "#000"   
+                                }}>
+                                    cako.io
+                                </Text>
+                                <Text style={{
+                                    fontWeight: '300',
+                                    width: 100,
+                                    color: (badgePressed) ? '#fff' : "#000"   
+                                }}>
                                     Issues may be reported to <Text style={{ color: '#d60000' }}>dc@cako.io</Text>.
                             </Text>
                             </View>

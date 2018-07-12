@@ -1,19 +1,22 @@
 import React, { Component } from 'react';
-import { View, AsyncStorage, Alert } from 'react-native';
-import { NavigationActions } from 'react-navigation';
-import styles from '../styles';
+import { View, Alert } from 'react-native';
+import { NavigationActions, NavigationScreenProps } from 'react-navigation';
+import styles from 'styles';
 
-export default class InitView extends Component {
-    constructor(props) {
-        super(props);
+export default class InitView extends Component<NavigationScreenProps> {
+    componentDidMount() {
+        const { navigation, screenProps } = this.props;
 
-        const { navigation, screenProps } = props;
+        if (screenProps === undefined || screenProps.chat === undefined) {
+            Alert.alert("Internal error.")
+            return;
+        }
 
-        const req = new Request('https://www.destiny.gg/api/chat/me', { 
-            method: "GET", 
+        const req = new Request('https://www.destiny.gg/api/chat/me', {
+            method: "GET",
             credentials: 'include'
         });
-        
+
         fetch(req).then(r => {
             if (r.ok) {
                 r.json().then(me => {
@@ -21,6 +24,7 @@ export default class InitView extends Component {
                         .withUserAndSettings(me)
                         .connect("wss://www.destiny.gg/ws");
                     screenProps.chat.me = me;
+                    // @ts-ignore
                     global.bugsnag.setUser(me.userId, me.username, me.username + '@destiny.gg');
                     navigation.dispatch(NavigationActions.reset({
                         index: 0,
@@ -39,19 +43,21 @@ export default class InitView extends Component {
             }
         }, error => {
             Alert.alert(
-                'Network rejection', 
+                'Network rejection',
                 'Check your network connection and retry.',
                 [
-                    {text: 'Retry', onPress: () => {
-                        navigation.dispatch(NavigationActions.reset({
-                            index: 0,
-                            actions: [
-                                NavigationActions.navigate({ routeName: 'InitView' })
-                            ]
-                        }));
-                    }}
+                    {
+                        text: 'Retry', onPress: () => {
+                            navigation.dispatch(NavigationActions.reset({
+                                index: 0,
+                                actions: [
+                                    NavigationActions.navigate({ routeName: 'InitView' })
+                                ]
+                            }));
+                        }
+                    }
                 ],
-                {cancelable: false}
+                { cancelable: false }
             );
         });
     }

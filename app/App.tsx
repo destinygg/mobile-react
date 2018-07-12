@@ -1,26 +1,28 @@
 import React, { Component } from 'react';
 import { StatusBar, View } from 'react-native';
-import InitNav from './app/navigation';
-import { MobileChat } from './app/chat/chat';
-import styles from './app/styles';
+import InitNav from 'navigation';
+import { MobileChat } from './chat/chat';
+import styles from 'styles';
+import { NavigationState } from 'react-navigation';
 
 const emotes = require('./lib/assets/emotes.json');
 
-class App extends Component {
-    constructor() {
-        super();
+class App extends Component<{}, {navState?: string}> {
+    chat: any
+    constructor(props: any) {
+        super(props);
         if (!this.chat) {
             this.chat = new MobileChat()
                 .withEmotes(emotes);
         }
-        this.state = {navState: null};
+        this.state = {};
     }
     render() {
         return (
             <View style={styles.View}>
                 <StatusBar barStyle='light-content' />
                 <InitNav 
-                    onNavigationStateChange={(prevState, currentState) => {
+                    onNavigationStateChange={(prevState: NavigationState, currentState: NavigationState) => {
                         const currentScreen = currentState.routes[currentState.index].routeName;
                         const prevScreen = prevState.routes[prevState.index].routeName;
                         if (prevScreen !== currentScreen) {
