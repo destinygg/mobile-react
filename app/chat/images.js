@@ -1,4 +1,4 @@
-export const emoteImgs = new Map(Object.entries({
+export const emoteImgs = {
         "Dravewin": require("../../lib/assets/emotes/emoticons/Dravewin.png"),
         "INFESTINY": require("../../lib/assets/emotes/emoticons/INFESTINY.png"),
         "FIDGETLOL": require("../../lib/assets/emotes/emoticons/FIDGETLOL.png"),
@@ -84,7 +84,7 @@ export const emoteImgs = new Map(Object.entries({
         "nathanRuse": require("../../lib/assets/emotes/emoticons/nathanRuse.png"),
         "nathanYee": require("../../lib/assets/emotes/emoticons/nathanYee.png"),
         "nathanWeeb": require("../../lib/assets/emotes/emoticons/nathanWeeb.png")
-}));
+};
 
 export const icons = {
         subscriber: require("../../lib/assets/icons/icons/subscriber.png"),

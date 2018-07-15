@@ -1,134 +1,29 @@
-import React, { Component } from 'react';
-import { View, Text, FlatList, ScrollView, WebView, Button, Platform, ActivityIndicator, Alert, TouchableHighlight, KeyboardAvoidingView, AsyncStorage } from 'react-native';
-import { StackNavigator, NavigationActions, SafeAreaView, HeaderBackButton } from 'react-navigation';
-import { NavList, NavListItem, FormItem, UserAgreement, ListButton } from '../components';
-import AboutView from '../about/about'
-import styles from './styles';
 import moment from 'moment';
+import React, { Component } from 'react';
+import { Alert, Button, Platform, ScrollView, Text, TouchableHighlight, View, WebView } from 'react-native';
+import { HeaderBackButton, NavigationActions, SafeAreaView, StackNavigator } from 'react-navigation';
+
+import styles from '../styles';
+import FormView, { FormViewProps, FormViewState, ProfileForm } from '../components/forms/FormView';
+import { IFormItem } from 'components/forms/FormItem';
 
 const countries = require("../../lib/assets/countries.json");
-const countryOptions = countries.map((item) => {
+const countryOptions = countries.map((item: any) => {
     return ({ name: item['name'], value: item['alpha-2'] })
 });
 
-class ProfileForm extends Component {
-    render() {
-        const children = this.props.formItems.map((item, index, array) =>
-            <FormItem
-                item={item}
-                value={this.props.formState[item.name]}
-                key={item.name}
-                first={index === 0}
-                last={index === (array.length - 1)}
-                onChange={(name, value) => this.props.onChange(name, value)}
-            />
-        );
-
-        return (
-            <View style={[styles.View, styles.List, { marginTop: 15 }]} >
-                {children}
-            </View>
-        )
-    }
-}
-
-class FormSaveBtn extends Component {
-    render() {
-        return(
-            <View style={styles.navbarRight}>
-                <Button title='Save' onPress={this.props.onSave} />
-            </View>
-        )
-    }
-}
-
-class FormView extends Component {
-    static navigationOptions = ({ navigation }) => {
-        const { params = {}, routeName } = navigation.state;
-
-        return {
-            title: routeName,
-            headerRight: (params.isSaving) ? 
-                <ActivityIndicator /> :
-                <FormSaveBtn onSave={params.saveHandler ? params.saveHandler : () => null} />   ,
-            drawerLockMode: 'locked-closed'
-        }
-    };
-
-    constructor(props) {
-        super(props);
-        this.me = JSON.parse(JSON.stringify(this.props.screenProps.chat.me)); // deep clone
-    }
-    _onChange(name, value) {
-        let updatedState = {};
-
-        updatedState[name] = value;
-
-        this.setState(updatedState);
-    }
-    save() {
-        const formData = new FormData();
-        for (let key in this.state) {
-            formData.append(key, this.state[key]);
-        }
-        this.props.navigation.setParams({ isSaving: true });
-
-        const req = new Request(`https://www.destiny.gg/${this.endpoint}`, {
-            method: 'POST',
-            body: formData,
-            credentials: 'include'
-        });
-
-        fetch(req).then((response) => {
-            if (response.ok) {
-                this.props.navigation.goBack();
-            } else {
-                this.showFailAlert();
-            }
-            this.props.navigation.setParams({ isSaving: false });
-        }).catch((error) => {
-            this.showFailAlert();
-            this.props.navigation.setParams({ isSaving: false });
-        });
-    }
-
-    showFailAlert() {
-        Alert.alert(
-            'Account update failed.',
-            'Please try again later.',
-            [ {text: 'OK', onPress: () => this.props.navigation.goBack()} ],
-            { cancelable: false }
-        );
-    }
-
-    componentDidMount() {
-        this.props.navigation.setParams({ saveHandler: () => this.save() });
-    }
-
-    render() {
-        return (
-            <KeyboardAvoidingView
-                behavior='padding'
-                style={styles.View}
-                keyboardVerticalOffset={(Platform.OS === 'android') ? -400 : 65}
-            >
-                <ScrollView style={styles.View}>
-                    <ProfileForm formItems={this.formItems} onChange={(name, value) => this._onChange} />
-                </ScrollView>
-            </KeyboardAvoidingView>
-        )
-    }
-}
-
 class AccountView extends FormView {
-    constructor(props) {
+    endpoint: string;
+    formState: FormViewState;
+    formItems: IFormItem[];
+    constructor(props: FormViewProps) {
         super(props);
         this.endpoint = 'profile/update';
-        this.state = {
+        this.formState = {items: {
             username: this.me.username,
             email: this.me.email,
             country: this.me.country
-        }
+        }};
         this.formItems = [
             { 
                 placeholder: "Username", 
@@ -163,19 +58,26 @@ class AccountView extends FormView {
         return (
             <SafeAreaView style={styles.View}>
                 <ScrollView style={styles.View}>
-                    <ProfileForm formItems={this.formItems} formState={this.state} onChange={(name, value) => this._onChange(name, value)} />
+                    <ProfileForm formItems={this.formItems} formState={this.state} onChange={this._onChange.bind(this)} />
                 </ScrollView>
             </SafeAreaView>
         )
     }
 }
 
-class SubscriptionItem extends Component {
+interface SubscriptionItemProps {
+    displayName: string;
+    subId: string;
+    duration: string;
+    onSelect: {(subId: string, displayName: string, duration: string): any};
+}
+
+class SubscriptionItem extends Component<SubscriptionItemProps> {
     static navigationOptions = {
         title: 'Subscription',
     };
 
-    constructor(props) {
+    constructor(props: SubscriptionItemProps) {
         super(props);
         this.state = {press: false};
     }
@@ -190,11 +92,11 @@ class SubscriptionItem extends Component {
                 '#488ce7' :
             (this.props.displayName === "Tier I" || this.props.displayName === "Twitch") ?
                 '#488ce7' :
-                null;
+                undefined;
         return (
             <TouchableHighlight
                 onPress={() => this.props.onSelect && this.props.onSelect(this.props.subId, this.props.displayName, this.props.duration)}
-                style={[styles.SubscriptionItem, {borderColor: tierColor}]}
+                style={[styles.SubscriptionItem, {borderColor: tierColor}] as any}
                 onPressIn={() => this.setState({press: true})} 
                 onPressOut={() => this.setState({press: false})} 
                 delayPressOut={100}

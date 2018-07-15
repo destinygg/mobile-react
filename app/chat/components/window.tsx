@@ -1,10 +1,10 @@
 import React, { Component, PureComponent } from 'react';
-import { View, TextInput, Animated, FlatList, Keyboard, AsyncStorage, Linking, AppState, TouchableWithoutFeedback, KeyboardAvoidingView, Text, ScrollView, TouchableOpacity, ActivityIndicator, TouchableHighlight, Platform, RefreshControl, Dimensions, Modal, WebView } from 'react-native';
+import { View, TextInput, Animated, FlatList, Keyboard, AsyncStorage, Linking, AppState, TouchableWithoutFeedback, KeyboardAvoidingView, Text, ScrollView, TouchableOpacity, ActivityIndicator, TouchableHighlight, Platform, RefreshControl, Dimensions, Modal, WebView, ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import styles from './styles';
-import EventEmitter from '../../lib/assets/chat/js/emitter';
+import EventEmitter from '../lib/assets/chat/js/emitter';
 import { emoteImgs } from './images';
-import { Emote } from './messages';
+import { Emote, MobileChatMessage } from './messages';
 
 const tagcolors = [
     "green",
@@ -25,10 +25,19 @@ const mediaExts = [
     'mov', 'mp4', 'm4v', 'mpg', 'mpeg', '3gp'
 ];
 
-export class EmoteDirectory extends PureComponent {
-    constructor(props) {
+interface EmoteDirectoryProps {
+    filter: string;
+    translateY?: Animated.Value;
+    topOffset: number;
+    onSelect: {(emote: string): any};
+}
+
+export class EmoteDirectory extends PureComponent<EmoteDirectoryProps> {
+    emotes: string[];
+    scrollView: ScrollView | null = null;
+    constructor(props: EmoteDirectoryProps) {
         super(props);
-        this.emotes = Array.from(emoteImgs.keys()).sort();
+        this.emotes = Array.from(Object.keys(emoteImgs)).sort();
     }
 
     render() {
@@ -38,7 +47,16 @@ export class EmoteDirectory extends PureComponent {
                     return (emote.toLowerCase().indexOf(this.props.filter.toLowerCase()) === 0);
                 }).map((emote) => {
                     return (
-                        <TouchableOpacity style={{ marginLeft: 5, marginRight: 5, flex: 1, justifyContent: 'center' }} key={emote} onPress={() => this.props.onSelect(emote)}>
+                        <TouchableOpacity 
+                            style={{ 
+                                marginLeft: 5,
+                                marginRight: 5,
+                                flex: 1,
+                                justifyContent: 'center' 
+                            }} 
+                            key={emote} 
+                            onPress={() => this.props.onSelect(emote)}
+                        >
                             <View>
                                 <Emote name={emote} emoteMenu={true} />
                             </View>
@@ -50,7 +68,7 @@ export class EmoteDirectory extends PureComponent {
                     styles.EmoteDirOuterOuter,
                     {
                         transform:[{
-                            translateY: (this.props.animated) ? this.props.animated : 0
+                            translateY: (this.props.translateY) ? this.props.translateY : 0
                         }],
                         top: this.props.topOffset
                     }
@@ -79,27 +97,41 @@ export class EmoteDirectory extends PureComponent {
     }
 
     componentDidMount() {
+        // @ts-ignore
         global.bugsnag.leaveBreadcrumb('EmoteDirectory mounted.');        
     }
 }
 
-export class MobileChatInput extends Component {
-    constructor(props) {
+interface MobileChatInputProps {
+    onChange: {(text: string): any};
+    chat: any;
+    opacity?: Animated.AnimatedWithChildren;
+    style?: ViewStyle;
+    shown?: boolean;
+    onEmoteBtnPress: { (): any };
+    onFocus: { (): any };
+    onBlur: {(): any};
+}
+
+export class MobileChatInput extends Component<MobileChatInputProps, {value: string}> {
+    opacity?: Animated.Value;
+    interpolate?: Animated.Value;
+    input: TextInput | null = null;
+
+    constructor(props: MobileChatInputProps) {
         super(props);
         this.state = {value: ""};
-        this.opacity = null;
-        this.interpolate = null;
-        this.input = null;
+        this.opacity = undefined;
     }
 
-    set(text) {
+    set(text: string) {
         this.setState({ value: text }); 
         if (this.props.onChange) {
             this.props.onChange(text);
         }
     }
 
-    append(text) {
+    append(text: string) {
         const newVal = 
             this.state.value + (
                 (this.state.value.length === 0 || this.state.value.slice(-1) == " ") ? 
@@ -109,14 +141,14 @@ export class MobileChatInput extends Component {
         this.set(newVal);     
     }
 
-    replace(text) {
+    replace(text: string) {
         let oldVal = this.state.value.split(' ');
         oldVal[oldVal.length-1] = text;
         const newVal = oldVal.join(' ');
         this.set(newVal);
     }
 
-    get() {
+    get(): string {
         return this.state.value;
     }
 
@@ -138,13 +170,12 @@ export class MobileChatInput extends Component {
     }
 
     render() {
-        console.log(this.props.opacityBinding);
         return (
             <View 
                 style={[styles.ChatInputOuter, this.props.style]}
                 pointerEvents={(this.props.shown) ? 'auto' : 'none'}
             >
-                <Animated.View style={[styles.ChatInputInner, {opacity: this.props.opacityBinding}]}>
+                <Animated.View style={[styles.ChatInputInner, {opacity: this.props.opacity}]}>
                     <TouchableOpacity onPress={() => this.props.onEmoteBtnPress()}>
                         <Text style={{
                             fontFamily: 'ionicons',
@@ -183,6 +214,7 @@ export class MobileChatInput extends Component {
     }
 
     componentDidMount() {
+        // @ts-ignore
         global.bugsnag.leaveBreadcrumb('Text input mounted.');   
         Keyboard.addListener('keyboardDidHide', this._handleKeyboardHidden);
         this.props.chat.mainwindow.bindMobileInput(this);     
@@ -194,8 +226,20 @@ export class MobileChatInput extends Component {
     }
 }
 
-export class MobileChatView extends Component {
-    constructor(props) {
+interface MobileChatViewProps {
+    window: any;
+}
+
+export class MobileChatView extends Component<MobileChatViewProps, {
+    messages: JSX.Element[],
+    extraData: boolean,
+    mediaModalShown: boolean
+}> {
+    pinned: boolean;
+    messageList: FlatList<JSX.Element> | null = null;
+    height: number;
+    mediaModalUri?: string;
+    constructor(props: MobileChatViewProps) {
         super(props);
         this.state = {
             messages: [],
@@ -203,9 +247,7 @@ export class MobileChatView extends Component {
             mediaModalShown: false
         }
         this.pinned = true;
-        this.messageList = null;
         this.height = 0;
-        this.mediaModalUri = null;
     }
 
     render() {
@@ -254,7 +296,7 @@ export class MobileChatView extends Component {
         );
     }
 
-    _onScroll(e) {
+    _onScroll(e: any) {
         if (e.nativeEvent.contentOffset.y < 300) {
             this.pinned = true;            
         } else {
@@ -276,12 +318,13 @@ export class MobileChatView extends Component {
         }
     }
 
-    showMediaModal(uri) {
+    showMediaModal(uri: string) {
         this.mediaModalUri = uri;
         this.setState({mediaModalShown: true});
     }
 
     componentDidMount() {
+        // @ts-ignore
         global.bugsnag.leaveBreadcrumb('ChatView mounted.');   
         this.sync();     
     }
@@ -294,7 +337,23 @@ export class MobileChatView extends Component {
 }
 
 export default class MobileWindow extends EventEmitter {
-    constructor(name, type = '', label = '') {
+    name: string;
+    label: string;
+    maxlines: number;
+    tag: string | null;
+    lastmessage: any;
+    chat: any;
+    locks: number;
+    visible: boolean;
+    lines: any[];
+    messageKey: number;
+    ui: any;
+    background: boolean;
+    mobileInput?: MobileChatInput;
+    uiElem?: JSX.Element;
+    settings!: Map<string, any>;
+    waspinned!: boolean;
+    constructor(name: string, type = '', label = '') {
         super()
         this.name = name
         this.label = label
@@ -311,7 +370,7 @@ export default class MobileWindow extends EventEmitter {
         this.mobileInput = undefined;
     }
 
-    openLink(uri) {
+    openLink(uri: string) {
         const extension = uri.split('.').slice(-1)[0];
 
         if (uri.indexOf('://') == -1) {
@@ -327,7 +386,7 @@ export default class MobileWindow extends EventEmitter {
         }
     }
 
-    censor(nick) {
+    censor(nick: string) {
         const c = this.getlines(nick.toLowerCase());
         
         for (let i = 0; i < c.length; i++) {
@@ -342,13 +401,13 @@ export default class MobileWindow extends EventEmitter {
         }
     }
 
-    appendInputText(text) {
+    appendInputText(text: string) {
         if (this.mobileInput) {
             this.mobileInput.append(text);
         }
     }
 
-    bindMobileInput(input) {
+    bindMobileInput(input: MobileChatInput) {
         this.mobileInput = input;
     }
 
@@ -356,7 +415,7 @@ export default class MobileWindow extends EventEmitter {
         this.mobileInput = undefined;
     }
 
-    getMessageKey() {
+    getMessageKey(): number {
         const key = this.messageKey;
         this.messageKey++;
         return key;
@@ -370,13 +429,12 @@ export default class MobileWindow extends EventEmitter {
         return this;
     }
 
-    into(chat) {
+    into(chat: any) {
         const normalized = this.name.toLowerCase()
         this.tag = chat.taggednicks.get(normalized) || tagcolors[Math.floor(Math.random() * tagcolors.length)]
         chat.addWindow(normalized, this)
         this.chat = chat;
         this.uiElem = <MobileChatView 
-                        chat={this.chat} 
                         window={this} 
                         ref={(ref) => this.ui = ref} 
                       />;   
@@ -409,7 +467,7 @@ export default class MobileWindow extends EventEmitter {
         this.ui.sync();
     }
 
-    addMessage(chat, message) {
+    addMessage(chat: any, message: any) {
         this.lastmessage = message        
         message.ui = message.html(chat)
         this.lines.unshift(message.ui);
@@ -420,15 +478,16 @@ export default class MobileWindow extends EventEmitter {
         }
     }
 
-    getlines(sel) {
+    getlines(sel: string): any {
         return this.lines.filter((line) => {
             if (line.props.msg.user !== null) {
-                line.props.msg.user.nick === sel;
+                return line.props.msg.user.nick === sel;
             }
+            return false
         });
     }
 
-    removelines(sel) {
+    removelines(sel: string) {
         for (let i = 0; i < this.lines.length; i++) {
             if (this.lines[i].props.msg.user === sel) {
                 this.lines.splice(i, 1);

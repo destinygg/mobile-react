@@ -1,7 +1,6 @@
 import React, { Component, PureComponent } from 'react';
 import { Image, Text, TextStyle, ViewStyle } from 'react-native';
-
-import styles from './styles';
+import styles from '../../styles';
 
 const { UserFeatures } = require('../../lib/assets/chat/js/features');
 const { EmoteFormatter, GreenTextFormatter, UrlFormatter } = require('./formatters');

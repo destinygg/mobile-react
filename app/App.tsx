@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StatusBar, View } from 'react-native';
 import InitNav from 'navigation';
-import { MobileChat } from './chat/chat';
+const { MobileChat } = require('./chat/chat');
 import styles from 'styles';
 import { NavigationState } from 'react-navigation';
 

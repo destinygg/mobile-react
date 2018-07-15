@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { WebView, ScrollView, View, Text } from 'react-native';
-import { ButtonList } from 'components';
 import { NavigationActions, NavigationScreenProps } from 'react-navigation';
 import styles from 'styles';
+import ButtonList from '../components/forms/ButtonList';
 
 interface AuthNavParams {
     authProvider: string;

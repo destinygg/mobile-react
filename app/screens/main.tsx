@@ -1,5 +1,4 @@
-import { ButtonList, ListButtonProps } from 'components';
-import React, { Component, PureComponent } from 'react';
+import React, { Component } from 'react';
 import {
     Animated,
     AppState,
@@ -14,11 +13,12 @@ import {
     PanResponderGestureState,
     ViewStyle,
 } from 'react-native';
-import { SafeAreaView, NavigationScreenProp, NavigationScreenProps } from 'react-navigation';
+import { SafeAreaView, NavigationScreenProps } from 'react-navigation';
 
-import { EmoteDirectory, MobileChatInput } from '../chat/window';
+import { EmoteDirectory, MobileChatInput } from 'chat/components/window';
 import styles from 'styles';
-import { BottomDrawer } from 'BottomDrawer';
+import { BottomDrawer } from '../components/BottomDrawer';
+import CardDrawerNavList from '../components/CardDrawerNavList';
 
 
 const DEVICE_HEIGHT = (function() {
@@ -65,70 +65,6 @@ class TwitchView extends Component<{landscape?: boolean, height?: number}> {
     }
 }
 
-interface CardDrawerNavListProps {
-    onShowStream: { (): any };
-    onHideStream: {(): any};
-    navigation: NavigationScreenProp<{}>;
-}
-
-class CardDrawerNavList extends PureComponent<CardDrawerNavListProps> {
-    routes: ListButtonProps[];
-    constructor(props: CardDrawerNavListProps) {
-        super(props);
-        this.routes = [
-            { 
-                name: 'Stream', 
-                onPress: () => {
-                    if (this.props.onShowStream) {
-                        this.props.onShowStream() 
-                    }
-                },
-                style: {backgroundColor: "#151515"}
-            },
-            { 
-                name: 'Chat', 
-                onPress: () => {
-                    if (this.props.onHideStream) {
-                        this.props.onHideStream() 
-                    }
-                },
-                style: {backgroundColor: "#151515"}
-            },
-            { 
-                name: 'Messages', 
-                onPress: () => {
-                    this.props.navigation.navigate('MessageView', {backHandler: this.props.navigation.goBack})
-                },
-                style: {backgroundColor: "#151515"}
-            }
-        ];
-        if (Platform.OS != 'ios') {
-            this.routes.push({ 
-                name: 'Donate', 
-                onPress: () => this.props.navigation.navigate('DonateView', { backHandler: this.props.navigation.goBack }) ,
-                style: {backgroundColor: "#151515"}
-            });
-        }
-        this.routes.push({ 
-            name: 'Profile', 
-            onPress: () => this.props.navigation.navigate('ProfileView', { backHandler: this.props.navigation.goBack }) ,
-            style: {backgroundColor: "#151515"}
-        });
-    }
-    render() {
-        return (
-            <View style={{
-                backgroundColor: '#151515',
-                paddingBottom: 100,
-                paddingTop: 10,
-                marginTop: -5
-            }}>
-                <ButtonList listItems={this.routes} />
-            </View>
-        )
-    }
-}
-
 interface MainViewState {
     height?: number;
     twitchHeight?: number;
@@ -143,7 +79,7 @@ interface MainViewState {
     emoteFilter: string;
     emoteDirOffset?: Animated.Value;
     drawerPosSpy?: Animated.Value
-    chatInputOpacity?: Animated.AnimatedInterpolation;
+    chatInputOpacity?: Animated.AnimatedWithChildren;
     inputFocused: boolean;
     interpolate?: {
         min: number,
@@ -311,7 +247,7 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                             posSpy={this.state.drawerPosSpy!}
                         >                  
                             <EmoteDirectory
-                                animated={this.state.emoteDirOffset}
+                                translateY={this.state.emoteDirOffset}
                                 filter={this.state.emoteFilter}
                                 topOffset={this.state.drawerPaddingHeight}
                                 onSelect={(emote: string) => this._onEmoteChosen(emote)}
@@ -319,7 +255,7 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                                 <MobileChatInput
                                     ref={(ref: any) => this.inputElem = ref}
                                     chat={this.chat}
-                                    opacityBinding={this.state.chatInputOpacity}
+                                    opacity={this.state.chatInputOpacity}
                                     shown={!this.state.drawerOpen}
                                     onChange={(val: string) => this._onInputUpdate(val)}
                                     onEmoteBtnPress={() => this.toggleEmoteDir()}
@@ -328,7 +264,6 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                                 />
                             {!this.state.inputFocused &&
                                 <CardDrawerNavList
-                                    screenProps={{ ...this.props.screenProps, mainView: this }}
                                     navigation={this.props.navigation}
                                     onShowStream={() => this.showStream()}
                                     onHideStream={() => this.hideStream()}

@@ -8,7 +8,6 @@ interface BottomDrawerProps {
     posSpy: Animated.Value;
     onOpen: {(): any};
     onClose: {(): any};
-    showingOffset: number;
     paddingHeight: number;
 }
 
@@ -96,10 +95,6 @@ export class BottomDrawer extends Component<BottomDrawerProps, {onTop: boolean, 
           (this.scrollView as any)._component.scrollTo({y: 0, animated: true});
         this.props.onClose();
         setTimeout(() => this.setState({onTop: false, open: false}), 200);
-    }
-
-    getContentOffset() {
-        return SCREEN_HEIGHT - this.props.showingOffset;
     }
 
     toTop() {

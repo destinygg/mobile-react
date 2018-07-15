@@ -16,10 +16,15 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import { HeaderBackButton, SafeAreaView, StackNavigator, NavigationScreenProp, NavigationScreenProps } from 'react-navigation';
-
-import { TextInputListItem } from 'components';
-import styles, {h3} from 'styles';
+import {
+    HeaderBackButton,
+    NavigationScreenProp,
+    NavigationScreenProps,
+    SafeAreaView,
+    StackNavigator,
+} from 'react-navigation';
+import styles, { h3 } from 'styles';
+import TextInputListItem from '../components/forms/TextInputListItem';
 
 const MOMENT_FORMAT = {
     sameDay: '[Today]',
