@@ -1,8 +1,14 @@
-import { Animated, Dimensions, NativeScrollEvent, TouchableWithoutFeedback, View, KeyboardAvoidingView, Keyboard, NativeSyntheticEvent } from "react-native";
-import React, { Component } from "react";
-import styles from "styles";
-
-const SCREEN_HEIGHT = Dimensions.get('window').height;
+import React, { Component } from 'react';
+import {
+    Animated,
+    Keyboard,
+    KeyboardAvoidingView,
+    NativeScrollEvent,
+    NativeSyntheticEvent,
+    TouchableWithoutFeedback,
+    View,
+} from 'react-native';
+import styles from 'styles';
 
 interface BottomDrawerProps {
     posSpy: Animated.Value;
@@ -119,6 +125,7 @@ export class BottomDrawer extends Component<BottomDrawerProps, {onTop: boolean, 
                 style={{
                     top: -(this.props.paddingHeight), 
                     width: '100%',
+                    maxWidth: 600,
                     zIndex: (this.state.onTop || this.state.fixed) ? 6000 : -1                    
                 }}
                 behavior={'position'}

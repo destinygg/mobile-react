@@ -4,6 +4,7 @@ import styles from 'styles';
 
 export interface ListButtonProps {
     name: string;
+    tag?: string;
     onPress?: { (): any };
     first?: boolean;
     last?: boolean;
@@ -28,11 +29,15 @@ export class ListButton extends Component<ListButtonProps> {
             outerStyle.push(this.props.style);
         }
 
+        const displayName = this.props.tag !== undefined
+            ? this.props.tag
+            : this.props.name;
+
         return (
             <TouchableHighlight onPress={this.props.onPress} style={outerStyle}>
                 <View style={innerStyle}>
                     <Text style={styles.ListItemText}>
-                        {this.props.name}
+                        {displayName}
                     </Text>
                 </View>
             </TouchableHighlight>

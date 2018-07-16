@@ -40,7 +40,7 @@ export default class SelectModal extends Component<SelectModalProps, SelectModal
     }
 
     render() {
-        const selectOptions = this.props.selectOptions.map((item) =>
+        const selectOptions = this.props.selectOptions.map((item) => 
             <Picker.Item label={item.name} value={item.value} key={item.value} />
         );
         return (

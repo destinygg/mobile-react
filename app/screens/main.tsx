@@ -21,10 +21,10 @@ import { BottomDrawer } from '../components/BottomDrawer';
 import CardDrawerNavList from '../components/CardDrawerNavList';
 
 
-const DEVICE_HEIGHT = (function() {
+function DEVICE_HEIGHT() {
     const dims = Dimensions.get('window');
     return (dims.height > dims.width) ? dims.height : dims.width  
-}());
+}
 
 class TwitchView extends Component<{landscape?: boolean, height?: number}> {
     render() {
@@ -208,7 +208,7 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
         return (
             <SafeAreaView style={styles.View}>
                 <View
-                    style={{width: '100%', height: DEVICE_HEIGHT - 95, paddingBottom: 5}}
+                    style={{width: '100%', height: DEVICE_HEIGHT() - 95, paddingBottom: 5}}
                     onLayout={(e) => {
                         this._onLayout(e.nativeEvent);
                     }}
@@ -348,7 +348,7 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
         // @ts-ignore
         global.bugsnag.leaveBreadcrumb('MainView before onLayout.');  
         const viewHeight = (e.layout.height > e.layout.width) ? e.layout.height : e.layout.width;
-        const bottomOffset = DEVICE_HEIGHT - viewHeight - e.layout.y;
+        const bottomOffset = DEVICE_HEIGHT() - viewHeight - e.layout.y;
         if (this.state.height === null) {
             const interpolate = {
                 min: 0,

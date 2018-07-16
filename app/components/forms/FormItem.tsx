@@ -7,6 +7,7 @@ import TextInputListItem from "./TextInputListItem";
 
 export interface IFormItem {
     name: string;
+    tag?: string;
     readOnly?: boolean;
     placeholder?: string;
     multiline?: boolean;
@@ -53,6 +54,7 @@ export class FormItem extends Component<FormItemProps> {
             children.push(
                 <ListButton
                     name={displayText[0].name}
+                    tag={this.props.item.tag}
                     onPress={() => this.selectModal && this.selectModal.show()}
                     key={this.props.item.name}
                     first={this.props.first}
@@ -73,6 +75,7 @@ export class FormItem extends Component<FormItemProps> {
             children.push(
                 <ListSwitch
                     name={this.props.item.name}
+                    tag={this.props.item.tag}
                     value={this.props.value}
                     onChange={this.props.onChange}
                     key={this.props.item.name}

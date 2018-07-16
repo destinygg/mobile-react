@@ -1,14 +1,7 @@
 import React, { Component } from 'react';
-import {
-    ActivityIndicator,
-    Alert,
-    Button,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    View,
-} from 'react-native';
-import { NavigationScreenProp, NavigationScreenProps, NavigationProp } from 'react-navigation';
+import { ActivityIndicator, Alert, Button, KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
+import { NavigationScreenProp } from 'react-navigation';
+
 import styles from '../../styles';
 import { FormItem, IFormItem } from './FormItem';
 
@@ -65,8 +58,6 @@ export interface FormViewProps {
 }
 
 export default class FormView extends Component<FormViewProps, FormViewState> {
-    me: any;
-
     static navigationOptions = ({ navigation }: {
         navigation: NavigationScreenProp<{ params: any, routeName: any }>
     }) => {
@@ -83,7 +74,6 @@ export default class FormView extends Component<FormViewProps, FormViewState> {
 
     constructor(props: FormViewProps) {
         super(props);
-        this.me = JSON.parse(JSON.stringify(this.props.screenProps!.chat.me)); // deep clone
     }
     _onChange(name: string, value: string) {
         const newItems = Object.assign({}, this.state.items);

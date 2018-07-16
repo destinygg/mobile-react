@@ -1,10 +1,26 @@
 import React, { Component, PureComponent } from 'react';
-import { View, TextInput, Animated, FlatList, Keyboard, AsyncStorage, Linking, AppState, TouchableWithoutFeedback, KeyboardAvoidingView, Text, ScrollView, TouchableOpacity, ActivityIndicator, TouchableHighlight, Platform, RefreshControl, Dimensions, Modal, WebView, ViewStyle } from 'react-native';
-import { SafeAreaView } from 'react-navigation';
-import styles from './styles';
-import EventEmitter from '../lib/assets/chat/js/emitter';
-import { emoteImgs } from './images';
-import { Emote, MobileChatMessage } from './messages';
+import {
+    Animated,
+    FlatList,
+    Keyboard,
+    Linking,
+    Modal,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View,
+    ViewStyle,
+    WebView,
+    StyleSheet,
+    Platform,
+} from 'react-native';
+
+const { EventEmitter } = require('../lib/assets/chat/js/emitter');
+const { emoteImgs } = require('../images');
+import { Emote } from './messages';
+import styles from '../../styles';
 
 const tagcolors = [
     "green",
@@ -64,19 +80,28 @@ export class EmoteDirectory extends PureComponent<EmoteDirectoryProps> {
                     );
                 });
         return (
-            <Animated.View style={[
-                    styles.EmoteDirOuterOuter,
-                    {
-                        transform:[{
-                            translateY: (this.props.translateY) ? this.props.translateY : 0
-                        }],
-                        top: this.props.topOffset
-                    }
-                ]} 
+            <Animated.View 
+                style={{
+                    width: '100%',
+                    position: 'absolute',
+                    transform: [{
+                        translateY: (this.props.translateY) ? this.props.translateY : 0
+                    }],
+                    top: this.props.topOffset
+                }} 
                 collapsable={false}
             >
-                <View style={[styles.EmoteDirectoryOuter]}>
-                    <View style={styles.EmoteDirectory}>
+                <View style={{
+                    borderTopLeftRadius: 25,
+                    borderTopRightRadius: 25,
+                    height: 70,
+                    backgroundColor: '#151515'
+                }}>
+                    <View style={{
+                        paddingLeft: 15,
+                        paddingRight: 15,
+                        marginTop: 15
+                    }}>
                         <ScrollView 
                             showsHorizontalScrollIndicator={false} 
                             horizontal={true} 
@@ -172,10 +197,25 @@ export class MobileChatInput extends Component<MobileChatInputProps, {value: str
     render() {
         return (
             <View 
-                style={[styles.ChatInputOuter, this.props.style]}
+                style={Object.assign({
+                    flexDirection: 'row',
+                    zIndex: 2000,
+                    backgroundColor: '#151515',
+                    borderTopLeftRadius: 25,
+                    borderTopRightRadius: 25,
+                    paddingTop: 8,
+                    paddingLeft: 5,
+                    paddingRight: 5,
+                }, this.props.style)}
                 pointerEvents={(this.props.shown) ? 'auto' : 'none'}
             >
-                <Animated.View style={[styles.ChatInputInner, {opacity: this.props.opacity}]}>
+                <Animated.View 
+                    style={{
+                        flex: 1,
+                        flexDirection: 'row',
+                        opacity: this.props.opacity
+                    }}
+                >
                     <TouchableOpacity onPress={() => this.props.onEmoteBtnPress()}>
                         <Text style={{
                             fontFamily: 'ionicons',
@@ -189,9 +229,26 @@ export class MobileChatInput extends Component<MobileChatInputProps, {value: str
                             &#xf38e;
                         </Text>
                     </TouchableOpacity>
-                    <View style={styles.ChatInputInnerInner}>
+                    <View style={{
+                        borderColor: "#222",
+                        backgroundColor: "#181818",
+                        borderWidth: StyleSheet.hairlineWidth,
+                        borderRadius: (Platform.OS === 'ios') ? 17 : 19,
+                        paddingLeft: 15,
+                        paddingRight: 15,
+                        marginLeft: 5,
+                        marginTop: 10,
+                        marginRight: 15,
+                        flex: 1,
+                        height: (Platform.OS === 'ios') ? 34 : 38
+                    }}>
                         <TextInput
-                            style={styles.ChatInput}
+                            style={{
+                                flex: 1,
+                                fontSize: 12,
+                                color: "#ccc",
+                                height: 34
+                            }}
                             placeholder={'Write something...'}
                             placeholderTextColor="#888"
                             onChangeText={(text) => this.set(text)}
@@ -202,6 +259,7 @@ export class MobileChatInput extends Component<MobileChatInputProps, {value: str
                             keyboardAppearance='dark'
                             onFocus={this.props.onFocus}
                             onBlur={this.props.onBlur}
+                            autoCorrect={true}
                         />
                     </View>
                 </Animated.View>
@@ -252,7 +310,15 @@ export class MobileChatView extends Component<MobileChatViewProps, {
 
     render() {
         return (
-            <View style={[styles.View, styles.ChatView]}>
+            <View style={[
+                styles.View, 
+                {
+                    flex: 1,
+                    paddingTop: 0,
+                    paddingRight: 10,
+                    paddingLeft: 10,
+                }
+            ]}>
                 <FlatList
                     data={this.state.messages}
                     style={styles.ChatViewList}
