@@ -26,6 +26,8 @@ import {
 import styles, { h3 } from 'styles';
 import TextInputListItem from '../components/forms/TextInputListItem';
 
+const { MobileChat } = require("../chat/chat"); 
+
 const MOMENT_FORMAT = {
     sameDay: '[Today]',
     nextDay: '[Tomorrow]',
@@ -83,7 +85,6 @@ class UserMessage extends Component<UserMessageProps> {
 
 interface UserViewProps {
     navigation: NavigationScreenProp<{params: {user: string}}>
-    screenProps: any;
 }
 
 interface UserViewState {
@@ -118,7 +119,7 @@ class UserView extends Component<UserViewProps, UserViewState> {
             messages: [
                 {
                     message: text,
-                    from: this.props.screenProps.chat.me.username,
+                    from: MobileChat.current.me.username,
                     to: this.user,
                     id: Date.now()
                 },
@@ -135,7 +136,7 @@ class UserView extends Component<UserViewProps, UserViewState> {
                 {
                     message: text,
                     from: this.user,
-                    to: this.props.screenProps.chat.me.username,
+                    to: MobileChat.current.me.username,
                     id: Date.now()
                 },
                 ...this.state.messages
@@ -200,7 +201,7 @@ class UserView extends Component<UserViewProps, UserViewState> {
                         data={this.state.messages}
                         extraData={this.state.extraData}
                         keyExtractor={(item) => String(item.id)}
-                        renderItem={({ item }) => <UserMessage item={item} isSelf={item.from === this.props.screenProps.chat.me.username} />}
+                        renderItem={({ item }) => <UserMessage item={item} isSelf={item.from === MobileChat.current.me.username} />}
                         onEndReached={(info) => this.loadMoreItems()}
                         onEndReachedThreshold={.1}
                         inverted={true}
@@ -227,6 +228,7 @@ class UserView extends Component<UserViewProps, UserViewState> {
                         underlineColorAndroid='#222'
                         value={this.state.input}
                         keyboardAppearance='dark'
+                        autoCorrect={true}
                     />
                 </KeyboardAvoidingView>
             </SafeAreaView>
@@ -234,11 +236,11 @@ class UserView extends Component<UserViewProps, UserViewState> {
     }
 
     componentDidMount() {
-        this.props.screenProps.chat.mobilePmWindow = this;
+        MobileChat.current.mobilePmWindow = this;
     }
 
     componentWillUnmount() {
-        this.props.screenProps.chat.mobilePmWindow = null;
+        MobileChat.current.mobilePmWindow = null;
     }
 }
 
@@ -404,7 +406,8 @@ class MessageView extends Component<NavigationScreenProps, {
         return ({
             title: 'Messages',
             headerLeft: <HeaderBackButton title='Back' onPress={() => params.backHandler(null)} />,
-            headerRight: <ComposeButton onPress={params.composeHandler ? params.composeHandler : () => null} />
+            headerRight: <ComposeButton onPress={params.composeHandler ? params.composeHandler : () => null} />,
+            headerTintColor: "#ccc"
         });
     }
     constructor(props: NavigationScreenProps) {

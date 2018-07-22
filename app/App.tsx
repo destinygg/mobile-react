@@ -29,7 +29,7 @@ class App extends Component<{}, {navState?: string}> {
                             this.setState({navState: currentScreen})
                         }
                     }}
-                    screenProps={{ chat: this.chat, init: true, navState: this.state.navState }} 
+                    screenProps={{ init: true, navState: this.state.navState }} 
                 />                
             </View>
         );

@@ -1,3 +1,5 @@
+import { MobileChat } from './chat';
+
 const { DATE_FORMATS } = require('../../lib/assets/chat/js/const');
 
 function buildMessageTxt(chat, message) {
@@ -166,10 +168,14 @@ class ChatMessage extends ChatUIMessage {
     }
 
     html(chat = null) {
+        const time = (MobileChat.current.mobileSettings.chatTimestamp)
+            ? buildTime(this)
+            : undefined;
+
         if (this.continued)
             this.classes.push(styles['msg-continue']);
         return this.wrap(
-            buildTime(this), null, null, buildMessageTxt(chat, this)
+            time, null, null, buildMessageTxt(chat, this)
         );
     }
 }
@@ -219,8 +225,13 @@ class ChatUserMessage extends ChatMessage {
         const user = (this.continued) ?
             null :
             <UserBadge user={this.user} onPress={(username) => this.window.appendInputText(username)}>{buildFeatures(this.user)}</UserBadge>;
+
+        const time = (MobileChat.current.mobileSettings.chatTimestamp)
+            ? buildTime(this)
+            : undefined;
+
         return this.wrap(
-            buildTime(this), user, ctrl, buildMessageTxt(chat, this)
+            time, user, ctrl, buildMessageTxt(chat, this)
         );
     }
 
@@ -260,8 +271,13 @@ class ChatEmoteMessage extends ChatMessage {
         const emote = <Emote name={this._text[0].emote} />;
         this.classes.unshift(styles[`msg-${this.type.toLowerCase()}`]);
         this.classes.unshift(styles[`msg-chat`]);
+
+        const time = (MobileChat.current.mobileSettings.chatTimestamp)
+            ? buildTime(this)
+            : undefined;
+            
         this.uiElem = <MobileChatEmoteMessage
-            time={buildTime(this)}
+            time={time}
             msg={this}
             emote={emote}
             ref={ref => this.ui = ref}

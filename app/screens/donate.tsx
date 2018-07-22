@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { View, ScrollView, Text, WebView, Platform, Button, Alert } from 'react-native';
-import { StackNavigator, NavigationActions, SafeAreaView, HeaderBackButton, NavigationScreenProps } from 'react-navigation';
-import { TextInputListItem, UserAgreement } from 'components';
+import { Alert, Button, Platform, ScrollView, Text, View, WebView } from 'react-native';
+import { HeaderBackButton, NavigationActions, NavigationScreenProps, SafeAreaView, StackNavigator } from 'react-navigation';
 import styles from 'styles';
+
+import TextInputListItem from '../components/forms/TextInputListItem';
+import { UserAgreement } from '../components/UserAgreement';
 
 interface DonateWebViewParams {
     amount: string;
@@ -81,7 +83,8 @@ class DonateView extends Component<NavigationScreenProps<DonateViewParams>, {amo
             headerLeft: <HeaderBackButton title='Back' onPress={() => params.backHandler()} />,    
             headerRight: <View style={styles.navbarRight}>
                             <Button title='Pay' onPress={params.sendHandler ? params.sendHandler : () => null} />
-                        </View>
+                        </View>,
+            headerTintColor: "#ccc"
         });
     }
 

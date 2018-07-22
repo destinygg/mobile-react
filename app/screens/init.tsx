@@ -3,11 +3,13 @@ import { View, Alert } from 'react-native';
 import { NavigationActions, NavigationScreenProps } from 'react-navigation';
 import styles from 'styles';
 
+const { MobileChat } = require("../chat/chat"); 
+
 export default class InitView extends Component<NavigationScreenProps> {
     componentDidMount() {
-        const { navigation, screenProps } = this.props;
+        const { navigation } = this.props;
 
-        if (screenProps === undefined || screenProps.chat === undefined) {
+        if (MobileChat.current === undefined) {
             Alert.alert("Internal error.")
             return;
         }
@@ -20,10 +22,10 @@ export default class InitView extends Component<NavigationScreenProps> {
         fetch(req).then(r => {
             if (r.ok) {
                 r.json().then(me => {
-                    screenProps.chat
+                    MobileChat.current
                         .withUserAndSettings(me)
                         .connect("wss://www.destiny.gg/ws");
-                    screenProps.chat.me = me;
+                    MobileChat.current.me = me;
                     // @ts-ignore
                     global.bugsnag.setUser(me.userId, me.username, me.username + '@destiny.gg');
                     navigation.dispatch(NavigationActions.reset({

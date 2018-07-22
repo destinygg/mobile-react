@@ -1,5 +1,5 @@
 import { StyleSheet, Platform } from 'react-native';
-import { inheritedStyles } from '../styles';
+import { inheritedStyles } from '../../styles';
 
 const styles = StyleSheet.create({
     ...inheritedStyles,
@@ -119,10 +119,6 @@ const styles = StyleSheet.create({
         height: 70,
         backgroundColor: '#151515'     
     },
-    EmoteDirOuterOuter: {
-        width: '100%', 
-        position: 'absolute'
-    },
     EmoteDirectory: {
         paddingLeft: 15,
         paddingRight: 15,
@@ -173,6 +169,6 @@ const styles = StyleSheet.create({
         height: '50%',
         borderRadius: 15        
     }
-});
+} as any);
 
 export default styles;
