@@ -11,6 +11,7 @@
 		"moment": "~2.19",
 		"react": "^16.0.0",
 		"react-native": "^0.49.5",
+		"react-native-interactable": "^0.1.10",
 		"react-navigation": "^1.0.0-beta.17",
 		"throttle-debounce": "~1.0.1",
 		"typescript": "^2.9.1"
