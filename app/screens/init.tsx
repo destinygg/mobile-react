@@ -14,27 +14,32 @@ export default class InitView extends Component<NavigationScreenProps> {
             return;
         }
 
-        const req = new Request('https://www.destiny.gg/api/chat/me', {
+        const meReq = new Request('https://www.destiny.gg/api/chat/me', {
             method: "GET",
             credentials: 'include'
         });
+        const histReq = new Request("https://www.destiny.gg/api/chat/history");
 
-        fetch(req).then(r => {
-            if (r.ok) {
-                r.json().then(me => {
-                    MobileChat.current
-                        .withUserAndSettings(me)
-                        .connect("wss://www.destiny.gg/ws");
-                    MobileChat.current.me = me;
-                    // @ts-ignore
-                    global.bugsnag.setUser(me.userId, me.username, me.username + '@destiny.gg');
-                    navigation.dispatch(NavigationActions.reset({
-                        index: 0,
-                        actions: [
-                            NavigationActions.navigate({ routeName: 'MainNav' })
-                        ]
-                    }));
-                })
+        Promise.all([fetch(meReq), fetch(histReq)]).then(async r => {
+            const meRes = r[0];
+            const histRes = r[1];
+            if (meRes.ok) {
+                const me = await meRes.json();
+                const hist = await histRes.json();
+
+                MobileChat.current
+                    .withUserAndSettings(me)
+                    .withHistory(hist)
+                    .connect("wss://www.destiny.gg/ws");
+                MobileChat.current.me = me;
+                // @ts-ignore
+                global.bugsnag.setUser(me.userId, me.username, me.username + '@destiny.gg');
+                navigation.dispatch(NavigationActions.reset({
+                    index: 0,
+                    actions: [
+                        NavigationActions.navigate({ routeName: 'MainNav' })
+                    ]
+                }));
             } else {
                 navigation.dispatch(NavigationActions.reset({
                     index: 0,

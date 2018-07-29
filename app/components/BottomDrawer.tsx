@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Animated, Keyboard, KeyboardAvoidingView, TouchableWithoutFeedback, View } from 'react-native';
+import { Animated, Keyboard, KeyboardAvoidingView, TouchableWithoutFeedback, View, ViewStyle } from 'react-native';
 import Interactable from 'react-native-interactable';
 import styles from 'styles';
 
@@ -8,12 +8,13 @@ interface BottomDrawerProps {
     onOpen: {(): any};
     onClose: {(): any};
     paddingHeight: number;
+    style: ViewStyle;
 }
 
 export class BottomDrawer extends Component<BottomDrawerProps, {
     onTop: boolean,
     open: boolean,
-    fixed: boolean
+    fixed: boolean,
 }> {
     open: boolean;
     interactable: Component<Interactable.IInteractableView> | null = null;
@@ -78,11 +79,10 @@ export class BottomDrawer extends Component<BottomDrawerProps, {
     render() {
         return (
             <KeyboardAvoidingView 
-                style={{
+                style={Object.assign({
                     top: -(this.props.paddingHeight), 
-                    width: '100%',
                     zIndex: 6000                   
-                }}
+                }, this.props.style)}
                 behavior={'position'}
             >
                     <Interactable.View

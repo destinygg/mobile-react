@@ -45,7 +45,7 @@ export class MobileChat extends Chat {
         MobileChat.current = this;
     }
 
-    loadMobileSettings(callback) {
+    loadMobileSettings() {
         if (this.mobileSettings === null) {
             AsyncStorage.getItem('appSettings', (err, settings) => {
                 let settingsObj;
@@ -60,12 +60,18 @@ export class MobileChat extends Chat {
                     }
                 }
                 this.mobileSettings = settingsObj;
-                callback(settingsObj);
             });
-        } else {
-            callback(this.mobileSettings);
-        }
+        } 
+    }
 
+    withHistory(history) {
+        if(history && history.length > 0) {
+            this.backlogloading = true;
+            history.forEach(line => this.source.parseAndDispatch({data: line}));
+            this.backlogloading = false;
+            this.mainwindow.updateAndPin();
+        }
+        return this;
     }
 
     saveMobileSettings() {
