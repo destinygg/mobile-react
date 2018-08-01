@@ -8,6 +8,7 @@ interface BottomDrawerProps {
     onOpen: {(): any};
     onClose: {(): any};
     paddingHeight: number;
+    showHandle?: boolean;
     style: ViewStyle;
 }
 
@@ -110,21 +111,24 @@ export class BottomDrawer extends Component<BottomDrawerProps, {
                         >
                             <View style={{ height: this.props.paddingHeight }} />
                         </TouchableWithoutFeedback>
-                        <Animated.View style={[
-                            styles.DrawerHandle, 
-                            {
-                                opacity: this.opacityBinding,
-                                transform: [
+                        {this.props.showHandle &&
+                            <Animated.View 
+                                style={[
+                                    styles.DrawerHandle, 
                                     {
-                                        translateY: this.handleTopBinding,
-                                    },
-                                    {
-                                        scaleX: this.handleWidthBinding
-                                    },
-                                ]
-                            }
-                        ]} 
-                        />
+                                        opacity: this.opacityBinding,
+                                        transform: [
+                                            {
+                                                translateY: this.handleTopBinding,
+                                            },
+                                            {
+                                                scaleX: this.handleWidthBinding
+                                            },
+                                        ]
+                                    }
+                                ]} 
+                            />
+                        }
                         {this.props.children}
                     </Interactable.View>
             </KeyboardAvoidingView>

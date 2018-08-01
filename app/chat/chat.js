@@ -50,13 +50,13 @@ export class MobileChat extends Chat {
             AsyncStorage.getItem('appSettings', (err, settings) => {
                 let settingsObj;
                 if (err) {
-                    settingsObj = this.resetMobileSettings();
+                    settingsObj = this.initMobileSettings();
                 } else {
                     settingsObj = JSON.parse(settings);                    
-                    if (settingsObj !== null && 'mediaModal' in settingsObj && 'emoteDirLoseFocus' in settingsObj) {
+                    if (settingsObj !== null) {
                         console.log("loaded mobile settings: " + settings);
                     } else {
-                        settingsObj = this.resetMobileSettings();
+                        settingsObj = this.initMobileSettings();
                     }
                 }
                 this.mobileSettings = settingsObj;
@@ -79,18 +79,15 @@ export class MobileChat extends Chat {
     }
 
     setMobileSetting(name, value) {
-        if ((name === 'mediaModal' || name === 'emoteDirLoseFocus') && 
-            typeof value === 'boolean') {
-                this.mobileSettings[name] = value;
-        } else {
-            throw new Error('trying to set invalid mobile setting!');
-        }
+        this.mobileSettings[name] = value;
     }
 
-    resetMobileSettings() {
+    initMobileSettings() {
         const settings = {
             mediaModal: true,
-            emoteDirLoseFocus: false
+            chatTimestamp: true,
+            emoteDirLoseFocus: false,
+            menuDrawerButton: false
         };
         AsyncStorage.setItem('appSettings', JSON.stringify(settings));
         console.log("reset mobile settings: " + JSON.stringify(settings));

@@ -11,7 +11,7 @@ import {
     WebView,
     PanResponderInstance,
     PanResponderGestureState,
-    ViewStyle,
+    ViewStyle
 } from 'react-native';
 import { SafeAreaView, NavigationScreenProps } from 'react-navigation';
 
@@ -20,6 +20,7 @@ import styles from 'styles';
 import { BottomDrawer } from '../components/BottomDrawer';
 import CardDrawerNavList from '../components/CardDrawerNavList';
 
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 function DEVICE_HEIGHT() {
     const dims = Dimensions.get('window');
@@ -214,6 +215,22 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                             />
                         }
                         {this.chat.mainwindow.uiElem}
+                        {this.chat.mobileSettings.menuDrawerButton &&
+                            <Ionicons
+                                name={"menu"}
+                                style={{
+                                    position: "absolute",
+                                    right: 5
+                                }}
+                                onPress={() => {
+                                    if (this.cardDrawer !== null) {
+                                        this.cardDrawer.open
+                                        ? this.cardDrawer.closeDrawer()
+                                        : this.cardDrawer.openDrawer()
+                                    }
+                                }}
+                            />
+                        }
                 </View>
                 {this.state.height != null &&
                         <BottomDrawer 
@@ -222,6 +239,7 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                             onClose={() => this._drawerClosed()}  
                             paddingHeight={this.state.drawerPaddingHeight}
                             posSpy={this.state.drawerPosSpy!}
+                            showHandle={this.chat.menuDrawerButton === false}
                             style={this.state.isLandscape
                                 ? {
                                     alignSelf: "flex-end",
@@ -246,7 +264,10 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                                     opacity={this.state.chatInputOpacity}
                                     shown={!this.state.drawerOpen}
                                     onChange={(val: string) => this._onInputUpdate(val)}
-                                    onEmoteBtnPress={() => this.toggleEmoteDir()}
+                                    onEmoteBtnPress={() => {
+                                        this.chat.mobileSettings.emoteDirLoseFocus &&
+                                            this.toggleEmoteDir();
+                                    }}
                                     onFocus={() => this._inputFocused()}
                                     onBlur={() => this._inputBlurred()}
                                 />
@@ -365,7 +386,6 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                 AsyncStorage.setItem('TwitchViewHeight', Math.floor(this.state.twitchHeight).toString());                
             }
             AsyncStorage.setItem('InitRoute', (this.state.streamShown) ? 'Main' : 'Chat');
-            this.chat.saveMobileSettings();
             this.chat.source.disconnect();
             this.chat.mainwindow.lines = [];
         } else if (nextState === 'active') {
