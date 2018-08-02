@@ -11,7 +11,7 @@ import {
     WebView,
     PanResponderInstance,
     PanResponderGestureState,
-    ViewStyle,
+    ViewStyle
 } from 'react-native';
 import { SafeAreaView, NavigationScreenProps } from 'react-navigation';
 
@@ -20,6 +20,7 @@ import styles from 'styles';
 import { BottomDrawer } from '../components/BottomDrawer';
 import CardDrawerNavList from '../components/CardDrawerNavList';
 
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 function DEVICE_HEIGHT() {
     const dims = Dimensions.get('window');
@@ -71,25 +72,14 @@ interface MainViewState {
     resizing: boolean;
     streamShown: boolean;
     drawerOpen: boolean;
-    underlayOpacity?: Animated.AnimatedInterpolation;
     emoteDirShown: boolean;
-    emoteDirY?: number;
-    keyboardShown: boolean;
     drawerPaddingHeight: number;
     emoteFilter: string;
     emoteDirOffset?: Animated.Value;
     drawerPosSpy?: Animated.Value
     chatInputOpacity?: Animated.AnimatedWithChildren;
     inputFocused: boolean;
-    interpolate?: {
-        min: number,
-        max: number
-    }
-    bottomOffset?: number;
-    settings: {
-        mediaModal?: number;
-        emoteDirLoseFocus?: number;
-    }
+    isLandscape?: boolean;
 }
 export default class MainView extends Component<NavigationScreenProps, MainViewState> {
     chat: any;
@@ -109,24 +99,11 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
             resizing: false, 
             streamShown: true,
             drawerOpen: false,
-            underlayOpacity: undefined,
             emoteDirShown: false,
-            emoteDirY: undefined,
-            keyboardShown: false,
             drawerPaddingHeight: 380,
             emoteFilter: '',
             inputFocused: false,
-            settings: {
-                mediaModal: undefined,
-                emoteDirLoseFocus: undefined
-            }
         };
-        // @ts-ignore
-        global.mainview = this;
-    }
-
-    applyMobileSettings(settings: any) {
-        this.setState({settings: settings});
     }
 
     applyPreviousResizeState() {
@@ -216,6 +193,7 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                         {(this.state.streamShown) &&
                             <TwitchView 
                                 height={this.state.twitchHeight}
+                                landscape={this.state.isLandscape}
                             />
                         }
                         {(this.state.streamShown) &&
@@ -236,7 +214,23 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                                 {...this.panResponder!.panHandlers} 
                             />
                         }
-                        {this.props.screenProps!.chat.mainwindow.uiElem}
+                        {this.chat.mainwindow.uiElem}
+                        {this.chat.mobileSettings.menuDrawerButton &&
+                            <Ionicons
+                                name={"menu"}
+                                style={{
+                                    position: "absolute",
+                                    right: 5
+                                }}
+                                onPress={() => {
+                                    if (this.cardDrawer !== null) {
+                                        this.cardDrawer.open
+                                        ? this.cardDrawer.closeDrawer()
+                                        : this.cardDrawer.openDrawer()
+                                    }
+                                }}
+                            />
+                        }
                 </View>
                 {this.state.height != null &&
                         <BottomDrawer 
@@ -245,6 +239,18 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                             onClose={() => this._drawerClosed()}  
                             paddingHeight={this.state.drawerPaddingHeight}
                             posSpy={this.state.drawerPosSpy!}
+                            showHandle={this.chat.menuDrawerButton === false}
+                            style={this.state.isLandscape
+                                ? {
+                                    alignSelf: "flex-end",
+                                    width: "100%",
+                                    maxWidth: 400
+                                }
+                                : {
+                                    alignSelf: "center",
+                                    width: "100%"
+                                }
+                            }
                         >                  
                             <EmoteDirectory
                                 translateY={this.state.emoteDirOffset}
@@ -258,7 +264,10 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                                     opacity={this.state.chatInputOpacity}
                                     shown={!this.state.drawerOpen}
                                     onChange={(val: string) => this._onInputUpdate(val)}
-                                    onEmoteBtnPress={() => this.toggleEmoteDir()}
+                                    onEmoteBtnPress={() => {
+                                        this.chat.mobileSettings.emoteDirLoseFocus &&
+                                            this.toggleEmoteDir();
+                                    }}
                                     onFocus={() => this._inputFocused()}
                                     onBlur={() => this._inputBlurred()}
                                 />
@@ -348,7 +357,7 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
         // @ts-ignore
         global.bugsnag.leaveBreadcrumb('MainView before onLayout.');  
         const viewHeight = (e.layout.height > e.layout.width) ? e.layout.height : e.layout.width;
-        const bottomOffset = DEVICE_HEIGHT() - viewHeight - e.layout.y;
+        const isLandscape = (e.layout.width > e.layout.height);
         if (this.state.height === null) {
             const interpolate = {
                 min: 0,
@@ -359,13 +368,8 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
             this.setState({ 
                 height: viewHeight,
                 emoteDirOffset: emoteDirOffset,
+                isLandscape: isLandscape,
                 drawerPosSpy: drawerPosSpy,
-                interpolate: interpolate,
-                bottomOffset: bottomOffset,
-                underlayOpacity: drawerPosSpy.interpolate({
-                    inputRange: [interpolate.min, interpolate.max],
-                    outputRange: [0, 0.7]
-                }),
                 chatInputOpacity: drawerPosSpy.interpolate({
                     inputRange: [interpolate.min, interpolate.max],
                     outputRange: [1, 0]                    
@@ -382,10 +386,16 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                 AsyncStorage.setItem('TwitchViewHeight', Math.floor(this.state.twitchHeight).toString());                
             }
             AsyncStorage.setItem('InitRoute', (this.state.streamShown) ? 'Main' : 'Chat');
-            this.chat.saveMobileSettings();
             this.chat.source.disconnect();
+            this.chat.mainwindow.lines = [];
         } else if (nextState === 'active') {
-            this.chat.source.connect("wss://www.destiny.gg/ws");
+            const histReq = new Request("https://www.destiny.gg/api/chat/history");
+            fetch(histReq).then(async r => {
+                const hist = await r.json();
+                this.chat.withHistory(hist)
+                    .connect("wss://www.destiny.gg/ws");
+            })
+
         }
     }
 
@@ -413,9 +423,7 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
             }
             return false;
         });  
-        this.chat.loadMobileSettings((settings: any) => {
-            this.applyMobileSettings(settings);
-        });
+        this.chat.loadMobileSettings();
         this.applyPreviousResizeState();
     }
 

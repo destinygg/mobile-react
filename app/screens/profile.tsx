@@ -492,6 +492,11 @@ class SettingsView extends FormView {
                 tag: "Close emote drawer on select",
                 name: "emoteDirLoseFocus",
                 type: "switch",
+            },
+            {
+                tag: "Control menu drawer with button",
+                name: "menuDrawerButton",
+                type: "switch"
             }
         ];
     }
@@ -510,6 +515,10 @@ class SettingsView extends FormView {
                 </ScrollView>
             </SafeAreaView>
         )
+    }
+
+    componentWillUnmount() {
+        MobileChat.current.saveMobileSettings();
     }
 }
 
