@@ -4,6 +4,7 @@
 	"private": true,
 	"scripts": {
 		"start": "node node_modules/react-native/local-cli/cli.js start",
+		"buildEmotes": "dist/buildEmotes.js",
 		"test": "jest"
 	},
 	"dependencies": {
@@ -11,16 +12,19 @@
 		"moment": "~2.19",
 		"react": "^16.0.0",
 		"react-native": "^0.56.0",
+		"react-native-fast-image": "^4.0.14",
 		"react-navigation": "^1.0.0-beta.17",
 		"throttle-debounce": "~1.0.1",
 		"typescript": "^2.9.1"
 	},
 	"devDependencies": {
+		"@types/css": "0.0.31",
 		"@types/react": "^16.3.17",
 		"@types/react-native": "^0.55.18",
 		"@types/react-navigation": "^2.0.4",
 		"babel-jest": "21.2.0",
 		"babel-preset-react-native": "4.0.0",
+		"css": "^2.2.3",
 		"jest": "21.2.1",
 		"react-test-renderer": "^16.0.0"
 	},
