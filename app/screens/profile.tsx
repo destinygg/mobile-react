@@ -11,11 +11,11 @@ import {
     StackNavigator,
 } from 'react-navigation';
 
-import { ListButton, ListButtonProps } from '../components/forms/ButtonList';
-import FormView, { FormViewProps, FormViewState, ProfileForm } from '../components/forms/FormView';
-import { NavList } from '../components/NavList';
-import { UserAgreement } from '../components/UserAgreement';
-import styles from '../styles';
+import { ListButton, ListButtonProps } from 'components/forms/ButtonList';
+import FormView, { FormViewProps, FormViewState, ProfileForm } from 'components/forms/FormView';
+import { NavList } from 'components/NavList';
+import { UserAgreement } from 'components/UserAgreement';
+import styles from 'styles';
 import AboutView from './about';
 
 const countries = require("../../lib/assets/countries.json");

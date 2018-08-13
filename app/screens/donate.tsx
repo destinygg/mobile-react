@@ -3,8 +3,8 @@ import { Alert, Button, Platform, ScrollView, Text, View, WebView } from 'react-
 import { HeaderBackButton, NavigationActions, NavigationScreenProps, SafeAreaView, StackNavigator } from 'react-navigation';
 import styles from 'styles';
 
-import TextInputListItem from '../components/forms/TextInputListItem';
-import { UserAgreement } from '../components/UserAgreement';
+import TextInputListItem from 'components/forms/TextInputListItem';
+import { UserAgreement } from 'components/UserAgreement';
 
 interface DonateWebViewParams {
     amount: string;

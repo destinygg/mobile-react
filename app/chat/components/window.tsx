@@ -20,7 +20,7 @@ import {
 const { EventEmitter } = require('../lib/assets/chat/js/emitter');
 const { emoteImgs } = require('../images');
 import { Emote } from './messages';
-import styles from '../../styles';
+import styles from 'styles';
 
 const tagcolors = [
     "green",

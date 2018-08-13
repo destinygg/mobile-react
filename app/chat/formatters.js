@@ -1,12 +1,8 @@
 import UserFeatures from '../../lib/assets/chat/js/features'
 
-const emoteDir = require('../../lib/assets/emotes.json');
+import MobileEmotes from "./emotes"
 
-const destinyEmotes = Array.from(emoteDir['destiny']);
-const twitchEmotes = Array.from(emoteDir['twitch']);
-
-const gemoteregex = new RegExp(`\b`);
-let twitchemoteregex;
+let gemoteregex;
 
 const urlregex = new RegExp(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/);
 
@@ -55,11 +51,9 @@ export class UrlFormatter {
 
 export class EmoteFormatter {
     format(chat, msg, message = null) {
-        if (!gemoteregex || !twitchemoteregex) {
-            const emoticons = destinyEmotes.join('|');
-            const twitchemotes = twitchEmotes.join('|');
+        if (!gemoteregex) {
+            const emoticons = Object.keys(MobileEmotes.emoticons).join('|');
             gemoteregex = new RegExp(`\b${emoticons}\b`);
-            twitchemoteregex = new RegExp(`\b${twitchemotes}\b`);
         }
         let regex = gemoteregex;
         let result;

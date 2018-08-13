@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { ActivityIndicator, Alert, Button, KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { NavigationScreenProp } from 'react-navigation';
 
-import styles from '../../styles';
+import styles from 'styles';
 import { FormItem, IFormItem } from './FormItem';
 
 interface ProfileFormProps {

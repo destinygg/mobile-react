@@ -17,8 +17,8 @@ import { SafeAreaView, NavigationScreenProps } from 'react-navigation';
 
 import { EmoteDirectory, MobileChatInput } from 'chat/components/window';
 import styles from 'styles';
-import { BottomDrawer } from '../components/BottomDrawer';
-import CardDrawerNavList from '../components/CardDrawerNavList';
+import { BottomDrawer } from 'components/BottomDrawer';
+import CardDrawerNavList from 'components/CardDrawerNavList';
 
 import Ionicons from "react-native-vector-icons/Ionicons";
 

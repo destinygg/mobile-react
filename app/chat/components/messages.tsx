@@ -1,10 +1,13 @@
 import React, { Component, PureComponent } from 'react';
 import { Image, Text, TextStyle, ViewStyle } from 'react-native';
 import styles from "./styles";
+import { MobileEmotes } from '../emotes';
+import RNFS from "react-native-fs";
+import { MobileIcons } from '../icons';
 
 const { UserFeatures } = require('../../lib/assets/chat/js/features');
 const { EmoteFormatter, GreenTextFormatter, UrlFormatter } = require('./formatters');
-const { emoteImgs, icons } = require('./images');
+
 export const MessageTypes = {
     STATUS: 'STATUS',
     ERROR: 'ERROR',
@@ -28,22 +31,24 @@ formatters.set('url', new UrlFormatter())
    for much layout control. */
 
 export class UserFlair extends Component<{name: string}> {
-    getFeature() {
-        if (this.props.name in icons) {
-            return icons[this.props.name];
-        } else {
-            return null;
-        }
-    }
     render() {
-        const feature = this.getFeature();
-        if (feature !== null) {
-            return (
-                <Image style={styles.Flair} source={feature} />
-            );
-        } else {
+        const icon = MobileIcons.icons[this.props.name];
+
+        if (icon === undefined) {
             return null;
         }
+
+        return (
+            <Image 
+                style={{
+                    width: icon.width,
+                    height: icon.height,
+                    top: -icon.x,
+                    left: -icon.y
+                }} 
+                source={{ uri: "file://" + RNFS.DocumentDirectoryPath + "/icons.png" }}
+            />
+        );
     }
 }
 
@@ -82,13 +87,20 @@ export class UserBadge extends Component<{user: any, onPress: {(user: string): a
 
 export class Emote extends Component<{name: string, emoteMenu?: boolean}> {
     image: Image | null = null;
-    setNativeProps = (nativeProps: any) => {
-        this.image && this.image.setNativeProps(nativeProps);
-    }
     render() {
-        const emoteStyle = (this.props.emoteMenu) ? styles.EmoteMenuItem : styles.Emote
+        const emote = MobileEmotes.emoticons[this.props.name];
+        if (emote === undefined)
+            return null;
         return (
-            <Image style={emoteStyle} source={emoteImgs.get(this.props.name)} ref={ref => this.image = ref}/>
+            <Image 
+                style={{
+                    width: emote.width,
+                    height: emote.height,
+                    top: -emote.x,
+                    left: -emote.y
+                }} 
+                source={{uri: "file://" + RNFS.DocumentDirectoryPath + "/emoticons.png"}} 
+            />
         );
     }
 }

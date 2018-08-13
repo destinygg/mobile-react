@@ -1,7 +1,7 @@
 import css from "css";
-import { IEmote } from "chat/components/emote";
+import { IEmote } from "./emotes";
 import { AsyncStorage } from "react-native";
-import FastImage from "react-native-fast-image";
+import RNFS from "react-native-fs";
 
 export interface IEmote {
     x: number;
@@ -30,18 +30,20 @@ export class MobileEmotes {
 
         const j = await f.json();
 
-        return j.sha;
+        for (let file of j) {
+            if (file.name === "emoticons.png") {
+                return file.sha
+            }
+        }
+
+        throw new Error("Unable to find file in github payload.")
     }
 
     static fetchLatestSpritesheet() {
-        // replace this with fetch, react-native-fs, and add a spritesheet
-        // implementation
-        FastImage.preload([
-            {
-                uri: "https://raw.githubusercontent.com/destinygg/chat-gui/master/assets/emotes/emoticons.png",
-                cache: "web"
-            } as any
-        ]);
+        return RNFS.downloadFile({
+            fromUrl: "https://raw.githubusercontent.com/destinygg/chat-gui/master/assets/emotes/emoticons.png",
+            toFile: RNFS.DocumentDirectoryPath + "/emoticons.png"
+        });
     }
 
     static async generateMobileEmotes(): Promise<{ [name: string]: IEmote }> {
@@ -95,7 +97,7 @@ export class MobileEmotes {
         return emoticons;
     }
 
-    static async runEmoteJob() {
+    static async init() {
         const currentSha = await AsyncStorage.getItem("emoteSha");
         const upstreamSha = await MobileEmotes.fetchLatestEmoticonHash();
 
@@ -104,12 +106,16 @@ export class MobileEmotes {
 
         if (currentSha === undefined || currentSha === null || currentSha !== upstreamSha) {
             try {
-                const e = MobileEmotes.generateMobileEmotes();
+                const e = await MobileEmotes.generateMobileEmotes();
+                MobileEmotes.emoticons = e;
                 AsyncStorage.multiSet([["emoteSha", upstreamSha], ["emotes", JSON.stringify(e)]])
             } catch (e) {
                 console.log("error generating emotes: ");
                 console.log(e);
             }
+        } else {
+            const e = await AsyncStorage.getItem("emotes");
+            MobileEmotes.emoticons = JSON.parse(e);
         }
     }
 }

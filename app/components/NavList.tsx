@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { ButtonListProps, ListButton, ListButtonProps } from "./forms/ButtonList";
 import { View } from "react-native";
-import styles from "../styles";
+import styles from "styles";
 
 interface NavListProps extends ButtonListProps {
     onPress: { (target: ListButtonProps): any };

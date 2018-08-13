@@ -24,7 +24,7 @@ import {
     StackNavigator,
 } from 'react-navigation';
 import styles, { h3 } from 'styles';
-import TextInputListItem from '../components/forms/TextInputListItem';
+import TextInputListItem from 'components/forms/TextInputListItem';
 
 const { MobileChat } = require("../chat/chat"); 
 

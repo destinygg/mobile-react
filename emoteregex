@@ -1,3 +1,0 @@
-background-position:([^ ]*).([^ ||,]*)
-
-crop: {\n\t\ttop: $1, \n\t\tleft: $2 \n\t}

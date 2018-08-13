@@ -1,84 +1,64 @@
-import { StyleSheet, Platform } from 'react-native';
-import { inheritedStyles } from 'styles';
-
-const styles = StyleSheet.create({
-    ...inheritedStyles,
-    ChatView: {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const react_native_1 = require("react-native");
+const styles_1 = require("../../styles");
+const styles = react_native_1.StyleSheet.create(Object.assign({}, styles_1.inheritedStyles, { ChatView: {
         flex: 1,
         paddingTop: 0,
         paddingRight: 10,
         paddingLeft: 10,
-    },
-    ChatViewList: {
+    }, ChatViewList: {
         flex: 1
-    },
-    ChatMessage: {
+    }, ChatMessage: {
         flexDirection: 'row',
         flexWrap: 'wrap'
-    },
-    MsgText: {
+    }, MsgText: {
         color: '#ccc',
         backgroundColor: 'transparent',
         fontSize: 12,
-        lineHeight: 18               
-    },
-    'msg-chat': {
+        lineHeight: 18
+    }, 'msg-chat': {
         flexDirection: 'row',
         flexWrap: 'wrap',
         backgroundColor: 'transparent',
         minHeight: 18
-    },
-    'msg-own': {
-        //TODO
-    },
-    'msg-broadcast': {
+    }, 'msg-own': {
+    //TODO
+    }, 'msg-broadcast': {
         color: '#edea12'
-    },
-    greenText: {
+    }, greenText: {
         color: '#6ca528'
-    },
-    subscriber: {
+    }, subscriber: {
         color: '#488ce7'
-    },
-    flair3: {
+    }, flair3: {
         color: '#0060ff'
-    },
-    flair8: {
+    }, flair8: {
         color: '#a427d6'
-    },
-    flair12: {
+    }, flair12: {
         color: '#00e5ff'
-    },
-    vip: {
+    }, vip: {
         color: '#4db524'
-    },
-    admin: {
+    }, admin: {
         color: '#b91010'
-    },
-    bot: {
+    }, bot: {
         color: '#e79015'
-    },
-    UserBadge: {
-       fontWeight: '600',
-       color: '#cacaca',
-       backgroundColor: 'transparent',
-       fontSize: 12,
-       marginLeft: 10
-    },
-    Subscriber: {
+    }, UserBadge: {
+        fontWeight: '600',
+        color: '#cacaca',
+        backgroundColor: 'transparent',
+        fontSize: 12,
+        marginLeft: 10
+    }, Subscriber: {
         color: '#488ce7'
-    },
-    mention: {
+    }, mention: {
         backgroundColor: 'rgba(0, 122, 255, 0.5)',
         borderRadius: 2
-    },
-    ChatInput: {
+    }, ChatInput: {
         flex: 1,
         fontSize: 12,
         color: "#ccc",
         height: 34
-    },
-    ChatInputOuter: {
+    }, ChatInputOuter: {
         flexDirection: 'row',
         zIndex: 2000,
         backgroundColor: '#151515',
@@ -87,88 +67,72 @@ const styles = StyleSheet.create({
         paddingTop: 8,
         paddingLeft: 5,
         paddingRight: 5,
-    },
-    ChatInputInner: {
-        flex: 1, 
+    }, ChatInputInner: {
+        flex: 1,
         flexDirection: 'row'
-    },
-    ChatInputInnerInner: {
+    }, ChatInputInnerInner: {
         borderColor: "#222",
         backgroundColor: "#181818",
-        borderWidth: StyleSheet.hairlineWidth,
-        borderRadius: (Platform.OS === 'ios') ? 17 : 19,
+        borderWidth: react_native_1.StyleSheet.hairlineWidth,
+        borderRadius: (react_native_1.Platform.OS === 'ios') ? 17 : 19,
         paddingLeft: 15,
         paddingRight: 15,
         marginLeft: 5,
         marginTop: 10,
         marginRight: 15,
         flex: 1,
-        height: (Platform.OS === 'ios') ? 34 : 38
-    },
-    Emote: {
+        height: (react_native_1.Platform.OS === 'ios') ? 34 : 38
+    }, Emote: {
         marginTop: 2,
-        height: (Platform.OS === 'ios') ? 15 : 25,
+        height: (react_native_1.Platform.OS === 'ios') ? 15 : 25,
         width: 25,
         resizeMode: 'contain',
         overflow: 'visible',
         backgroundColor: 'transparent'
-    },
-    EmoteDirectoryOuter: {
+    }, EmoteDirectoryOuter: {
         borderTopLeftRadius: 25,
         borderTopRightRadius: 25,
         height: 70,
-        backgroundColor: '#151515'     
-    },
-    EmoteDirectory: {
+        backgroundColor: '#151515'
+    }, EmoteDirectory: {
         paddingLeft: 15,
         paddingRight: 15,
         marginTop: 15
-    },
-    EmoteMenuItem: {
+    }, EmoteMenuItem: {
         resizeMode: 'contain',
         overflow: 'visible',
-        height: (Platform.OS === 'ios') ? 25 : 20
-    },
-    Flair: {
-        height: (Platform.OS === 'ios') ? 10 : 15,
-        width: (Platform.OS === 'ios') ? 10 : 15,
+        height: (react_native_1.Platform.OS === 'ios') ? 25 : 20
+    }, Flair: {
+        height: (react_native_1.Platform.OS === 'ios') ? 10 : 15,
+        width: (react_native_1.Platform.OS === 'ios') ? 10 : 15,
         resizeMode: 'contain',
         backgroundColor: 'transparent'
-    },
-    Time: {
+    }, Time: {
         fontSize: 10,
         color: '#888',
         fontWeight: '200',
         backgroundColor: 'transparent'
-    },
-    PinnedFooter: {
-        color: '#444', 
-        bottom: -25, 
+    }, PinnedFooter: {
+        color: '#444',
+        bottom: -25,
         position: 'absolute',
         alignSelf: 'center'
-    },
-    ComboCount: {
+    }, ComboCount: {
         color: '#fff',
         fontWeight: '700',
         marginLeft: 5
-    },
-    ComboX: {
+    }, ComboX: {
         color: '#fff',
         fontWeight: '500'
-    },
-    ComboCombo: {
+    }, ComboCombo: {
         color: '#ccc',
         fontSize: 10
-    },
-    MediaModal: {
+    }, MediaModal: {
         height: '100%',
         backgroundColor: 'rgba(0,0,0,0.7)',
         justifyContent: 'center'
-    },
-    MediaModalInner: {
+    }, MediaModalInner: {
         height: '50%',
-        borderRadius: 15        
-    }
-} as any);
-
-export default styles;
+        borderRadius: 15
+    } }));
+exports.default = styles;
