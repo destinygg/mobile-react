@@ -1,4 +1,5 @@
 import { StyleSheet, Platform, Dimensions } from 'react-native';
+import { Palette } from 'assets/constants';
 
 export const shortDimension = (() => {
     const dim = Dimensions.get('window');
@@ -98,7 +99,7 @@ export const inheritedStyles = {
     },
     View: {
         flex: 1,
-        backgroundColor: "#0D0D0D"
+        backgroundColor: Palette.background
     },
     SubscriptionTerms: {
         color: '#444',
@@ -106,7 +107,7 @@ export const inheritedStyles = {
         margin: 15
     },
     Link: {
-        color: '#FB952B'
+        color: 'Palette.link'
     },
     navbarRight: {
         marginRight: (Platform.OS == 'ios') ? 5 : 15

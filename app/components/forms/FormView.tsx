@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { ActivityIndicator, Alert, Button, KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { NavigationScreenProp } from 'react-navigation';
 
-import styles from 'styles';
 import { FormItem, IFormItem } from './FormItem';
+import { Palette } from 'assets/constants';
 
 interface ProfileFormProps {
     formItems: IFormItem[];
@@ -29,7 +29,11 @@ export class ProfileForm extends Component<ProfileFormProps> {
         );
 
         return (
-            <View style={[styles.View, styles.List, { marginTop: 15 }]} >
+            <View style={{
+                flex: 1,
+                backgroundColor: Palette.background,
+                marginTop: 15
+            }}>
                 {children}
             </View>
         )
@@ -39,7 +43,9 @@ export class ProfileForm extends Component<ProfileFormProps> {
 class FormSaveBtn extends Component<{ onSave: { (): any } }> {
     render() {
         return (
-            <View style={styles.navbarRight}>
+            <View style={{
+                marginRight: (Platform.OS == 'ios') ? 5 : 15
+            }}>
                 <Button title='Save' onPress={this.props.onSave} />
             </View>
         )
@@ -126,10 +132,16 @@ export default class FormView extends Component<FormViewProps, FormViewState> {
         return (
             <KeyboardAvoidingView
                 behavior='padding'
-                style={styles.View}
+                style={{
+                    flex: 1,
+                    backgroundColor: Palette.background
+                }}
                 keyboardVerticalOffset={(Platform.OS === 'android') ? -400 : 65}
             >
-                <ScrollView style={styles.View}>
+                <ScrollView style={{
+                    flex: 1,
+                    backgroundColor: Palette.background
+                }}>
                     <ProfileForm formItems={this.props.formItems} onChange={this._onChange.bind(this)} />
                 </ScrollView>
             </KeyboardAvoidingView>

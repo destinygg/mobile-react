@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Animated, Keyboard, KeyboardAvoidingView, TouchableWithoutFeedback, View, ViewStyle } from 'react-native';
 import Interactable from 'react-native-interactable';
-import styles from 'styles';
+import { Palette } from 'assets/constants';
 
 interface BottomDrawerProps {
     posSpy: Animated.Value;
@@ -113,20 +113,24 @@ export class BottomDrawer extends Component<BottomDrawerProps, {
                         </TouchableWithoutFeedback>
                         {this.props.showHandle &&
                             <Animated.View 
-                                style={[
-                                    styles.DrawerHandle, 
-                                    {
-                                        opacity: this.opacityBinding,
-                                        transform: [
-                                            {
-                                                translateY: this.handleTopBinding,
-                                            },
-                                            {
-                                                scaleX: this.handleWidthBinding
-                                            },
-                                        ]
-                                    }
-                                ]} 
+                                style={{
+                                    height: 4,
+                                    width: 100,
+                                    backgroundColor: Palette.text,
+                                    borderRadius: 2,
+                                    alignSelf: 'center',
+                                    zIndex: 3000,
+                                    top: 10,
+                                    opacity: this.opacityBinding,
+                                    transform: [
+                                        {
+                                            translateY: this.handleTopBinding,
+                                        },
+                                        {
+                                            scaleX: this.handleWidthBinding
+                                        },
+                                    ]
+                                }} 
                             />
                         }
                         {this.props.children}

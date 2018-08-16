@@ -22,7 +22,7 @@ export default class CardDrawerNavList extends PureComponent<CardDrawerNavListPr
                         this.props.onShowStream()
                     }
                 },
-                style: { backgroundColor: "#151515" }
+                style: { backgroundColor: Palette.drawerBg }
             },
             {
                 name: 'Chat',
@@ -31,33 +31,33 @@ export default class CardDrawerNavList extends PureComponent<CardDrawerNavListPr
                         this.props.onHideStream()
                     }
                 },
-                style: { backgroundColor: "#151515" }
+                style: { backgroundColor: Palette.drawerBg }
             },
             {
                 name: 'Messages',
                 onPress: () => {
                     this.props.navigation.navigate('MessageView', { backHandler: this.props.navigation.goBack })
                 },
-                style: { backgroundColor: "#151515" }
+                style: { backgroundColor: Palette.drawerBg }
             }
         ];
         if (Platform.OS != 'ios') {
             this.routes.push({
                 name: 'Donate',
                 onPress: () => this.props.navigation.navigate('DonateView', { backHandler: this.props.navigation.goBack }),
-                style: { backgroundColor: "#151515" }
+                style: { backgroundColor: Palette.drawerBg }
             });
         }
         this.routes.push({
             name: 'Profile',
             onPress: () => this.props.navigation.navigate('ProfileView', { backHandler: this.props.navigation.goBack }),
-            style: { backgroundColor: "#151515" }
+            style: { backgroundColor: Palette.drawerBg }
         });
     }
     render() {
         return (
             <View style={{
-                backgroundColor: '#151515',
+                backgroundColor: Palette.drawerBg,
                 paddingBottom: 100,
                 paddingTop: 10,
                 marginTop: -5

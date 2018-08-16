@@ -1,6 +1,6 @@
 import React, {Component} from "react";
-import { ViewStyle, View, TextInput } from "react-native";
-import styles from "styles";
+import { ViewStyle, View, TextInput, TextStyle, StyleSheet } from "react-native";
+import { Palette } from "assets/constants";
 
 interface TextInputListItemProps {
     name: string;
@@ -20,25 +20,22 @@ export default class TextInputListItem extends Component<TextInputListItemProps>
         this.state = { value: this.props.value };
     }
     render() {
-        let outerStyle: ViewStyle[] = [styles.ListItemOuter];
-        let innerStyle: ViewStyle[] = [styles.FormItem];
-
-        if (this.props.first) {
-            outerStyle.push(styles.firstInList);
-        }
-
-        if (this.props.last) {
-            outerStyle.push(styles.lastInList);
-            innerStyle.push(styles.innerLastInList);
-        }
-
-        if (this.props.readOnly) {
-            innerStyle.push(styles.FormItemDisabled);
-        }
-
-        if (this.props.multiline) {
-            innerStyle.push({ minHeight: 100 });
-        }
+        const outerStyle: ViewStyle = Object.assign({
+            backgroundColor: Palette.innerDark,             
+            paddingLeft: 15,      
+            borderColor: Palette.border,
+            borderTopWidth: this.props.first ? StyleSheet.hairlineWidth : undefined,
+            borderBottomWidth: this.props.last ? StyleSheet.hairlineWidth : undefined
+        });
+        const innerStyle: TextStyle = {
+            color: this.props.readOnly ? Palette.text : undefined,
+            minHeight: this.props.multiline ? 100 : undefined,
+            paddingTop: 10,
+            paddingRight: 15, 
+            paddingBottom: 10,         
+            borderColor: Palette.border,
+            borderBottomWidth: this.props.last ? StyleSheet.hairlineWidth : undefined
+        };
 
         return (
             <View style={outerStyle}>
@@ -46,13 +43,13 @@ export default class TextInputListItem extends Component<TextInputListItemProps>
                     style={innerStyle}
                     value={this.props.value}
                     placeholder={this.props.placeholder}
-                    placeholderTextColor={'#888'}
+                    placeholderTextColor={Palette.text}
                     editable={(this.props.readOnly) === true ? false : true}
                     onChangeText={(value) => {
                         this.setState({ value: value });
                         this.props.onChange && this.props.onChange(this.props.name, value);
                     }}
-                    underlineColorAndroid='#222'
+                    underlineColorAndroid={Palette.border}
                     multiline={this.props.multiline}
                     keyboardAppearance='dark'
                     maxLength={this.props.maxLength}

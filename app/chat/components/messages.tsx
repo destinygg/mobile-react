@@ -1,9 +1,9 @@
 import React, { Component, PureComponent } from 'react';
 import { Image, Text, TextStyle, ViewStyle } from 'react-native';
-import styles from "./styles";
 import { MobileEmotes } from '../emotes';
 import RNFS from "react-native-fs";
 import { MobileIcons } from '../icons';
+import { Palette } from 'assets/constants';
 
 const { UserFeatures } = require('../../lib/assets/chat/js/features');
 const { EmoteFormatter, GreenTextFormatter, UrlFormatter } = require('./formatters');
@@ -55,16 +55,29 @@ export class UserFlair extends Component<{name: string}> {
 export class Time extends Component {
     render() {
         return (
-            <Text style={styles.Time}>{this.props.children} </Text>
+            <Text style={{
+                fontSize: 10,
+                color: Palette.text,
+                fontWeight: '200',
+                backgroundColor: 'transparent'
+            }}>
+                {this.props.children}
+            </Text>
         )
     }
 }
 
 export class UserBadge extends Component<{user: any, onPress: {(user: string): any}}> {
-    style: ViewStyle[];
+    style: TextStyle[];
     constructor(props: {user: any, onPress: {(user: string): any}}) {
         super(props);
-        this.style = [styles.UserBadge];
+        this.style = [{
+            fontWeight: '600',
+            color: Palette.messageText,
+            backgroundColor: 'transparent',
+            fontSize: 12,
+            marginLeft: 10
+         }];
         let admin = false;
         for (let i = 0; i < this.props.user.features.length; i++) {
             if (this.props.user.features[i] == UserFeatures.ADMIN) {
@@ -117,7 +130,12 @@ class MsgText extends Component<MsgTextProps> {
         super(props);
     }
     render() {
-        let msgStyles = [styles.MsgText];
+        let msgStyles = [{
+            color: Palette.messageText,
+            backgroundColor: 'transparent',
+            fontSize: 12,
+            lineHeight: 18               
+        }];
 
         if (this.props.greenText) {
             msgStyles.push(styles.greenText);

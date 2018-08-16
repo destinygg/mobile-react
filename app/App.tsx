@@ -1,19 +1,16 @@
 import React, { Component } from 'react';
 import { StatusBar, View } from 'react-native';
-import InitNav from 'navigation';
+import InitNav from './navigation';
 const { MobileChat } = require('./chat/chat');
-import styles from 'styles';
+import styles from './styles';
 import { NavigationState } from 'react-navigation';
-
-const emotes = require('./lib/assets/emotes.json');
 
 class App extends Component<{}, {navState?: string}> {
     chat: any
     constructor(props: any) {
         super(props);
         if (!this.chat) {
-            this.chat = new MobileChat()
-                .withEmotes(emotes);
+            this.chat = new MobileChat();
         }
         this.state = {};
     }

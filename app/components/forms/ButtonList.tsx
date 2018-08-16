@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Text, TouchableHighlight, View, ViewStyle } from 'react-native';
-import styles from 'styles';
+import { StyleSheet, Text, TouchableHighlight, View, ViewStyle } from 'react-native';
+import { Palette, h3 } from 'assets/constants';
 
 export interface ListButtonProps {
     name: string;
@@ -13,21 +13,20 @@ export interface ListButtonProps {
 
 export class ListButton extends Component<ListButtonProps> {
     render() {
-        const outerStyle: ViewStyle[] = [styles.ListItemOuter];
-        const innerStyle: ViewStyle[] = [styles.ListItemInner];
-
-        if (this.props.first) {
-            outerStyle.push(styles.firstInList);
-        }
-
-        if (this.props.last) {
-            outerStyle.push(styles.lastInList);
-            innerStyle.push(styles.innerLastInList);
-        }
-
-        if (this.props.style) {
-            outerStyle.push(this.props.style);
-        }
+        const outerStyle: ViewStyle = Object.assign({
+            backgroundColor: Palette.innerDark,             
+            paddingLeft: 15,      
+            borderColor: Palette.border,
+            borderTopWidth: this.props.first ? StyleSheet.hairlineWidth : undefined,
+            borderBottomWidth: this.props.last ? StyleSheet.hairlineWidth : undefined
+        }, this.props.style);
+        const innerStyle: ViewStyle = {
+            paddingTop: 10,
+            paddingRight: 15, 
+            paddingBottom: 10,         
+            borderColor: Palette.border,
+            borderBottomWidth: this.props.last ? StyleSheet.hairlineWidth : undefined
+        };
 
         const displayName = this.props.tag !== undefined
             ? this.props.tag
@@ -36,7 +35,10 @@ export class ListButton extends Component<ListButtonProps> {
         return (
             <TouchableHighlight onPress={this.props.onPress} style={outerStyle}>
                 <View style={innerStyle}>
-                    <Text style={styles.ListItemText}>
+                    <Text style={{
+                        color: Palette.title,
+                        fontSize: h3
+                    }}>
                         {displayName}
                     </Text>
                 </View>
@@ -65,7 +67,7 @@ export default class ButtonList extends Component<ButtonListProps> {
         });
 
         return (
-            <View style={styles.List}>
+            <View style={{flex: 1}}>
                 {children}
             </View>
         )

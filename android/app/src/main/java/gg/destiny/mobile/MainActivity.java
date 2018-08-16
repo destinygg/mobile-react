@@ -1,4 +1,4 @@
-package gg.destiny.mobile;
+package com.destinyapp;
 
 import com.facebook.react.ReactActivity;
 

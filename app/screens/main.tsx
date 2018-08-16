@@ -21,6 +21,7 @@ import { BottomDrawer } from 'components/BottomDrawer';
 import CardDrawerNavList from 'components/CardDrawerNavList';
 
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { Palette } from 'assets/constants';
 
 function DEVICE_HEIGHT() {
     const dims = Dimensions.get('window');
@@ -107,7 +108,7 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
     }
 
     applyPreviousResizeState() {
-        AsyncStorage.getItem('TwitchViewHeight').then((twitchViewHeight: string) => {
+        AsyncStorage.getItem('TwitchViewHeight').then((twitchViewHeight: string | null) => {
             if (twitchViewHeight !== null) {
                 const resize = Math.floor(Number(twitchViewHeight));
                 // @ts-ignore
@@ -177,7 +178,7 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
         }];     
         if (this.state.resizing) { 
             dividerStyle.push({
-                backgroundColor: '#444',
+                backgroundColor: Palette.handleLine,
                 opacity: .5
             }); 
         }
@@ -208,7 +209,7 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                                     zIndex: 1000,
                                     width: (Platform.OS === 'ios') ? 24 : 30,
                                     borderRadius: (Platform.OS === 'ios') ? 8 : 10,
-                                    backgroundColor: '#151515',
+                                    backgroundColor: Palette.drawerBg,
                                     alignSelf: 'center',
                                 }} 
                                 {...this.panResponder!.panHandlers} 
@@ -279,7 +280,7 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                                 />
                             }
                             {this.state.inputFocused &&
-                                <View style={{height: 100, backgroundColor: '#151515'}} />
+                                <View style={{height: 100, backgroundColor: Palette.drawerBg}} />
                             }
                         </BottomDrawer>
                 }

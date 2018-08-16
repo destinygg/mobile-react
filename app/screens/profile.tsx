@@ -15,8 +15,8 @@ import { ListButton, ListButtonProps } from 'components/forms/ButtonList';
 import FormView, { FormViewProps, FormViewState, ProfileForm } from 'components/forms/FormView';
 import { NavList } from 'components/NavList';
 import { UserAgreement } from 'components/UserAgreement';
-import styles from 'styles';
 import AboutView from './about';
+import { h3, Palette, shortDimension, h2 } from 'assets/constants';
 
 const countries = require("../../lib/assets/countries.json");
 const countryOptions = countries.map((item: any) => {
@@ -69,8 +69,14 @@ class AccountView extends FormView {
     }
     render() {
         return (
-            <SafeAreaView style={styles.View}>
-                <ScrollView style={styles.View}>
+            <SafeAreaView style={{
+                flex: 1,
+                backgroundColor: Palette.background
+            }}>
+                <ScrollView style={{
+                flex: 1,
+                backgroundColor: Palette.background
+            }}>
                     <ProfileForm formItems={this.formItems} formState={this.state} onChange={this._onChange.bind(this)} />
                 </ScrollView>
             </SafeAreaView>
@@ -113,7 +119,15 @@ class SubscriptionItem extends Component<SubscriptionItemProps, {press: boolean}
                 onPress={() => this.props.onSelect && 
                     this.props.subId &&
                     this.props.onSelect(this.props.subId, this.props.displayName, this.props.duration)}
-                style={[styles.SubscriptionItem, {borderColor: tierColor}] as any}
+                style={{
+                    flex: 1,
+                    borderRadius: 5,
+                    borderWidth: 2,
+                    height: (shortDimension-48)/2*.9,  // surrounding margins
+                    margin: 8,                        // divided by half, adjusted for perception
+                    padding: 10,
+                    borderColor: tierColor
+                }}
                 onPressIn={() => this.setState({press: true})} 
                 onPressOut={() => this.setState({press: false})} 
                 delayPressOut={100}
@@ -121,17 +135,48 @@ class SubscriptionItem extends Component<SubscriptionItemProps, {press: boolean}
             >
                 <View style={{alignItems: 'flex-start', justifyContent:'space-between', flex: 1}}>
                     <View style={{alignItems: 'flex-start'}}>
-                        <Text style={[styles.SubscriptionTitle, (this.state.press) ? {color: '#000'} : null]}>{this.props.displayName}</Text>
-                        <Text style={[
-                            styles.SubscriptionSubtitle, 
-                            (this.props.duration === '3mo' || this.props.alreadySubscribed) ? styles.ThreeMonth : null, 
-                            (this.state.press) ? {color: '#000', borderColor: '#000'} : null 
+                        <Text style={{
+                            alignContent: 'center',
+                            marginTop: 25,
+                            elevation: 4,
+                            shadowColor: '#000',
+                            shadowOpacity: 0.7,
+                            shadowRadius: 5,
+                            color: this.state.press ? '#000' : undefined
+                        }}>
+                            {this.props.displayName}
+                        </Text>
+                        <Text style={[{
+                            fontSize: h3,
+                            marginTop: 5,
+                            fontWeight: '300',
+                            color: this.state.press ? '#000' : '#fff',
+                            borderColor: this.state.press ? '#000' : undefined
+                        },
+                        (this.props.duration === '3mo' || this.props.alreadySubscribed) 
+                            ? {
+                                color: '#FB952B',
+                                borderColor: '#FB952B',
+                                borderRadius: 5,
+                                borderWidth: 1,
+                                paddingTop: 2,
+                                paddingBottom: 2,
+                                paddingLeft: 5,
+                                paddingRight: 5
+                            }: undefined
                         ]}>
                             {this.props.duration}
                         </Text>
                     </View>
                     {!this.props.alreadySubscribed &&
-                        <Text style={[styles.SubscriptionPrice, (this.state.press) ? {color: '#000'} : null]}>{this.props.price}</Text>                    
+                        <Text style={{
+                            fontSize: h2,
+                            fontWeight: '700',
+                            color: this.state.press ? "#000" : '#fff',
+                            alignSelf: 'flex-end'
+                        }}>
+                            {this.props.price}
+                        </Text>                    
                     }
                 </View>
             </TouchableHighlight>
@@ -154,10 +199,29 @@ class SubscriptionView extends Component<NavigationScreenProps> {
 
         if (features.indexOf('subscriber') === -1) {
             return (
-                <SafeAreaView style={styles.View}>
-                    <ScrollView style={styles.SubscriptionView}>
-                        <Text style={styles.ChooseTitle}>Choose subscription.</Text>
-                        <View style={styles.SubscriptionRow}>
+                <SafeAreaView style={{
+                flex: 1,
+                backgroundColor: Palette.background
+            }}>
+                    <ScrollView style={{flex: 1}}>
+                        <Text style={{
+                            fontSize: h2,
+                            fontWeight: '700',
+                            color: "#fff",
+                            marginTop: 25,
+                            marginBottom: 10,        
+                            marginLeft: 15     
+                        }}>
+                            Choose subscription.
+                        </Text>
+                        <View style={ {
+                            flex: 1,
+                            flexDirection: 'row',
+                            marginLeft: 8,
+                            marginRight: 8,
+                            marginTop: 0,
+                            marginBottom: 0,
+                        }}>
                             <SubscriptionItem
                                 subId="1-MONTH-SUB4" 
                                 displayName="Tier IV"
@@ -173,7 +237,14 @@ class SubscriptionView extends Component<NavigationScreenProps> {
                                 onSelect={(id, name, duration) => this._onSelect(id, name, duration)}
                             />
                         </View>
-                        <View style={styles.SubscriptionRow}>
+                        <View style={ {
+                            flex: 1,
+                            flexDirection: 'row',
+                            marginLeft: 8,
+                            marginRight: 8,
+                            marginTop: 0,
+                            marginBottom: 0,
+                        }}>
                             <SubscriptionItem
                                 subId="1-MONTH-SUB3" 
                                 displayName="Tier III"
@@ -189,7 +260,14 @@ class SubscriptionView extends Component<NavigationScreenProps> {
                                 onSelect={(id, name, duration) => this._onSelect(id, name, duration)}
                             />
                         </View>
-                        <View style={styles.SubscriptionRow}>
+                        <View style={ {
+                            flex: 1,
+                            flexDirection: 'row',
+                            marginLeft: 8,
+                            marginRight: 8,
+                            marginTop: 0,
+                            marginBottom: 0,
+                        }}>
                             <SubscriptionItem
                                 subId="1-MONTH-SUB2" 
                                 displayName="Tier II"
@@ -205,7 +283,14 @@ class SubscriptionView extends Component<NavigationScreenProps> {
                                 onSelect={(id, name, duration) => this._onSelect(id, name, duration)}
                             />
                         </View>
-                        <View style={styles.SubscriptionRow}>
+                        <View style={ {
+                            flex: 1,
+                            flexDirection: 'row',
+                            marginLeft: 8,
+                            marginRight: 8,
+                            marginTop: 0,
+                            marginBottom: 0,
+                        }}>
                             <SubscriptionItem
                                 subId="1-MONTH-SUB" 
                                 displayName="Tier I"
@@ -259,7 +344,10 @@ class SubscriptionView extends Component<NavigationScreenProps> {
                     />;
             }
             return (
-                <SafeAreaView style={styles.View}>
+                <SafeAreaView style={{
+                flex: 1,
+                backgroundColor: Palette.background
+            }}>
                     <ScrollView style={styles.SubscriptionView}>
                         <Text style={styles.ChooseTitle}>Subscribed</Text>
                         <Text style={styles.ChooseSubtitle}>Visit site in browser to manage subscription.</Text>
@@ -386,8 +474,14 @@ class SubscriptionMessageView extends Component<SubscriptionMessageViewProps, Su
         }
 
         return (
-            <SafeAreaView style={styles.View}>
-                <ScrollView style={[styles.View, {paddingTop: 25}]}>
+            <SafeAreaView style={{
+                flex: 1,
+                backgroundColor: Palette.background
+            }}>
+                <ScrollView style={[{
+                flex: 1,
+                backgroundColor: Palette.background
+            }, {paddingTop: 25}]}>
                     <View style={{marginLeft: 15}}>
                         <Text style={styles.SubscriptionTitle}>{this.subDisplayName}</Text>
                         <Text style={styles.SubscriptionSubtitle}>{this.subDuration}</Text>
@@ -509,8 +603,14 @@ class SettingsView extends FormView {
     }
     render() {
         return (
-            <SafeAreaView style={styles.View}>
-                <ScrollView style={styles.View}>
+            <SafeAreaView style={{
+                flex: 1,
+                backgroundColor: Palette.background
+            }}>
+                <ScrollView style={{
+                flex: 1,
+                backgroundColor: Palette.background
+            }}>
                     <ProfileForm formItems={this.formItems} formState={this.state} onChange={(name, value) => this._onChange(name, value)} />
                 </ScrollView>
             </SafeAreaView>
@@ -550,8 +650,14 @@ class ProfileView extends Component<NavigationScreenProps> {
         const created = moment(MobileChat.current.me.createdDate);
 
         return (
-            <SafeAreaView style={styles.View}>
-                <ScrollView contentContainerStyle={[styles.View]}>
+            <SafeAreaView style={{
+                flex: 1,
+                backgroundColor: Palette.background
+            }}>
+                <ScrollView contentContainerStyle={[{
+                flex: 1,
+                backgroundColor: Palette.background
+            }]}>
                     <View style={styles.ProfileHeader}>
                         <Text style={styles.ProfileName}>{MobileChat.current.user.username}</Text>
                         <Text style={styles.ProfileCreated}>{'Member since: ' + created.format('dddd, D MMMM YYYY')}</Text>
@@ -588,7 +694,10 @@ const ProfileNav = StackNavigator({
         headerTitleStyle: styles.NavigationHeaderTitle,
         headerTintColor: (Platform.OS === 'android') ? '#fff' : undefined
     },
-    cardStyle: styles.View
+    cardStyle: {
+                flex: 1,
+                backgroundColor: Palette.background
+            }
 });
 
 export default ProfileNav;

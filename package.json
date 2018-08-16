@@ -8,31 +8,31 @@
 		"test": "jest"
 	},
 	"dependencies": {
-		"bugsnag-react-native": "^2.6.0",
+		"bugsnag-react-native": "^2.10.2",
 		"moment": "~2.19",
-		"react": "^16.0.0",
+		"react": "^16.4.2",
 		"react-native": "^0.56.0",
 		"react-native-fast-image": "^4.0.14",
 		"react-native-fs": "^2.11.15",
 		"react-native-interactable": "^0.1.10",
 		"react-native-vector-icons": "^5.0.0",
-		"react-navigation": "^1.0.0-beta.17",
+		"react-navigation": "^1.5.12",
 		"throttle-debounce": "~1.0.1",
-		"typescript": "^2.9.1"
+		"typescript": "^2.9.2"
 	},
 	"devDependencies": {
 		"@types/css": "0.0.31",
-		"@types/react": "^16.3.17",
-		"@types/react-native": "^0.55.18",
+		"@types/react": "^16.4.11",
+		"@types/react-native": "^0.56.9",
 		"@types/react-native-fs": "^2.8.2",
 		"@types/react-native-vector-icons": "^4.6.2",
-		"@types/react-navigation": "^2.0.4",
+		"@types/react-navigation": "^2.0.16",
 		"babel-jest": "21.2.0",
-		"babel-preset-react-native": "4.0.0",
+		"babel-preset-react-native": "^5.0.2",
 		"css": "^2.2.3",
 		"jest": "21.2.1",
 		"react-native-typescript-transformer": "^1.2.10",
-		"react-test-renderer": "^16.0.0"
+		"react-test-renderer": "^16.4.2"
 	},
 	"jest": {
 		"preset": "react-native"

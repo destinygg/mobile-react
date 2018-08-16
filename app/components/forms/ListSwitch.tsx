@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import styles from "styles";
-import { Text, View, Switch } from "react-native";
+import { StyleSheet, Text, View, Switch, ViewStyle } from "react-native";
+import { Palette, h3 } from "assets/constants";
 
 interface ListSwitchProps {
     first?: boolean;
@@ -13,17 +13,23 @@ interface ListSwitchProps {
 
 export default class ListSwitch extends Component<ListSwitchProps> {
     render() {
-        let outerStyle = [styles.ListItemOuter];
-        let innerStyle = [styles.ListItemInner];
-
-        if (this.props.first) {
-            outerStyle.push(styles.firstInList);
-        }
-
-        if (this.props.last) {
-            outerStyle.push(styles.lastInList);
-            innerStyle.push(styles.innerLastInList);
-        }
+        const outerStyle: ViewStyle = {
+            backgroundColor: Palette.innerDark,             
+            paddingLeft: 15,      
+            borderColor: Palette.border,
+            borderTopWidth: this.props.first ? StyleSheet.hairlineWidth : undefined,
+            borderBottomWidth: this.props.last ? StyleSheet.hairlineWidth : undefined
+        };
+        const innerStyle: ViewStyle = {
+            paddingTop: 10,
+            paddingRight: 15, 
+            paddingBottom: 10,         
+            borderColor: Palette.border,
+            borderBottomWidth: this.props.last ? StyleSheet.hairlineWidth : undefined,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+        };
         
         const displayName = this.props.tag !== undefined
             ? this.props.tag
@@ -31,8 +37,13 @@ export default class ListSwitch extends Component<ListSwitchProps> {
 
         return (
             <View style={outerStyle}>
-                <View style={[innerStyle, styles.ListSwitch]}>
-                    <Text style={styles.ListItemText}>{displayName}</Text>
+                <View style={innerStyle}>
+                    <Text style={{
+                        color: Palette.title,
+                        fontSize: h3
+                    }}>
+                        {displayName}
+                    </Text>
                     <Switch onValueChange={(value) => this.props.onChange(this.props.name, value)} value={this.props.value} />
                 </View>
             </View>

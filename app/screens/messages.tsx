@@ -25,6 +25,7 @@ import {
 } from 'react-navigation';
 import styles, { h3 } from 'styles';
 import TextInputListItem from 'components/forms/TextInputListItem';
+import { Palette } from 'assets/constants';
 
 const { MobileChat } = require("../chat/chat"); 
 
@@ -70,10 +71,10 @@ class UserMessage extends Component<UserMessageProps> {
                     paddingBottom: 8,
                     paddingLeft: 12,
                     paddingRight: 12,
-                    backgroundColor: (this.props.isSelf) ? "#222" : '#181818'
+                    backgroundColor: (this.props.isSelf) ? Palette.border : Palette.inner
                 }}>
                     <Text style={{
-                        color: "#fff",
+                        color: Palette.title,
                     }}>
                         {this.props.item.message}
                     </Text>
@@ -217,15 +218,15 @@ class UserView extends Component<UserViewProps, UserViewState> {
                             marginRight: 5,
                             marginBottom: 5,
                             fontSize: 12,
-                            color: "#ccc",
-                            borderColor: '#222',
+                            color: Palette.messageText,
+                            borderColor: Palette.border,
                             borderWidth: (Platform.OS === 'ios') ? StyleSheet.hairlineWidth : 0,
                         }}
                         placeholder={'Direct message'}
-                        placeholderTextColor="#888"
+                        placeholderTextColor={Palette.text}
                         onChangeText={(text) => this.setState({ input: text })}
                         onSubmitEditing={() => this.sendMessage()}
-                        underlineColorAndroid='#222'
+                        underlineColorAndroid={Palette.border}
                         value={this.state.input}
                         keyboardAppearance='dark'
                         autoCorrect={true}
@@ -264,7 +265,7 @@ class MessageListItem extends Component<MessageListItemProps> {
                 <View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                         <Text style={{
-                            color: '#fff',
+                            color: Palette.title,
                             fontSize: h3,
                             fontWeight: '500'
                         }}>
@@ -272,7 +273,7 @@ class MessageListItem extends Component<MessageListItemProps> {
                         </Text>
                         <View>
                             <Text style={{
-                                color: '#888'
+                                color: Palette.text
                             }}>
                                 {moment(this.props.item.timestamp).calendar(this.props.item.timestamp, MOMENT_FORMAT)}
                             </Text>
@@ -281,7 +282,7 @@ class MessageListItem extends Component<MessageListItemProps> {
                     <Text 
                         numberOfLines={1} 
                         style={{
-                            color: '#888'
+                            color: Palette.text
                         }}
                     >
                         {this.props.item.message}
@@ -387,7 +388,7 @@ class Separator extends Component {
                 marginLeft: 15,
                 marginRight: 15,
                 height: StyleSheet.hairlineWidth,
-                backgroundColor: '#222'
+                backgroundColor: Palette.border
             }} />
         )
     }
@@ -407,7 +408,7 @@ class MessageView extends Component<NavigationScreenProps, {
             title: 'Messages',
             headerLeft: <HeaderBackButton title='Back' onPress={() => params.backHandler(null)} />,
             headerRight: <ComposeButton onPress={params.composeHandler ? params.composeHandler : () => null} />,
-            headerTintColor: "#ccc"
+            headerTintColor: Palette.messageText
         });
     }
     constructor(props: NavigationScreenProps) {
@@ -504,9 +505,13 @@ const MessageNav = StackNavigator({
 }, {
         initialRouteName: 'MessageView',
         navigationOptions: {
-            headerStyle: styles.Navigation,
-            headerTitleStyle: styles.NavigationHeaderTitle,
-            headerTintColor: (Platform.OS === 'android') ? '#fff' : undefined
+            headerStyle: {
+                backgroundColor: Palette.inner,
+                borderColor: Palette.navBorder,
+                borderStyle: "solid"
+            },
+            headerTitleStyle: {color: Palette.text},
+            headerTintColor: (Platform.OS === 'android') ? Palette.text : undefined
         },
         cardStyle: styles.View
     });

@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { ButtonListProps, ListButton, ListButtonProps } from "./forms/ButtonList";
 import { View } from "react-native";
-import styles from "styles";
 
 interface NavListProps extends ButtonListProps {
     onPress: { (target: ListButtonProps): any };
@@ -22,7 +21,7 @@ export class NavList extends Component<NavListProps> {
         });
 
         return (
-            <View style={styles.List}>
+            <View style={{flex: 1}}>
                 {children}
             </View>
         )

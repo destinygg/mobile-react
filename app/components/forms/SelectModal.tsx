@@ -1,7 +1,6 @@
 import React, {Component} from "react";
 import { Picker, Modal, View, Button } from "react-native";
-
-import styles from "styles";
+import { Palette } from "assets/constants";
 
 export interface SelectModalItem {
     name: string;
@@ -50,9 +49,17 @@ export default class SelectModal extends Component<SelectModalProps, SelectModal
                 visible={this.state.shown}
                 onRequestClose={() => this.hide()}
             >
-                <View style={styles.SelectModalOuter}>
-                    <View style={styles.SelectModalInner}>
-                        <View style={styles.SelectModalHeader}>
+                <View style={{
+                    flex: 1,
+                    justifyContent: 'flex-end'
+                }}>
+                    <View style={{backgroundColor: Palette.inner}}>
+                        <View style={{
+                            marginTop: 5,
+                            marginRight: 10,
+                            flexDirection: 'row',
+                            justifyContent: 'flex-end'
+                        }}>
                             <Button
                                 onPress={() => this._onSelect(this.props.name, this.state.value)}
                                 title='Done'
@@ -63,7 +70,6 @@ export default class SelectModal extends Component<SelectModalProps, SelectModal
                             onValueChange={(itemValue, itemIndex) => {
                                 this.setState({ value: itemValue });
                             }}
-                            itemStyle={styles.text}
                         >
                             {selectOptions}
                         </Picker>

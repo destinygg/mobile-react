@@ -1,27 +1,7 @@
 import { StyleSheet, Platform } from 'react-native';
-import { inheritedStyles } from 'styles';
+import { Palette } from 'assets/constants';
 
 const styles = StyleSheet.create({
-    ...inheritedStyles,
-    ChatView: {
-        flex: 1,
-        paddingTop: 0,
-        paddingRight: 10,
-        paddingLeft: 10,
-    },
-    ChatViewList: {
-        flex: 1
-    },
-    ChatMessage: {
-        flexDirection: 'row',
-        flexWrap: 'wrap'
-    },
-    MsgText: {
-        color: '#ccc',
-        backgroundColor: 'transparent',
-        fontSize: 12,
-        lineHeight: 18               
-    },
     'msg-chat': {
         flexDirection: 'row',
         flexWrap: 'wrap',
@@ -58,13 +38,6 @@ const styles = StyleSheet.create({
     bot: {
         color: '#e79015'
     },
-    UserBadge: {
-       fontWeight: '600',
-       color: '#cacaca',
-       backgroundColor: 'transparent',
-       fontSize: 12,
-       marginLeft: 10
-    },
     Subscriber: {
         color: '#488ce7'
     },
@@ -72,88 +45,16 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 122, 255, 0.5)',
         borderRadius: 2
     },
-    ChatInput: {
-        flex: 1,
-        fontSize: 12,
-        color: "#ccc",
-        height: 34
-    },
-    ChatInputOuter: {
-        flexDirection: 'row',
-        zIndex: 2000,
-        backgroundColor: '#151515',
-        borderTopLeftRadius: 25,
-        borderTopRightRadius: 25,
-        paddingTop: 8,
-        paddingLeft: 5,
-        paddingRight: 5,
-    },
-    ChatInputInner: {
-        flex: 1, 
-        flexDirection: 'row'
-    },
-    ChatInputInnerInner: {
-        borderColor: "#222",
-        backgroundColor: "#181818",
-        borderWidth: StyleSheet.hairlineWidth,
-        borderRadius: (Platform.OS === 'ios') ? 17 : 19,
-        paddingLeft: 15,
-        paddingRight: 15,
-        marginLeft: 5,
-        marginTop: 10,
-        marginRight: 15,
-        flex: 1,
-        height: (Platform.OS === 'ios') ? 34 : 38
-    },
-    Emote: {
-        marginTop: 2,
-        height: (Platform.OS === 'ios') ? 15 : 25,
-        width: 25,
-        resizeMode: 'contain',
-        overflow: 'visible',
-        backgroundColor: 'transparent'
-    },
-    EmoteDirectoryOuter: {
-        borderTopLeftRadius: 25,
-        borderTopRightRadius: 25,
-        height: 70,
-        backgroundColor: '#151515'     
-    },
-    EmoteDirectory: {
-        paddingLeft: 15,
-        paddingRight: 15,
-        marginTop: 15
-    },
-    EmoteMenuItem: {
-        resizeMode: 'contain',
-        overflow: 'visible',
-        height: (Platform.OS === 'ios') ? 25 : 20
-    },
-    Flair: {
-        height: (Platform.OS === 'ios') ? 10 : 15,
-        width: (Platform.OS === 'ios') ? 10 : 15,
-        resizeMode: 'contain',
-        backgroundColor: 'transparent'
-    },
-    Time: {
-        fontSize: 10,
-        color: '#888',
-        fontWeight: '200',
-        backgroundColor: 'transparent'
-    },
-    PinnedFooter: {
-        color: '#444', 
-        bottom: -25, 
-        position: 'absolute',
-        alignSelf: 'center'
+    Link: {
+        color: 'Palette.link'
     },
     ComboCount: {
-        color: '#fff',
+        color: Palette.title,
         fontWeight: '700',
         marginLeft: 5
     },
     ComboX: {
-        color: '#fff',
+        color: Palette.title,
         fontWeight: '500'
     },
     ComboCombo: {

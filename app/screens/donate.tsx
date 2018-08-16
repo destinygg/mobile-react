@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Alert, Button, Platform, ScrollView, Text, View, WebView } from 'react-native';
 import { HeaderBackButton, NavigationActions, NavigationScreenProps, SafeAreaView, StackNavigator } from 'react-navigation';
-import styles from 'styles';
 
 import TextInputListItem from 'components/forms/TextInputListItem';
 import { UserAgreement } from 'components/UserAgreement';
+import { Palette } from 'assets/constants';
 
 interface DonateWebViewParams {
     amount: string;
@@ -81,10 +81,12 @@ class DonateView extends Component<NavigationScreenProps<DonateViewParams>, {amo
         return ({
             title: 'Donate',
             headerLeft: <HeaderBackButton title='Back' onPress={() => params.backHandler()} />,    
-            headerRight: <View style={styles.navbarRight}>
+            headerRight: <View style={{
+                            marginRight: (Platform.OS == 'ios') ? 5 : 15
+                        }}>
                             <Button title='Pay' onPress={params.sendHandler ? params.sendHandler : () => null} />
                         </View>,
-            headerTintColor: "#ccc"
+            headerTintColor: Palette.messageText
         });
     }
 
@@ -110,7 +112,10 @@ class DonateView extends Component<NavigationScreenProps<DonateViewParams>, {amo
 
     render() {
         return (
-            <SafeAreaView style={styles.View}>
+            <SafeAreaView style={{
+                flex: 1,
+                backgroundColor: Palette.background
+            }}>
                 <ScrollView style={{ paddingTop: 25 }}>
                     <TextInputListItem
                         name='amount'
@@ -130,9 +135,21 @@ class DonateView extends Component<NavigationScreenProps<DonateViewParams>, {amo
                         multiline={true}
                         maxLength={200}
                     />
-                    <Text style={styles.SubscriptionTerms}>
+                    <Text style={{
+                        color: Palette.handleLine,
+                        fontSize: 12,
+                        margin: 15
+                    }}>
                         By clicking the "Pay" button, you are confirming that this purchase is
-                        what you wanted and that you have read the <Text onPress={() => this._showUserAgreement()} style={styles.Link}>user agreement.</Text>
+                        what you wanted and that you have read the 
+                        <Text 
+                            onPress={() => this._showUserAgreement()} 
+                            style={{
+                                color: Palette.link
+                            }}
+                        >
+                            user agreement.
+                        </Text>
                     </Text>
                 </ScrollView>
             </SafeAreaView>
@@ -147,11 +164,18 @@ const DonateNav = StackNavigator({
 }, {
     initialRouteName: 'DonateView',
     navigationOptions: {
-        headerStyle: styles.Navigation,
-        headerTitleStyle: styles.NavigationHeaderTitle,
-        headerTintColor: (Platform.OS === 'android') ? '#fff' : undefined
+        headerStyle: {
+            backgroundColor: Palette.inner,
+            borderColor: Palette.navBorder,
+            borderStyle: "solid"
+        },
+        headerTitleStyle: {color: Palette.title},
+        headerTintColor: (Platform.OS === 'android') ? Palette.title : undefined
     },
-    cardStyle: styles.View
+    cardStyle: {
+        flex: 1,
+        backgroundColor: Palette.background
+    }
 });
 
 export default DonateNav;

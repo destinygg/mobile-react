@@ -1,5 +1,5 @@
 import Chat from '../../lib/assets/chat/js/chat';
-import MobileWindow from './window';
+import MobileWindow from './components/window';
 import {MessageTypes, MobileMessageBuilder as MessageBuilder} from './messages'
 import {AsyncStorage} from 'react-native';
 

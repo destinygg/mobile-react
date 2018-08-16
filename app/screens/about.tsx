@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { ScrollView, View, Text, TouchableHighlight, Linking } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
-import styles, { h2 } from 'styles';
+import { Palette, h2 } from 'assets/constants';
 
 export default class AboutView extends Component<{}, {badgePressed: boolean}> {
     static navigationOptions = {
@@ -20,13 +20,16 @@ export default class AboutView extends Component<{}, {badgePressed: boolean}> {
     render() {
         const badgePressed = this.state.badgePressed;
         return (
-            <SafeAreaView style={styles.View}>
+            <SafeAreaView style={{
+                flex: 1,
+                backgroundColor: Palette.background
+            }}>
                 <ScrollView 
                     style={{marginLeft: 15, marginRight: 15}}
                 >
                     <View>
                         <Text style={{
-                                color: '#888',
+                                color: Palette.text,
                                 fontSize: h2,
                                 fontWeight: '600',
                                 marginTop: 15
@@ -34,7 +37,7 @@ export default class AboutView extends Component<{}, {badgePressed: boolean}> {
                             License
                         </Text>                    
                         <Text style={{
-                            color: '#888'
+                            color: Palette.text
                         }}>
                             "destiny.gg app" is licensed as proprietary software.
                             All intellectual property, source code, and "destiny.gg" media assets
@@ -42,8 +45,17 @@ export default class AboutView extends Component<{}, {badgePressed: boolean}> {
                             is property of the respective copyright owners.  destiny.gg LLC
                             assumes no responsibility for members of its social features. 
                         </Text>
-                        <Text style={styles.AboutHeader}>Warranty</Text>
-                        <Text style={styles.AboutBody}>
+                        <Text style={{
+                            color: Palette.text,
+                            fontSize: h2,
+                            fontWeight: '600',
+                            marginTop: 15
+                        }}>
+                            Warranty
+                        </Text>
+                        <Text style={{
+                            color: Palette.text
+                        }}>
                             No warranty express or implied is provided.  This software
                             is provided "as-is".
                         </Text>
@@ -80,12 +92,24 @@ export default class AboutView extends Component<{}, {badgePressed: boolean}> {
                                     width: 100,
                                     color: (badgePressed) ? '#fff' : "#000"   
                                 }}>
-                                    Issues may be reported to <Text style={{ color: '#d60000' }}>dc@cako.io</Text>.
+                                    Issues may be reported to 
+                                    <Text style={{ color: '#d60000' }}>
+                                        dc@cako.io
+                                    </Text>.
                             </Text>
                             </View>
                         </TouchableHighlight>
-                        <Text style={styles.AboutHeader}>3rd party licenses</Text>
-                        <Text style={styles.AboutBody}>{`BSD License
+                        <Text style={{
+                                color: Palette.text,
+                                fontSize: h2,
+                                fontWeight: '600',
+                                marginTop: 15
+                        }}>
+                            3rd party licenses
+                        </Text>
+                        <Text style={{
+                            color: Palette.text
+                        }}>{`BSD License
 
 For React Native software
 
@@ -116,7 +140,9 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         `}</Text>
-                        <Text style={styles.AboutBody}>{`
+                        <Text style={{
+                            color: Palette.text
+                        }}>{`
 Ionicons is licensed under the MIT license.
 
 The MIT License (MIT)

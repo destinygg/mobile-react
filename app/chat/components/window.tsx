@@ -20,7 +20,7 @@ import {
 const { EventEmitter } = require('../lib/assets/chat/js/emitter');
 const { emoteImgs } = require('../images');
 import { Emote } from './messages';
-import styles from 'styles';
+import { Palette } from 'assets/constants';
 
 const tagcolors = [
     "green",
@@ -95,7 +95,7 @@ export class EmoteDirectory extends PureComponent<EmoteDirectoryProps> {
                     borderTopLeftRadius: 25,
                     borderTopRightRadius: 25,
                     height: 70,
-                    backgroundColor: '#151515'
+                    backgroundColor: Palette.drawerBg
                 }}>
                     <View style={{
                         paddingLeft: 15,
@@ -200,7 +200,7 @@ export class MobileChatInput extends Component<MobileChatInputProps, {value: str
                 style={Object.assign({
                     flexDirection: 'row',
                     zIndex: 2000,
-                    backgroundColor: '#151515',
+                    backgroundColor: Palette.drawerBg,
                     borderTopLeftRadius: 25,
                     borderTopRightRadius: 25,
                     paddingTop: 8,
@@ -219,7 +219,7 @@ export class MobileChatInput extends Component<MobileChatInputProps, {value: str
                     <TouchableOpacity onPress={() => this.props.onEmoteBtnPress()}>
                         <Text style={{
                             fontFamily: 'ionicons',
-                            color: '#888',
+                            color: Palette.text,
                             fontSize: 30,
                             paddingLeft: 12,
                             paddingRight: 10,
@@ -230,8 +230,8 @@ export class MobileChatInput extends Component<MobileChatInputProps, {value: str
                         </Text>
                     </TouchableOpacity>
                     <View style={{
-                        borderColor: "#222",
-                        backgroundColor: "#181818",
+                        borderColor: Palette.border,
+                        backgroundColor: Palette.inner,
                         borderWidth: StyleSheet.hairlineWidth,
                         borderRadius: (Platform.OS === 'ios') ? 17 : 19,
                         paddingLeft: 15,
@@ -246,11 +246,11 @@ export class MobileChatInput extends Component<MobileChatInputProps, {value: str
                             style={{
                                 flex: 1,
                                 fontSize: 12,
-                                color: "#ccc",
+                                color: Palette.messageText,
                                 height: 34
                             }}
                             placeholder={'Write something...'}
-                            placeholderTextColor="#888"
+                            placeholderTextColor={Palette.text}
                             onChangeText={(text) => this.set(text)}
                             onSubmitEditing={() => this.send()}
                             ref={ref => this.input = ref}
@@ -310,18 +310,16 @@ export class MobileChatView extends Component<MobileChatViewProps, {
 
     render() {
         return (
-            <View style={[
-                styles.View, 
-                {
-                    flex: 1,
-                    paddingTop: 0,
-                    paddingRight: 10,
-                    paddingLeft: 10,
-                }
-            ]}>
+            <View style={{
+                flex: 1,
+                paddingTop: 0,
+                paddingRight: 10,
+                paddingLeft: 10,
+                backgroundColor: Palette.background
+            }}>
                 <FlatList
                     data={this.state.messages}
-                    style={styles.ChatViewList}
+                    style={{flex: 1}}
                     extraData={this.state.extraData}
                     renderItem={item => {
                         return item.item;
@@ -343,13 +341,20 @@ export class MobileChatView extends Component<MobileChatViewProps, {
                         this.setState({mediaModalShown: false})
                     }}
                 >    
-                    <View style={styles.MediaModal}>
+                    <View style={{
+                        height: '100%',
+                        backgroundColor: 'rgba(0,0,0,0.7)',
+                        justifyContent: 'center'
+                    }}>
                         <TouchableWithoutFeedback
                             onPress={() => this.setState({mediaModalShown: false})}
                         >
                             <View style={{position: 'absolute', height: '100%', width: '100%'}}/>
                         </TouchableWithoutFeedback> 
-                        <View style={styles.MediaModalInner}>
+                        <View style={{
+                            height: '50%',
+                            borderRadius: 15        
+                        }}>
                             <WebView 
                                 source={{uri: this.mediaModalUri}}
                                 allowsInlineMediaPlayback={true}

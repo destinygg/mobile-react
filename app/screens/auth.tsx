@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { WebView, ScrollView, View, Text } from 'react-native';
+import { WebView, ScrollView, View, Text, Platform } from 'react-native';
 import { NavigationActions, NavigationScreenProps } from 'react-navigation';
-import styles from 'styles';
 import ButtonList from 'components/forms/ButtonList';
+import { Palette, h2 } from 'assets/constants';
 
 interface AuthNavParams {
     authProvider: string;
@@ -34,9 +34,22 @@ export class AuthView extends Component<NavigationScreenProps<{}>> {
         ];
 
         return (
-            <ScrollView style={[styles.View, styles.iosPad]}>
+            <ScrollView style={{
+                flex: 1,
+                backgroundColor: Palette.background,
+                paddingTop: (Platform.OS === 'ios' ? 20 : 0)                
+            }}>
                 <View>
-                    <Text style={styles.selectTitle}>{'Choose auth provider.'}</Text>
+                    <Text style={{
+                        fontSize: h2,
+                        fontWeight: '700',
+                        color: Palette.title,
+                        marginTop: 100,
+                        marginBottom: 10,        
+                        marginLeft: 15        
+                    }}>
+                        Choose auth provider.
+                    </Text>
                     <ButtonList listItems={listItems} />                    
                 </View>
             </ScrollView>
