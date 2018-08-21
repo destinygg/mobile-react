@@ -81,7 +81,6 @@ export class BottomDrawer extends Component<BottomDrawerProps, {
         return (
             <KeyboardAvoidingView 
                 style={Object.assign({
-                    top: -(this.props.paddingHeight), 
                     zIndex: 6000                   
                 }, this.props.style)}
                 behavior={'position'}

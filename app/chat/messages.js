@@ -20,6 +20,14 @@ import throttle from 'throttle-debounce/throttle';
 const { DATE_FORMATS } = require('../../lib/assets/chat/js/const');
 const UserFeatures = require('../../lib/assets/chat/js/features').default;
 
+const { EmoteFormatter, GreenTextFormatter, UrlFormatter } = require('./formatters');
+
+const formatters = new Map()
+formatters.set('green', new GreenTextFormatter())
+formatters.set('emote', new EmoteFormatter())
+formatters.set('url', new UrlFormatter())
+//formatters.set('mentioned', new MentionedUserFormatter())
+
 export const MessageTypes = {
     STATUS: 'STATUS',
     ERROR: 'ERROR',

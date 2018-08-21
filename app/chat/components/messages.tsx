@@ -6,8 +6,7 @@ import MobileIcons from '../MobileIcons';
 import { Palette } from 'assets/constants';
 import { styles, MobileChatFlairColors } from '../styles';
 
-const { UserFeatures } = require('../../../lib/assets/chat/js/features');
-const { EmoteFormatter, GreenTextFormatter, UrlFormatter } = require('../formatters');
+const UserFeatures = require('../../../lib/assets/chat/js/features').default;
 
 export const MessageTypes = {
     STATUS: 'STATUS',
@@ -21,11 +20,6 @@ export const MessageTypes = {
     EMOTE: 'EMOTE'
 }
 
-const formatters = new Map()
-formatters.set('green', new GreenTextFormatter())
-formatters.set('emote', new EmoteFormatter())
-formatters.set('url', new UrlFormatter())
-//formatters.set('mentioned', new MentionedUserFormatter())
 
 /* Chat elements do not use Views so as to use Text's inline-block-style layout.
    This means that elements may have spaces hard-coded, as Text does not allow
