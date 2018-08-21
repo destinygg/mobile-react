@@ -23,9 +23,8 @@ import {
     SafeAreaView,
     StackNavigator,
 } from 'react-navigation';
-import styles, { h3 } from 'styles';
 import TextInputListItem from 'components/forms/TextInputListItem';
-import { Palette } from 'assets/constants';
+import { Palette, h3 } from 'assets/constants';
 
 const { MobileChat } = require("../chat/chat"); 
 
@@ -192,10 +191,10 @@ class UserView extends Component<UserViewProps, UserViewState> {
 
     render() {
         return (
-            <SafeAreaView style={styles.View}>
+            <SafeAreaView style={{flex: 1}}>
                 <KeyboardAvoidingView
                     behavior='padding'
-                    style={styles.View}
+                    style={{flex: 1}}
                     keyboardVerticalOffset={(Platform.OS === 'android') ? -400 : 65}
                 >
                     <FlatList
@@ -299,9 +298,11 @@ class ComposeView extends Component<NavigationScreenProps, {recipients: string, 
         return ({
             title: 'Compose',
             drawerLockMode: 'locked-closed',
-            headerRight: <View style={styles.navbarRight}>
-                <Button title='Send' onPress={params.sendHandler ? params.sendHandler : () => null} />
-            </View>
+            headerRight: <View style={{
+                            marginRight: (Platform.OS == 'ios') ? 5 : 15
+                        }}>
+                            <Button title='Send' onPress={params.sendHandler ? params.sendHandler : () => null} />
+                        </View>
         });
     }
 
@@ -343,7 +344,7 @@ class ComposeView extends Component<NavigationScreenProps, {recipients: string, 
 
     render() {
         return (
-            <SafeAreaView style={styles.View}>
+            <SafeAreaView style={{flex: 1}}>
                 <ScrollView style={{ paddingTop: 25 }}>
                     <TextInputListItem
                         name='recipients'
@@ -478,7 +479,7 @@ class MessageView extends Component<NavigationScreenProps, {
             this.refreshInbox();
         }
         return (
-            <SafeAreaView style={styles.View}>
+            <SafeAreaView style={{flex: 1}}>
                 <FlatList
                     data={this.state.inbox}
                     extraData={this.state.extraData}
@@ -513,7 +514,7 @@ const MessageNav = StackNavigator({
             headerTitleStyle: {color: Palette.text},
             headerTintColor: (Platform.OS === 'android') ? Palette.text : undefined
         },
-        cardStyle: styles.View
+        cardStyle: {flex: 1}
     });
 
 export default MessageNav;

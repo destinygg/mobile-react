@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { View, Alert } from 'react-native';
 import { NavigationActions, NavigationScreenProps } from 'react-navigation';
-import styles from 'styles';
 
 const { MobileChat } = require("../chat/chat"); 
 
@@ -27,11 +26,13 @@ export default class InitView extends Component<NavigationScreenProps> {
                 const me = await meRes.json();
                 const hist = await histRes.json();
 
+                await MobileChat.current.loadMobileSettings();
+
                 MobileChat.current
+                    .withMe(me)
                     .withUserAndSettings(me)
-                    .withHistory(hist)
                     .connect("wss://www.destiny.gg/ws");
-                MobileChat.current.me = me;
+
                 // @ts-ignore
                 global.bugsnag.setUser(me.userId, me.username, me.username + '@destiny.gg');
                 navigation.dispatch(NavigationActions.reset({
@@ -71,7 +72,7 @@ export default class InitView extends Component<NavigationScreenProps> {
 
     render() {
         return(
-            <View style={styles.View} />
+            <View style={{flex: 1}} />
         )
     }
 }

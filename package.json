@@ -9,6 +9,7 @@
 	},
 	"dependencies": {
 		"bugsnag-react-native": "^2.10.2",
+		"jotform-css.js": "^1.0.1",
 		"moment": "~2.19",
 		"react": "^16.4.2",
 		"react-native": "^0.56.0",
@@ -21,7 +22,7 @@
 		"typescript": "^2.9.2"
 	},
 	"devDependencies": {
-		"@types/css": "0.0.31",
+		"@types/jotform-css.js": "^1.0.0",
 		"@types/react": "^16.4.11",
 		"@types/react-native": "^0.56.9",
 		"@types/react-native-fs": "^2.8.2",
@@ -29,7 +30,6 @@
 		"@types/react-navigation": "^2.0.16",
 		"babel-jest": "21.2.0",
 		"babel-preset-react-native": "^5.0.2",
-		"css": "^2.2.3",
 		"jest": "21.2.1",
 		"react-native-typescript-transformer": "^1.2.10",
 		"react-test-renderer": "^16.4.2"

@@ -1,7 +1,7 @@
-import css from "css";
-import { IEmote } from "./emotes";
+import css from "jotform-css.js";
+
 import { AsyncStorage } from "react-native";
-import RNFS from "react-native-fs";
+import UpstreamAsset from "./UpstreamAsset";
 
 export interface IEmote {
     x: number;
@@ -11,53 +11,26 @@ export interface IEmote {
     marginTop: number;
 }
 
-export class MobileEmotes {
+enum UpstreamEmotePaths {
+    styles = "assets/emotes/emoticons.scss",
+    spriteSheet = "assets/emotes/emoticons.png"
+}
+
+export default class MobileEmotes {
     static emoticons: { [name: string]: IEmote } = {};
-
-    static async fetchEmoteStyles(): Promise<string> {
-        const f = await fetch("https://github.com/destinygg/chat-gui/blob/master/assets/emotes/emoticons.scss");
-        if (!f.ok) {
-            throw new Error(f.statusText);
-        }
-        return await f.text();
-    }
-
-    static async fetchLatestEmoticonHash() {
-        const f = await fetch("https://api.github.com/repositories/108987755/contents/assets/emotes");
-        if (!f.ok) {
-            throw new Error(f.statusText);
-        }
-
-        const j = await f.json();
-
-        for (let file of j) {
-            if (file.name === "emoticons.png") {
-                return file.sha
-            }
-        }
-
-        throw new Error("Unable to find file in github payload.")
-    }
-
-    static fetchLatestSpritesheet() {
-        return RNFS.downloadFile({
-            fromUrl: "https://raw.githubusercontent.com/destinygg/chat-gui/master/assets/emotes/emoticons.png",
-            toFile: RNFS.DocumentDirectoryPath + "/emoticons.png"
-        });
-    }
-
     static async generateMobileEmotes(): Promise<{ [name: string]: IEmote }> {
-        const emoteStyle = css.parse(await MobileEmotes.fetchEmoteStyles());
+        const emoteStyle: any = new css().parseCSS(await UpstreamAsset.fetchText(UpstreamEmotePaths.styles));
 
         const emoticons: { [name: string]: IEmote } = {};
 
-        for (let rule of (emoteStyle.stylesheet!.rules as css.Rule[])) {
-            if (rule.selectors!.length > 1) {
-                // throw out the all-emotes rule
+        for (let each of emoteStyle) {
+            const s: string[] = each.selector.split(",");
+            if (s.length > 1) {
+                // throw out the all-emotes obj
                 continue;
             }
 
-            const name = rule.selectors![0].split("-").slice(-1)[0];
+            const name = s[0].trim().split("-").slice(-1)[0];
             let emote: IEmote = {
                 x: 0,
                 y: 0,
@@ -66,15 +39,21 @@ export class MobileEmotes {
                 marginTop: 0
             }
 
-            for (let d of (rule.declarations! as css.Declaration[])) {
-                switch (d.property) {
+            for (let r of each.rules) {
+                switch (r.directive) {
                     case "background-position":
+                        const xy = r.directive.split(" ");
+                        emote.x = Number.parseInt(xy[0].slice(0, -2));
+                        emote.y = Number.parseInt(xy[1].slice(0, -2));
                         break;
                     case "width":
+                        emote.width = Number.parseInt(r.directive.slice(0, -2));
                         break;
                     case "height":
+                        emote.height = Number.parseInt(r.directive.slice(0, -2));
                         break;
-                    case "marginTop":
+                    case "margin-top":
+                        emote.marginTop = Number.parseInt(r.directive.slice(0, -2));
                         break;
                 }
             }
@@ -92,14 +71,14 @@ export class MobileEmotes {
             emoticons[name] = emote;
         }
 
-        MobileEmotes.fetchLatestSpritesheet();
+        UpstreamAsset.downloadToCache(UpstreamEmotePaths.spriteSheet, "emoticons.png");
 
         return emoticons;
     }
 
     static async init() {
         const currentSha = await AsyncStorage.getItem("emoteSha");
-        const upstreamSha = await MobileEmotes.fetchLatestEmoticonHash();
+        const upstreamSha = await UpstreamAsset.getShaSum(UpstreamEmotePaths.spriteSheet);
 
         console.log("current emote sha: " + currentSha);
         console.log("upstream emote sha: " + upstreamSha);
@@ -115,7 +94,7 @@ export class MobileEmotes {
             }
         } else {
             const e = await AsyncStorage.getItem("emotes");
-            MobileEmotes.emoticons = JSON.parse(e);
+            MobileEmotes.emoticons = e === null ? [] : JSON.parse(e);
         }
     }
 }

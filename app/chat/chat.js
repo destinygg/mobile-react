@@ -1,6 +1,6 @@
 import Chat from '../../lib/assets/chat/js/chat';
 import MobileWindow from './components/window';
-import {MessageTypes, MobileMessageBuilder as MessageBuilder} from './messages'
+import {MobileMessageBuilder as MessageBuilder} from './messages'
 import {AsyncStorage} from 'react-native';
 
 const settingsdefault = new Map([
@@ -45,23 +45,33 @@ export class MobileChat extends Chat {
         MobileChat.current = this;
     }
 
+    withMe(me) {
+        this.me = me;
+        return this;
+    }
+
     loadMobileSettings() {
         if (this.mobileSettings === null) {
-            AsyncStorage.getItem('appSettings', (err, settings) => {
-                let settingsObj;
-                if (err) {
-                    settingsObj = this.initMobileSettings();
-                } else {
-                    settingsObj = JSON.parse(settings);                    
-                    if (settingsObj !== null) {
-                        console.log("loaded mobile settings: " + settings);
-                    } else {
+            return new Promise(resolve => {
+                AsyncStorage.getItem('appSettings', (err, settings) => {
+                    let settingsObj;
+                    if (err) {
                         settingsObj = this.initMobileSettings();
+                    } else {
+                        settingsObj = JSON.parse(settings);                    
+                        if (settingsObj !== null) {
+                            console.log("loaded mobile settings: " + settings);
+                        } else {
+                            settingsObj = this.initMobileSettings();
+                        }
                     }
-                }
-                this.mobileSettings = settingsObj;
-            });
-        } 
+                    this.mobileSettings = settingsObj;
+                    resolve();
+                });
+            })
+        } else {
+            return Promise.resolve();
+        }
     }
 
     withHistory(history) {

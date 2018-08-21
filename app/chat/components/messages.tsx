@@ -1,12 +1,13 @@
 import React, { Component, PureComponent } from 'react';
-import { Image, Text, TextStyle, ViewStyle } from 'react-native';
-import { MobileEmotes } from '../emotes';
+import { Image, Text, TextStyle } from 'react-native';
+import MobileEmotes from '../MobileEmotes';
 import RNFS from "react-native-fs";
-import { MobileIcons } from '../icons';
+import MobileIcons from '../MobileIcons';
 import { Palette } from 'assets/constants';
+import { styles, MobileChatFlairColors } from '../styles';
 
-const { UserFeatures } = require('../../lib/assets/chat/js/features');
-const { EmoteFormatter, GreenTextFormatter, UrlFormatter } = require('./formatters');
+const { UserFeatures } = require('../../../lib/assets/chat/js/features');
+const { EmoteFormatter, GreenTextFormatter, UrlFormatter } = require('../formatters');
 
 export const MessageTypes = {
     STATUS: 'STATUS',
@@ -46,7 +47,7 @@ export class UserFlair extends Component<{name: string}> {
                     top: -icon.x,
                     left: -icon.y
                 }} 
-                source={{ uri: "file://" + RNFS.DocumentDirectoryPath + "/icons.png" }}
+                source={{ uri: "file://" + RNFS.CachesDirectoryPath + "/icons.png" }}
             />
         );
     }
@@ -83,10 +84,10 @@ export class UserBadge extends Component<{user: any, onPress: {(user: string): a
             if (this.props.user.features[i] == UserFeatures.ADMIN) {
                 admin = true;
             } else {
-                this.style.push(styles[this.props.user.features[i]]);                
+                this.style.push({ color: MobileChatFlairColors.colors[this.props.user.features[i]] });                
             }
         }
-        if (admin) this.style.push(styles['admin']);
+        if (admin) this.style.push({ color: MobileChatFlairColors.colors["admin"] });
     }
     render() {
         return (
@@ -112,7 +113,7 @@ export class Emote extends Component<{name: string, emoteMenu?: boolean}> {
                     top: -emote.x,
                     left: -emote.y
                 }} 
-                source={{uri: "file://" + RNFS.DocumentDirectoryPath + "/emoticons.png"}} 
+                source={{uri: "file://" + RNFS.CachesDirectoryPath + "/emoticons.png"}} 
             />
         );
     }
@@ -125,12 +126,12 @@ interface MsgTextProps {
     emit?: any;
 }
 
-class MsgText extends Component<MsgTextProps> {
+export class MsgText extends Component<MsgTextProps> {
     constructor(props: MsgTextProps) {
         super(props);
     }
     render() {
-        let msgStyles = [{
+        let msgStyles: TextStyle[] = [{
             color: Palette.messageText,
             backgroundColor: 'transparent',
             fontSize: 12,
@@ -250,4 +251,3 @@ export class MobileChatEmoteMessage extends PureComponent<MobileChatEmoteMessage
         )
     }
 }
-

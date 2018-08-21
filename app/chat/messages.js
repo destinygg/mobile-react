@@ -1,6 +1,36 @@
+import * as React from "react";
+
 import { MobileChat } from './chat';
+import { 
+    MobileChatMessage, 
+    MobileChatEmoteMessage, 
+    UserBadge, 
+    MsgText, 
+    UserFlair,
+    Time
+} from "./components/messages"
+
+import {
+    styles
+} from "./styles";
+
+import moment from 'moment';
+import throttle from 'throttle-debounce/throttle';
 
 const { DATE_FORMATS } = require('../../lib/assets/chat/js/const');
+const UserFeatures = require('../../lib/assets/chat/js/features').default;
+
+export const MessageTypes = {
+    STATUS: 'STATUS',
+    ERROR: 'ERROR',
+    INFO: 'INFO',
+    COMMAND: 'COMMAND',
+    BROADCAST: 'BROADCAST',
+    UI: 'UI',
+    CHAT: 'CHAT',
+    USER: 'USER',
+    EMOTE: 'EMOTE'
+}
 
 function buildMessageTxt(chat, message) {
     // TODO we strip off the `/me ` of every message -- must be a better way to do this
@@ -13,6 +43,10 @@ function buildFeatures(user) {
         .filter(e => !UserFeatures.SUBSCRIBER.equals(e))
         .sort((a, b) => {
             let a1, a2;
+
+            a1 = UserFeatures.DGGBDAY.equals(a);
+            a2 = UserFeatures.DGGBDAY.equals(b);
+            if (a1 > a2) return -1; if (a1 < a2) return 1;
 
             a1 = UserFeatures.SUBSCRIBERT4.equals(a);
             a2 = UserFeatures.SUBSCRIBERT4.equals(b);

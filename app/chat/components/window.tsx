@@ -17,9 +17,9 @@ import {
     Platform,
 } from 'react-native';
 
-const { EventEmitter } = require('../lib/assets/chat/js/emitter');
-const { emoteImgs } = require('../images');
+const EventEmitter = require('../../../lib/assets/chat/js/emitter').default;
 import { Emote } from './messages';
+import MobileEmotes from "../MobileEmotes";
 import { Palette } from 'assets/constants';
 
 const tagcolors = [
@@ -53,7 +53,7 @@ export class EmoteDirectory extends PureComponent<EmoteDirectoryProps> {
     scrollView: ScrollView | null = null;
     constructor(props: EmoteDirectoryProps) {
         super(props);
-        this.emotes = Array.from(Object.keys(emoteImgs)).sort();
+        this.emotes = Array.from(Object.keys(MobileEmotes.emoticons)).sort();
     }
 
     render() {

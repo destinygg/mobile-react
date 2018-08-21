@@ -1,6 +1,6 @@
 import UserFeatures from '../../lib/assets/chat/js/features'
 
-import MobileEmotes from "./emotes"
+import MobileEmotes from "./MobileEmotes"
 
 let gemoteregex;
 

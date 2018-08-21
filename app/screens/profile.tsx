@@ -15,8 +15,8 @@ import { ListButton, ListButtonProps } from 'components/forms/ButtonList';
 import FormView, { FormViewProps, FormViewState, ProfileForm } from 'components/forms/FormView';
 import { NavList } from 'components/NavList';
 import { UserAgreement } from 'components/UserAgreement';
-import AboutView from './about';
-import { h3, Palette, shortDimension, h2 } from 'assets/constants';
+import AboutView from './AboutView';
+import { h3, Palette, shortDimension, h2, h1 } from 'assets/constants';
 
 const countries = require("../../lib/assets/countries.json");
 const countryOptions = countries.map((item: any) => {
@@ -207,7 +207,7 @@ class SubscriptionView extends Component<NavigationScreenProps> {
                         <Text style={{
                             fontSize: h2,
                             fontWeight: '700',
-                            color: "#fff",
+                            color: Palette.title,
                             marginTop: 25,
                             marginBottom: 10,        
                             marginLeft: 15     
@@ -348,10 +348,33 @@ class SubscriptionView extends Component<NavigationScreenProps> {
                 flex: 1,
                 backgroundColor: Palette.background
             }}>
-                    <ScrollView style={styles.SubscriptionView}>
-                        <Text style={styles.ChooseTitle}>Subscribed</Text>
-                        <Text style={styles.ChooseSubtitle}>Visit site in browser to manage subscription.</Text>
-                        <View style={styles.SubscribedTile}>
+                    <ScrollView style={{flex: 1}}>
+                        <Text style={{
+                            fontSize: h2,
+                            fontWeight: '700',
+                            color: Palette.title,
+                            marginTop: 25,
+                            marginBottom: 10,        
+                            marginLeft: 15     
+                        }}>
+                            Subscribed
+                        </Text>
+                        <Text style={{
+                            fontWeight: '500',
+                            color: Palette.title,
+                            marginTop: 10,
+                            marginLeft: 15
+                        }}>
+                            Visit site in browser to manage subscription.
+                        </Text>
+                        <View style={{
+                            alignContent: 'center',
+                            marginTop: 25,
+                            elevation: 4,
+                            shadowColor: '#000',
+                            shadowOpacity: 0.7,
+                            shadowRadius: 5
+                        }}>
                             {subscribedItem}
                         </View>  
                     </ScrollView>
@@ -381,7 +404,9 @@ class SubscriptionMessageView extends Component<SubscriptionMessageViewProps, Su
         const params = navigation.state.params;
 
         return {
-            headerRight: <View style={styles.navbarRight}>
+            headerRight: <View style={{
+                            marginRight: (Platform.OS == 'ios') ? 5 : 15
+                        }}>
                             <Button title='Pay' onPress={params.saveHandler ? params.saveHandler : () => null} />
                         </View>,
             drawerLockMode: 'locked-closed'            
@@ -483,13 +508,34 @@ class SubscriptionMessageView extends Component<SubscriptionMessageViewProps, Su
                 backgroundColor: Palette.background
             }, {paddingTop: 25}]}>
                     <View style={{marginLeft: 15}}>
-                        <Text style={styles.SubscriptionTitle}>{this.subDisplayName}</Text>
-                        <Text style={styles.SubscriptionSubtitle}>{this.subDuration}</Text>
+                        <Text style={ {
+                            fontSize: h1,
+                            fontWeight: '700',
+                            color: Palette.title
+                        }}>{this.subDisplayName}</Text>
+                        <Text style={{
+                            fontSize: h3,
+                            marginTop: 5,
+                            fontWeight: '300',
+                            color: Palette.title
+                        }}>
+                            {this.subDuration}
+                        </Text>
                     </View>
                     <ProfileForm formItems={this.formItems} formState={this.state} onChange={(name, value) => this._onChange(name, value)} />
-                    <Text style={styles.SubscriptionTerms}>
+                    <Text style={{
+                        color: Palette.handleLine,
+                        fontSize: 12,
+                        margin: 15
+                    }}>
                         By clicking the "Pay" button, you are confirming that this purchase is 
-                        what you wanted and that you have read the <Text onPress={() => this._showUserAgreement()} style={styles.Link}>user agreement.</Text> 
+                        what you wanted and that you have read the 
+                        <Text 
+                            onPress={() => this._showUserAgreement()} 
+                            style={{color: Palette.link}}
+                        >
+                            user agreement.
+                        </Text> 
                     </Text>
                 </ScrollView>
             </SafeAreaView>
@@ -630,7 +676,7 @@ class ProfileView extends Component<NavigationScreenProps> {
         return {
             title: 'Profile',        
             headerLeft: <HeaderBackButton title='Back' onPress={() => params.backHandler(null)} />,
-            headerTintColor: "#ccc"
+            headerTintColor: Palette.navBorder
         }
     };
 
@@ -658,9 +704,23 @@ class ProfileView extends Component<NavigationScreenProps> {
                 flex: 1,
                 backgroundColor: Palette.background
             }]}>
-                    <View style={styles.ProfileHeader}>
-                        <Text style={styles.ProfileName}>{MobileChat.current.user.username}</Text>
-                        <Text style={styles.ProfileCreated}>{'Member since: ' + created.format('dddd, D MMMM YYYY')}</Text>
+                    <View style={{
+                        marginLeft: 15,
+                        marginBottom: 25,
+                        marginTop: 25
+                    }}>
+                        <Text style={{
+                            color: Palette.title,
+                            fontSize: h1,
+                        }}>
+                            {MobileChat.current.user.username}
+                        </Text>
+                        <Text style={{
+                            fontSize: h3,
+                            color: '#888'
+                        }}>
+                            {'Member since: ' + created.format('dddd, D MMMM YYYY')}
+                        </Text>
                     </View>
                     <NavList listItems={this.listItems} onPress={(item) => {
                         this.props.navigation.navigate(item.name)
@@ -690,8 +750,14 @@ const ProfileNav = StackNavigator({
 }, {
     initialRouteName: 'Profile',
     navigationOptions: {
-        headerStyle: styles.Navigation,
-        headerTitleStyle: styles.NavigationHeaderTitle,
+        headerStyle: {
+            backgroundColor: Palette.inner,
+            borderColor: Palette.navBorder,
+            borderStyle: "solid"
+        },
+        headerTitleStyle: {
+            color: Palette.title
+        },
         headerTintColor: (Platform.OS === 'android') ? '#fff' : undefined
     },
     cardStyle: {

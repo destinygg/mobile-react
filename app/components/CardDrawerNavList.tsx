@@ -3,6 +3,7 @@ import { PureComponent } from "react";
 import ButtonList, { ListButtonProps } from "./forms/ButtonList";
 import React from "react";
 import { View, Platform } from "react-native";
+import { Palette } from "assets/constants";
 
 interface CardDrawerNavListProps {
     onShowStream: { (): any };

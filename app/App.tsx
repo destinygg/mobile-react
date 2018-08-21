@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { StatusBar, View } from 'react-native';
 import InitNav from './navigation';
 const { MobileChat } = require('./chat/chat');
-import styles from './styles';
 import { NavigationState } from 'react-navigation';
 
 class App extends Component<{}, {navState?: string}> {
@@ -16,7 +15,7 @@ class App extends Component<{}, {navState?: string}> {
     }
     render() {
         return (
-            <View style={styles.View}>
+            <View style={{flex: 1}}>
                 <StatusBar barStyle='light-content' />
                 <InitNav 
                     onNavigationStateChange={(prevState: NavigationState, currentState: NavigationState) => {
@@ -26,7 +25,7 @@ class App extends Component<{}, {navState?: string}> {
                             this.setState({navState: currentScreen})
                         }
                     }}
-                    screenProps={{ init: true, navState: this.state.navState }} 
+                    screenProps={{ init: true, navState: this.state.navState, chat: this.chat }} 
                 />                
             </View>
         );

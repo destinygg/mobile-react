@@ -16,7 +16,6 @@ import {
 import { SafeAreaView, NavigationScreenProps } from 'react-navigation';
 
 import { EmoteDirectory, MobileChatInput } from 'chat/components/window';
-import styles from 'styles';
 import { BottomDrawer } from 'components/BottomDrawer';
 import CardDrawerNavList from 'components/CardDrawerNavList';
 
@@ -184,7 +183,7 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
         }
         console.log(this.state.twitchHeight);
         return (
-            <SafeAreaView style={styles.View}>
+            <SafeAreaView style={{flex: 1}}>
                 <View
                     style={{width: '100%', height: DEVICE_HEIGHT() - 95, paddingBottom: 5}}
                     onLayout={(e) => {
@@ -240,7 +239,7 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                             onClose={() => this._drawerClosed()}  
                             paddingHeight={this.state.drawerPaddingHeight}
                             posSpy={this.state.drawerPosSpy!}
-                            showHandle={this.chat.menuDrawerButton === false}
+                            showHandle={this.chat.mobileSettings.menuDrawerButton === false}
                             style={this.state.isLandscape
                                 ? {
                                     alignSelf: "flex-end",
@@ -424,7 +423,6 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
             }
             return false;
         });  
-        this.chat.loadMobileSettings();
         this.applyPreviousResizeState();
     }
 
