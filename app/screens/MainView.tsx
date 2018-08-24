@@ -73,7 +73,6 @@ interface MainViewState {
     streamShown: boolean;
     drawerOpen: boolean;
     emoteDirShown: boolean;
-    drawerPaddingHeight: number;
     emoteFilter: string;
     emoteDirOffset?: Animated.Value;
     drawerPosSpy?: Animated.Value
@@ -85,6 +84,13 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
     chat: any;
     cardDrawer: BottomDrawer | null = null;
     inputElem: MobileChatInput | null = null;
+
+    handleTopBinding?: Animated.AnimatedInterpolation;
+    handleWidthBinding?: Animated.AnimatedInterpolation;
+    handleOpacityBinding?: Animated.AnimatedInterpolation;
+
+    backdropOpacity?: Animated.AnimatedInterpolation;
+
     private panResponder?: PanResponderInstance;
     static navigationOptions = {
         title: 'Stream'
@@ -100,7 +106,6 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
             streamShown: true,
             drawerOpen: false,
             emoteDirShown: false,
-            drawerPaddingHeight: 380,
             emoteFilter: '',
             inputFocused: false,
         };
@@ -181,12 +186,18 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                 opacity: .5
             }); 
         }
-        console.log(this.state.twitchHeight);
+        console.log(this.state);
         return (
-            <SafeAreaView style={{flex: 1}}>
+            <SafeAreaView style={{flex: 1, backgroundColor: Palette.background}}>
                 <View
-                    style={{width: '100%', height: DEVICE_HEIGHT() - 95, paddingBottom: 5}}
-                    onLayout={(e) => {
+                    style={{
+                        width: '100%', 
+                        height: DEVICE_HEIGHT() - (this.chat.mobileSettings.menuDrawerButton === false
+                            ? 100
+                            : 90
+                        ),
+                    }}
+                    onLayout={(e: any) => {
                         this._onLayout(e.nativeEvent);
                     }}
                 >
@@ -237,40 +248,46 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                             ref={(ref) => this.cardDrawer = ref} 
                             onOpen={() => this._drawerOpened()}                 
                             onClose={() => this._drawerClosed()}  
-                            paddingHeight={this.state.drawerPaddingHeight}
                             posSpy={this.state.drawerPosSpy!}
-                            showHandle={this.chat.mobileSettings.menuDrawerButton === false}
                             style={this.state.isLandscape
                                 ? {
                                     alignSelf: "flex-end",
                                     width: "100%",
-                                    maxWidth: 400
+                                    maxWidth: 400,
+                                    top: -45,
+                                    zIndex: 10
                                 }
                                 : {
                                     alignSelf: "center",
-                                    width: "100%"
+                                    width: "100%",
+                                    position: "relative",
+                                    top: -45,
+                                    zIndex: 10
                                 }
                             }
                         >                  
-                            <EmoteDirectory
-                                translateY={this.state.emoteDirOffset}
-                                filter={this.state.emoteFilter}
-                                topOffset={this.state.drawerPaddingHeight}
-                                onSelect={(emote: string) => this._onEmoteChosen(emote)}
-                            />
-                                <MobileChatInput
-                                    ref={(ref: any) => this.inputElem = ref}
-                                    chat={this.chat}
-                                    opacity={this.state.chatInputOpacity}
-                                    shown={!this.state.drawerOpen}
-                                    onChange={(val: string) => this._onInputUpdate(val)}
-                                    onEmoteBtnPress={() => {
-                                        this.chat.mobileSettings.emoteDirLoseFocus &&
-                                            this.toggleEmoteDir();
-                                    }}
-                                    onFocus={() => this._inputFocused()}
-                                    onBlur={() => this._inputBlurred()}
+                            <MobileChatInput
+                                ref={(ref: any) => this.inputElem = ref}
+                                chat={this.chat}
+                                opacity={this.state.chatInputOpacity}
+                                handleTop={this.handleTopBinding}
+                                handleWidth={this.handleWidthBinding}
+                                handleOpacity={this.handleOpacityBinding}
+                                showHandle={this.chat.mobileSettings.menuDrawerButton === false}
+                                shown={!this.state.drawerOpen}
+                                onChange={(val: string) => this._onInputUpdate(val)}
+                                onEmoteBtnPress={() => {
+                                    this.toggleEmoteDir();
+                                }}
+                                onFocus={() => this._inputFocused()}
+                                onBlur={() => this._inputBlurred()}
+                            >
+                                <EmoteDirectory
+                                    translateY={this.state.emoteDirOffset}
+                                    filter={this.state.emoteFilter}
+                                    onSelect={(emote: string) => this._onEmoteChosen(emote)}
                                 />
+                            </MobileChatInput>
                             {!this.state.inputFocused &&
                                 <CardDrawerNavList
                                     navigation={this.props.navigation}
@@ -283,6 +300,17 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                             }
                         </BottomDrawer>
                 }
+                <Animated.View
+                    style={{
+                        height: "100%",
+                        width: "100%",
+                        position: "absolute",
+                        top: 0,
+                        backgroundColor: "#000",
+                        opacity: this.backdropOpacity
+                    }}
+                    pointerEvents={"none"}
+                />
             </SafeAreaView>                         
         );
     }
@@ -358,21 +386,43 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
         global.bugsnag.leaveBreadcrumb('MainView before onLayout.');  
         const viewHeight = (e.layout.height > e.layout.width) ? e.layout.height : e.layout.width;
         const isLandscape = (e.layout.width > e.layout.height);
-        if (this.state.height === null) {
+        if (this.state.height === undefined) {
             const interpolate = {
-                min: 0,
-                max: 265
+                min: -265,
+                max: 0
             };
             const emoteDirOffset = new Animated.Value(0);        
             const drawerPosSpy = new Animated.Value(0);
+
+            this.handleTopBinding = drawerPosSpy.interpolate({
+                inputRange: [interpolate.min, interpolate.max],
+                outputRange: [10, 0],
+                extrapolate: "clamp"
+            });
+            this.handleWidthBinding = drawerPosSpy.interpolate({
+                inputRange: [interpolate.min, interpolate.max],
+                outputRange: [1, 0.6],
+                extrapolate: "clamp"
+            });
+            this.handleOpacityBinding = drawerPosSpy.interpolate({
+                inputRange: [interpolate.min, interpolate.max],
+                outputRange: [1, 0.4],
+                extrapolate: "clamp"
+            })
+            this.backdropOpacity = drawerPosSpy.interpolate({
+                inputRange: [interpolate.min, interpolate.max],
+                outputRange: [0.7, 0],
+                extrapolate: "clamp"
+            })
             this.setState({ 
                 height: viewHeight,
                 emoteDirOffset: emoteDirOffset,
                 isLandscape: isLandscape,
                 drawerPosSpy: drawerPosSpy,
                 chatInputOpacity: drawerPosSpy.interpolate({
-                    inputRange: [interpolate.min, interpolate.max],
-                    outputRange: [1, 0]                    
+                    inputRange: [interpolate.min/3, interpolate.max],
+                    outputRange: [0, 1],
+                    extrapolate: "clamp"
                 })
             });
         }         

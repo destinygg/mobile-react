@@ -44,7 +44,6 @@ const mediaExts = [
 interface EmoteDirectoryProps {
     filter: string;
     translateY?: Animated.Value;
-    topOffset: number;
     onSelect: {(emote: string): any};
 }
 
@@ -82,41 +81,33 @@ export class EmoteDirectory extends PureComponent<EmoteDirectoryProps> {
         return (
             <Animated.View 
                 style={{
-                    width: '100%',
                     position: 'absolute',
+                    width: "100%",
+                    top: 45,
+                    borderTopLeftRadius: 25,
+                    borderTopRightRadius: 25,
+                    backgroundColor: Palette.drawerBg,
+                    height: 70,
                     transform: [{
                         translateY: (this.props.translateY) ? this.props.translateY : 0
                     }],
-                    top: this.props.topOffset
                 }} 
                 collapsable={false}
             >
-                <View style={{
-                    borderTopLeftRadius: 25,
-                    borderTopRightRadius: 25,
-                    height: 70,
-                    backgroundColor: Palette.drawerBg
-                }}>
-                    <View style={{
-                        paddingLeft: 15,
-                        paddingRight: 15,
-                        marginTop: 15
-                    }}>
-                        <ScrollView 
-                            showsHorizontalScrollIndicator={false} 
-                            horizontal={true} 
-                            keyboardShouldPersistTaps={'always'}
-                            onContentSizeChange={() => {
-                                if (this.scrollView && this.scrollView.scrollTo) {
-                                    this.scrollView.scrollTo({ x: 0, animated: false });
-                                }
-                            }}
-                            ref={ref => this.scrollView = ref}
-                        >
-                            {children}
-                        </ScrollView>
-                    </View>
-                </View>
+                    <ScrollView 
+                        showsHorizontalScrollIndicator={false} 
+                        horizontal={true} 
+                        contentContainerStyle={{width: "100%"}}
+                        keyboardShouldPersistTaps={'always'}
+                        onContentSizeChange={() => {
+                            if (this.scrollView && this.scrollView.scrollTo) {
+                                this.scrollView.scrollTo({ x: 0, animated: false });
+                            }
+                        }}
+                        ref={ref => this.scrollView = ref}
+                    >
+                        {children}
+                    </ScrollView>
             </Animated.View>
         )
     }
@@ -131,6 +122,10 @@ interface MobileChatInputProps {
     onChange: {(text: string): any};
     chat: any;
     opacity?: Animated.AnimatedWithChildren;
+    handleTop?: Animated.AnimatedInterpolation;
+    handleWidth?: Animated.AnimatedInterpolation;
+    handleOpacity?: Animated.AnimatedInterpolation;
+    showHandle?: boolean;
     style?: ViewStyle;
     shown?: boolean;
     onEmoteBtnPress: { (): any };
@@ -197,72 +192,97 @@ export class MobileChatInput extends Component<MobileChatInputProps, {value: str
     render() {
         return (
             <View 
-                style={Object.assign({
-                    flexDirection: 'row',
-                    zIndex: 2000,
-                    backgroundColor: Palette.drawerBg,
-                    borderTopLeftRadius: 25,
-                    borderTopRightRadius: 25,
-                    paddingTop: 8,
-                    paddingLeft: 5,
-                    paddingRight: 5,
-                }, this.props.style)}
-                pointerEvents={(this.props.shown) ? 'auto' : 'none'}
+                style={{paddingTop: 45}}
             >
-                <Animated.View 
-                    style={{
-                        flex: 1,
-                        flexDirection: 'row',
-                        opacity: this.props.opacity
-                    }}
+            {this.props.children}
+                <View 
+                    style={Object.assign({
+                        backgroundColor: Palette.drawerBg,
+                        borderTopLeftRadius: 25,
+                        borderTopRightRadius: 25,
+                        paddingTop: 8,
+                        paddingLeft: 5,
+                        paddingRight: 5,
+                    }, this.props.style)}
+                    pointerEvents={(this.props.shown) ? 'auto' : 'none'}
                 >
-                    <TouchableOpacity onPress={() => this.props.onEmoteBtnPress()}>
-                        <Text style={{
-                            fontFamily: 'ionicons',
-                            color: Palette.text,
-                            fontSize: 30,
-                            paddingLeft: 12,
-                            paddingRight: 10,
-                            paddingTop: 15,
-                            paddingBottom: 10
-                        }}>
-                            &#xf38e;
-                        </Text>
-                    </TouchableOpacity>
-                    <View style={{
-                        borderColor: Palette.border,
-                        backgroundColor: Palette.inner,
-                        borderWidth: StyleSheet.hairlineWidth,
-                        borderRadius: (Platform.OS === 'ios') ? 17 : 19,
-                        paddingLeft: 15,
-                        paddingRight: 15,
-                        marginLeft: 5,
-                        marginTop: 10,
-                        marginRight: 15,
-                        flex: 1,
-                        height: (Platform.OS === 'ios') ? 34 : 38
-                    }}>
-                        <TextInput
+                    {this.props.showHandle &&
+                        <Animated.View 
                             style={{
-                                flex: 1,
-                                fontSize: 12,
-                                color: Palette.messageText,
-                                height: 34
-                            }}
-                            placeholder={'Write something...'}
-                            placeholderTextColor={Palette.text}
-                            onChangeText={(text) => this.set(text)}
-                            onSubmitEditing={() => this.send()}
-                            ref={ref => this.input = ref}
-                            underlineColorAndroid='transparent'
-                            value={this.state.value}
-                            keyboardAppearance='dark'
-                            onFocus={this.props.onFocus}
-                            onBlur={this.props.onBlur}
-                            autoCorrect={true}
-                        />
-                    </View>
-                </Animated.View>
+                                height: 4,
+                                width: 100,
+                                backgroundColor: Palette.text,
+                                borderRadius: 2,
+                                zIndex: 10,
+                                alignSelf: "center",
+                                marginTop: 5,
+                                opacity: this.props.handleOpacity,
+                                transform: [
+                                    {
+                                        translateY: this.props.handleTop,
+                                    },
+                                    {
+                                        scaleX: this.props.handleWidth
+                                    },
+                                ]
+                            }} 
+                        /> 
+                    }
+                    <Animated.View 
+                        style={{
+                            width: "100%",
+                            flexDirection: 'row',
+                            opacity: this.props.opacity
+                        }}
+                    >
+                        <TouchableOpacity onPress={() => this.props.onEmoteBtnPress()}>
+                            <Text style={{
+                                fontFamily: 'ionicons',
+                                color: Palette.text,
+                                fontSize: 30,
+                                paddingLeft: 12,
+                                paddingRight: 10,
+                                paddingTop: 15,
+                                paddingBottom: 10
+                            }}>
+                                &#xf38e;
+                            </Text>
+                        </TouchableOpacity>
+                        <View style={{
+                            borderColor: Palette.border,
+                            backgroundColor: Palette.inner,
+                            borderWidth: StyleSheet.hairlineWidth,
+                            borderRadius: (Platform.OS === 'ios') ? 17 : 19,
+                            paddingLeft: 15,
+                            paddingRight: 15,
+                            marginLeft: 5,
+                            marginTop: 10,
+                            marginRight: 15,
+                            flex: 1,
+                            height: (Platform.OS === 'ios') ? 34 : 38
+                        }}>
+                            <TextInput
+                                style={{
+                                    flex: 1,
+                                    fontSize: 12,
+                                    color: Palette.messageText,
+                                    height: 34
+                                }}
+                                placeholder={'Write something...'}
+                                placeholderTextColor={Palette.text}
+                                onChangeText={(text) => this.set(text)}
+                                onSubmitEditing={() => this.send()}
+                                ref={ref => this.input = ref}
+                                underlineColorAndroid='transparent'
+                                value={this.state.value}
+                                keyboardAppearance='dark'
+                                onFocus={this.props.onFocus}
+                                onBlur={this.props.onBlur}
+                                autoCorrect={true}
+                            />
+                        </View>
+                    </Animated.View>
+                </View>
             </View>
         )
     }
@@ -315,6 +335,7 @@ export class MobileChatView extends Component<MobileChatViewProps, {
                 paddingTop: 0,
                 paddingRight: 10,
                 paddingLeft: 10,
+                marginTop: 45,
                 backgroundColor: Palette.background
             }}>
                 <FlatList

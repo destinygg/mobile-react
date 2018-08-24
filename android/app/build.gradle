@@ -139,6 +139,7 @@ android {
 dependencies {
     compile project(':react-native-fs')
     compile project(':bugsnag-react-native')
+    compile project(path: ':react-native-interactable')
     compile fileTree(dir: "libs", include: ["*.jar"])
     compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     compile "com.facebook.react:react-native:+"  // From node_modules

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { WebView, ScrollView, View, Text, Platform } from 'react-native';
-import { NavigationActions, NavigationScreenProps } from 'react-navigation';
+import { StackActions, NavigationScreenProps, NavigationActions } from 'react-navigation';
 import ButtonList from 'components/forms/ButtonList';
 import { Palette, h2 } from 'assets/constants';
 
@@ -68,7 +68,7 @@ export class AuthWebView extends Component<NavigationScreenProps<AuthNavParams>>
                 style={{ backgroundColor: '#000' }}
                 onNavigationStateChange={e => {
                     if (e.loading == false && e.url && e.url.indexOf('destiny.gg/profile') != -1) {
-                        this.props.navigation.dispatch(NavigationActions.reset({
+                        this.props.navigation.dispatch(StackActions.reset({
                             index: 0,
                             actions: [
                                 NavigationActions.navigate({ routeName: 'InitView' })

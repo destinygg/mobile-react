@@ -71,9 +71,9 @@ export default class FormView extends Component<FormViewProps, FormViewState> {
 
         return {
             title: routeName,
-            headerRight: (params.isSaving) ?
+            headerRight: params && (params.isSaving ?
                 <ActivityIndicator /> :
-                <FormSaveBtn onSave={params.saveHandler ? params.saveHandler : () => null} />,
+            <FormSaveBtn onSave={params.saveHandler ? params.saveHandler : () => null} />),
             drawerLockMode: 'locked-closed'
         }
     };

@@ -8,7 +8,8 @@ import {
     NavigationScreenProp,
     NavigationScreenProps,
     SafeAreaView,
-    StackNavigator,
+    createStackNavigator,
+    StackActions,
 } from 'react-navigation';
 
 import { ListButton, ListButtonProps } from 'components/forms/ButtonList';
@@ -32,10 +33,12 @@ class AccountView extends FormView {
     constructor(props: FormViewProps) {
         super(props);
         this.endpoint = 'profile/update';
+        const me = MobileChat.current.me;
+        console.log(this.props)
         this.formState = {items: {
-            username: MobileChat.current.me.username,
-            email: MobileChat.current.me.email,
-            country: MobileChat.current.me.country
+            username: me.username,
+            email: me.email,
+            country: me.country
         }};
         this.formItems = [
             { 
@@ -77,7 +80,7 @@ class AccountView extends FormView {
                 flex: 1,
                 backgroundColor: Palette.background
             }}>
-                    <ProfileForm formItems={this.formItems} formState={this.state} onChange={this._onChange.bind(this)} />
+                    <ProfileForm formItems={this.formItems} formState={this.formState} onChange={this._onChange.bind(this)} />
                 </ScrollView>
             </SafeAreaView>
         )
@@ -590,7 +593,7 @@ class SubscriptionWebView extends Component<SubscriptionWebViewProps> {
                             this.props.navigation.goBack();                                                                                
                         } else if (e.url.indexOf('complete') != -1) {
                             Alert.alert('Success', 'Subscription complete.');
-                            this.props.navigation.dispatch(NavigationActions.reset({
+                            this.props.navigation.dispatch(StackActions.reset({
                                 index: 0,
                                 actions: [
                                     NavigationActions.navigate({ routeName: 'ProfileView'}),
@@ -670,12 +673,13 @@ class SettingsView extends FormView {
 
 class ProfileView extends Component<NavigationScreenProps> {
     listItems: ListButtonProps[];
-    static navigationOptions = ({ navigation }: any) => {
+
+    static navigationOptions = ({ navigation }: {navigation: NavigationScreenProp<{params: any}>}) => {
         const { params = {} } = navigation.state;
 
         return {
             title: 'Profile',        
-            headerLeft: <HeaderBackButton title='Back' onPress={() => params.backHandler(null)} />,
+            headerLeft: <HeaderBackButton tintColor={Palette.title} title='Back' onPress={() => params.backHandler(null)} />,
             headerTintColor: Palette.navBorder
         }
     };
@@ -701,9 +705,9 @@ class ProfileView extends Component<NavigationScreenProps> {
                 backgroundColor: Palette.background
             }}>
                 <ScrollView contentContainerStyle={[{
-                flex: 1,
-                backgroundColor: Palette.background
-            }]}>
+                    backgroundColor: Palette.background,
+                    flex: 1
+                }]}>
                     <View style={{
                         marginLeft: 15,
                         marginBottom: 25,
@@ -727,10 +731,8 @@ class ProfileView extends Component<NavigationScreenProps> {
                     }}/>
                     <ListButton 
                         name='About'
-                        first={true} 
                         last={true} 
                         onPress={() => this.props.navigation.navigate('About')} 
-                        style={{marginTop: 50}}
                     />
                 </ScrollView>
             </SafeAreaView>
@@ -738,7 +740,7 @@ class ProfileView extends Component<NavigationScreenProps> {
     }
 }
 
-const ProfileNav = StackNavigator({
+const ProfileNav = createStackNavigator({
     Profile: { screen: ProfileView },
     Account: { screen: AccountView },
     Subscription: { screen: SubscriptionView },

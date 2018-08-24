@@ -17,7 +17,7 @@
 		"react-native-fs": "^2.11.15",
 		"react-native-interactable": "^0.1.10",
 		"react-native-vector-icons": "^5.0.0",
-		"react-navigation": "^1.5.12",
+		"react-navigation": "^2.11.2",
 		"throttle-debounce": "~1.0.1",
 		"typescript": "^2.9.2"
 	},
@@ -27,7 +27,7 @@
 		"@types/react-native": "^0.56.9",
 		"@types/react-native-fs": "^2.8.2",
 		"@types/react-native-vector-icons": "^4.6.2",
-		"@types/react-navigation": "^2.0.16",
+		"@types/react-navigation": "^2.0.17",
 		"babel-jest": "21.2.0",
 		"babel-preset-react-native": "^5.0.2",
 		"jest": "21.2.1",

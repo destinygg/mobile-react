@@ -59,9 +59,9 @@ export default class CardDrawerNavList extends PureComponent<CardDrawerNavListPr
         return (
             <View style={{
                 backgroundColor: Palette.drawerBg,
-                paddingBottom: 100,
                 paddingTop: 10,
-                marginTop: -5
+                marginTop: -5,
+                height: 350
             }}>
                 <ButtonList listItems={this.routes} />
             </View>

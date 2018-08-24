@@ -14,14 +14,13 @@ export class NavList extends Component<NavListProps> {
                     name={item.name}
                     onPress={() => this.props.onPress(item)}
                     key={index}
-                    first={index === 0}
                     last={index === (array.length - 1)}
                 />
             );
         });
 
         return (
-            <View style={{flex: 1}}>
+            <View>
                 {children}
             </View>
         )

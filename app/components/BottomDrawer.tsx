@@ -7,8 +7,6 @@ interface BottomDrawerProps {
     posSpy: Animated.Value;
     onOpen: {(): any};
     onClose: {(): any};
-    paddingHeight: number;
-    showHandle?: boolean;
     style: ViewStyle;
 }
 
@@ -20,37 +18,12 @@ export class BottomDrawer extends Component<BottomDrawerProps, {
     open: boolean;
     interactable: Component<Interactable.IInteractableView> | null = null;
     scrollY: Animated.Value;
-    scrollViewHeight = 500;
-    handleTopBinding: Animated.AnimatedInterpolation;
-    handleWidthBinding: Animated.AnimatedInterpolation;
-    opacityBinding: Animated.AnimatedInterpolation;
 
     constructor(props: BottomDrawerProps) {
         super(props);
         this.state = {onTop: false, open: false, fixed: false};
         this.open = false;
         this.scrollY = this.props.posSpy;
-        this.handleTopBinding = this.scrollY.interpolate({
-            inputRange: [
-                0,
-                265
-            ],
-            outputRange: [0, 10]
-        });
-        this.handleWidthBinding = this.scrollY.interpolate({
-            inputRange: [
-                0,
-                265
-            ],
-            outputRange: [0.6, 1]
-        });
-        this.opacityBinding = this.scrollY.interpolate({
-            inputRange: [
-                0,
-                265
-            ],
-            outputRange: [0.4, 1]
-        })
     }
 
     openDrawer() {
@@ -79,62 +52,26 @@ export class BottomDrawer extends Component<BottomDrawerProps, {
 
     render() {
         return (
-            <KeyboardAvoidingView 
-                style={Object.assign({
-                    zIndex: 6000                   
-                }, this.props.style)}
-                behavior={'position'}
-            >
-                    <Interactable.View
-                        verticalOnly={true}
-                        snapPoints={[{y: 0, tension: 0, damping: 1}, {y: 265, tension: 0, damping: 1}]}
-                        style={{
-                            height: this.scrollViewHeight,
-                            width: '100%',
-                        }} 
-                        dragEnabled={!this.state.fixed}
-                        animatedValueY={this.props.posSpy}
-                        ref={r => this.interactable = r}
-                        onSnap={(e) => {
-                            if (e.nativeEvent.index === 1) {
-                                this.setState({ open: true });
-                                this.props.onOpen();
-                            } else if (e.nativeEvent.index === 0) {
-                                this.setState({ open: false });
-                                this.props.onClose();
-                            }
-                        }}
-                    >              
-                        <TouchableWithoutFeedback 
-                            onPress={() => Keyboard.dismiss()}
-                        >
-                            <View style={{ height: this.props.paddingHeight }} />
-                        </TouchableWithoutFeedback>
-                        {this.props.showHandle &&
-                            <Animated.View 
-                                style={{
-                                    height: 4,
-                                    width: 100,
-                                    backgroundColor: Palette.text,
-                                    borderRadius: 2,
-                                    alignSelf: 'center',
-                                    zIndex: 3000,
-                                    top: 10,
-                                    opacity: this.opacityBinding,
-                                    transform: [
-                                        {
-                                            translateY: this.handleTopBinding,
-                                        },
-                                        {
-                                            scaleX: this.handleWidthBinding
-                                        },
-                                    ]
-                                }} 
-                            />
-                        }
-                        {this.props.children}
-                    </Interactable.View>
-            </KeyboardAvoidingView>
+            <Interactable.View
+                verticalOnly={true}
+                snapPoints={[{y: 0}, {y: -265}]}
+                boundaries={{top: -325}}
+                style={this.props.style} 
+                dragEnabled={!this.state.fixed}
+                animatedValueY={this.props.posSpy}
+                ref={r => this.interactable = r}
+                onSnap={(e) => {
+                    if (e.nativeEvent.index === 1) {
+                        this.setState({ open: true });
+                        this.props.onOpen();
+                    } else if (e.nativeEvent.index === 0) {
+                        this.setState({ open: false });
+                        this.props.onClose();
+                    }
+                }}
+            >      
+                {this.props.children}
+            </Interactable.View>
         )
     }
 }

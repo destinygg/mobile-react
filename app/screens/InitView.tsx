@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Alert } from 'react-native';
-import { NavigationActions, NavigationScreenProps } from 'react-navigation';
+import { NavigationActions, NavigationScreenProps, StackActions } from 'react-navigation';
 
 const { MobileChat } = require("../chat/chat"); 
 
@@ -33,16 +33,17 @@ export default class InitView extends Component<NavigationScreenProps> {
                     .withUserAndSettings(me)
                     .connect("wss://www.destiny.gg/ws");
 
+
                 // @ts-ignore
                 global.bugsnag.setUser(me.userId, me.username, me.username + '@destiny.gg');
-                navigation.dispatch(NavigationActions.reset({
+                navigation.dispatch(StackActions.reset({
                     index: 0,
                     actions: [
                         NavigationActions.navigate({ routeName: 'MainNav' })
                     ]
                 }));
             } else {
-                navigation.dispatch(NavigationActions.reset({
+                navigation.dispatch(StackActions.reset({
                     index: 0,
                     actions: [
                         NavigationActions.navigate({ routeName: 'AuthView' })
@@ -56,7 +57,7 @@ export default class InitView extends Component<NavigationScreenProps> {
                 [
                     {
                         text: 'Retry', onPress: () => {
-                            navigation.dispatch(NavigationActions.reset({
+                            navigation.dispatch(StackActions.reset({
                                 index: 0,
                                 actions: [
                                     NavigationActions.navigate({ routeName: 'InitView' })

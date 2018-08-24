@@ -48,16 +48,15 @@ export class FormItem extends Component<FormItemProps> {
         } else if (this.props.item.type === "select") {
             // @ts-ignore
             global.bugsnag.leaveBreadcrumb("Getting display text for country: " + this.props.value);
-            const displayText = this.props.item.selectOptions!.filter((item) => {
+            const displayText = this.props.item.selectOptions!.find((item) => {
                 return item.value === this.props.value;
             });
             children.push(
                 <ListButton
-                    name={displayText[0].name}
+                    name={displayText ? displayText.name : "Choose country..."}
                     tag={this.props.item.tag}
                     onPress={() => this.selectModal && this.selectModal.show()}
                     key={this.props.item.name}
-                    first={this.props.first}
                     last={this.props.last}
                 />
             );

@@ -21,7 +21,7 @@ import {
     NavigationScreenProp,
     NavigationScreenProps,
     SafeAreaView,
-    StackNavigator,
+    createStackNavigator,
 } from 'react-navigation';
 import TextInputListItem from 'components/forms/TextInputListItem';
 import { Palette, h3 } from 'assets/constants';
@@ -407,7 +407,7 @@ class MessageView extends Component<NavigationScreenProps, {
         const params = navigation.state.params;
         return ({
             title: 'Messages',
-            headerLeft: <HeaderBackButton title='Back' onPress={() => params.backHandler(null)} />,
+            headerLeft: <HeaderBackButton tintColor={Palette.title} title='Back' onPress={() => params.backHandler(null)} />,
             headerRight: <ComposeButton onPress={params.composeHandler ? params.composeHandler : () => null} />,
             headerTintColor: Palette.messageText
         });
@@ -499,7 +499,7 @@ class MessageView extends Component<NavigationScreenProps, {
     }
 }
 
-const MessageNav = StackNavigator({
+const MessageNav = createStackNavigator({
     MessageView: { screen: MessageView },
     UserView: { screen: UserView },
     ComposeView: { screen: ComposeView }

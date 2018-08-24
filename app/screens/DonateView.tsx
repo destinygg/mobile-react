@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Alert, Button, Platform, ScrollView, Text, View, WebView } from 'react-native';
-import { HeaderBackButton, NavigationActions, NavigationScreenProps, SafeAreaView, StackNavigator } from 'react-navigation';
+import { HeaderBackButton, NavigationActions, NavigationScreenProps, SafeAreaView, createStackNavigator, StackActions } from 'react-navigation';
 
 import TextInputListItem from 'components/forms/TextInputListItem';
 import { UserAgreement } from 'components/UserAgreement';
@@ -56,7 +56,7 @@ Try again later.');
                             this.props.navigation.goBack();
                         } else if (e.url.indexOf('complete') != -1) {
                             Alert.alert('Success', 'Donation complete.');
-                            this.props.navigation.dispatch(NavigationActions.reset({
+                            this.props.navigation.dispatch(StackActions.reset({
                                 index: 0,
                                 actions: [
                                     NavigationActions.navigate({ routeName: 'DonateView' }),
@@ -80,7 +80,7 @@ class DonateView extends Component<NavigationScreenProps<DonateViewParams>, {amo
         const { params }: {params: DonateViewParams} = navigation.state;
         return ({
             title: 'Donate',
-            headerLeft: <HeaderBackButton title='Back' onPress={() => params.backHandler()} />,    
+            headerLeft: <HeaderBackButton title='Back' tintColor={Palette.title} onPress={() => params.backHandler()} />,    
             headerRight: <View style={{
                             marginRight: (Platform.OS == 'ios') ? 5 : 15
                         }}>
@@ -157,7 +157,7 @@ class DonateView extends Component<NavigationScreenProps<DonateViewParams>, {amo
     }
 }
 
-const DonateNav = StackNavigator({
+const DonateNav = createStackNavigator({
     DonateView: { screen: DonateView },
     DonateWebView: { screen: DonateWebView },
     UserAgreement: { screen: UserAgreement }

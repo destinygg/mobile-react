@@ -6,7 +6,6 @@ export interface ListButtonProps {
     name: string;
     tag?: string;
     onPress?: { (): any };
-    first?: boolean;
     last?: boolean;
     style?: ViewStyle;
 }
@@ -17,15 +16,13 @@ export class ListButton extends Component<ListButtonProps> {
             backgroundColor: Palette.innerDark,             
             paddingLeft: 15,      
             borderColor: Palette.border,
-            borderTopWidth: this.props.first ? StyleSheet.hairlineWidth : undefined,
-            borderBottomWidth: this.props.last ? StyleSheet.hairlineWidth : undefined
+            borderBottomWidth: this.props.last ? undefined : StyleSheet.hairlineWidth
         }, this.props.style);
         const innerStyle: ViewStyle = {
             paddingTop: 10,
             paddingRight: 15, 
             paddingBottom: 10,         
             borderColor: Palette.border,
-            borderBottomWidth: this.props.last ? StyleSheet.hairlineWidth : undefined
         };
 
         const displayName = this.props.tag !== undefined
@@ -59,7 +56,6 @@ export default class ButtonList extends Component<ButtonListProps> {
                     name={item.name}
                     onPress={item.onPress}
                     key={index}
-                    first={index === 0}
                     last={index === (array.length - 1)}
                     style={item.style}
                 />
