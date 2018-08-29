@@ -18,6 +18,8 @@ import {
 } from 'react-native';
 
 const EventEmitter = require('../../../lib/assets/chat/js/emitter').default;
+import Ionicons from "react-native-vector-icons/Ionicons";
+
 import { Emote } from './messages';
 import MobileEmotes from "../MobileEmotes";
 import { Palette } from 'assets/constants';
@@ -48,14 +50,14 @@ interface EmoteDirectoryProps {
 }
 
 export class EmoteDirectory extends PureComponent<EmoteDirectoryProps> {
-    emotes: string[];
+    emotes: string[] = [];
     scrollView: ScrollView | null = null;
     constructor(props: EmoteDirectoryProps) {
         super(props);
-        this.emotes = Array.from(Object.keys(MobileEmotes.emoticons)).sort();
     }
 
     render() {
+        this.emotes = Object.keys(MobileEmotes.emoticons).sort();
         const children = 
             this.emotes
                 .filter((emote) => {
@@ -66,15 +68,11 @@ export class EmoteDirectory extends PureComponent<EmoteDirectoryProps> {
                             style={{ 
                                 marginLeft: 5,
                                 marginRight: 5,
-                                flex: 1,
-                                justifyContent: 'center' 
                             }} 
                             key={emote} 
                             onPress={() => this.props.onSelect(emote)}
                         >
-                            <View>
-                                <Emote name={emote} emoteMenu={true} />
-                            </View>
+                            <Emote name={emote} />
                         </TouchableOpacity>
                     );
                 });
@@ -86,6 +84,8 @@ export class EmoteDirectory extends PureComponent<EmoteDirectoryProps> {
                     top: 45,
                     borderTopLeftRadius: 25,
                     borderTopRightRadius: 25,
+                    paddingTop: 10,
+                    overflow: "hidden",
                     backgroundColor: Palette.drawerBg,
                     height: 70,
                     transform: [{
@@ -97,13 +97,14 @@ export class EmoteDirectory extends PureComponent<EmoteDirectoryProps> {
                     <ScrollView 
                         showsHorizontalScrollIndicator={false} 
                         horizontal={true} 
-                        contentContainerStyle={{width: "100%"}}
                         keyboardShouldPersistTaps={'always'}
                         onContentSizeChange={() => {
                             if (this.scrollView && this.scrollView.scrollTo) {
                                 this.scrollView.scrollTo({ x: 0, animated: false });
                             }
                         }}
+                        overScrollMode={"never"}
+                        style={{flex: 1}}
                         ref={ref => this.scrollView = ref}
                     >
                         {children}
@@ -236,17 +237,14 @@ export class MobileChatInput extends Component<MobileChatInputProps, {value: str
                         }}
                     >
                         <TouchableOpacity onPress={() => this.props.onEmoteBtnPress()}>
-                            <Text style={{
-                                fontFamily: 'ionicons',
+                            <Ionicons name={"md-happy"} style={{
                                 color: Palette.text,
                                 fontSize: 30,
                                 paddingLeft: 12,
                                 paddingRight: 10,
                                 paddingTop: 15,
                                 paddingBottom: 10
-                            }}>
-                                &#xf38e;
-                            </Text>
+                            }}/>
                         </TouchableOpacity>
                         <View style={{
                             borderColor: Palette.border,
@@ -335,7 +333,6 @@ export class MobileChatView extends Component<MobileChatViewProps, {
                 paddingTop: 0,
                 paddingRight: 10,
                 paddingLeft: 10,
-                marginTop: 45,
                 backgroundColor: Palette.background
             }}>
                 <FlatList

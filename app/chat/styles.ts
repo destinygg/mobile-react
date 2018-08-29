@@ -1,8 +1,8 @@
-import css from "jotform-css.js";
+const css = require("jotform-css.js");
 
 import { StyleSheet, AsyncStorage } from 'react-native';
 import { Palette } from 'assets/constants';
-import UpstreamAsset from './UpstreamAsset';
+import UpstreamAsset from './UpstreamAssets';
 
 const UpstreamChatStylePath = "assets/chat/css/style.scss";
 const UpstreamChatColorPath = "assets/common.scss";
@@ -11,7 +11,8 @@ export class MobileChatFlairColors {
     static colors: { [className: string]: string } = {};
 
     static async generateMobileColors(): Promise<{ [className: string]: string }> {
-        const styles: any = new css().parseCSS(await UpstreamAsset.fetchText(UpstreamChatStylePath));
+        const parser = new cssjs();
+        const styles: any = parser.parseCSS(await UpstreamAsset.fetchText(UpstreamChatStylePath));
         const colorText = await UpstreamAsset.fetchText(UpstreamChatColorPath);
         const lines = colorText.split(/[\r\n]+/g);
 
@@ -20,7 +21,9 @@ export class MobileChatFlairColors {
         lines.forEach(l => {
             if (l.indexOf("$") === 0) {
                 const kv = l.split(":");
-                upstreamColors[kv[0]] = kv[1];
+                const value = kv[1].trim().slice(0, -1);
+                console.log(value);
+                upstreamColors[kv[0]] = value;
             }
         });
 
@@ -42,6 +45,11 @@ export class MobileChatFlairColors {
     }
 
     static async init() {
+        if (__DEV__) {
+            const e = await AsyncStorage.getItem("mobileChatColors");
+            MobileChatFlairColors.colors = e === null ? [] : JSON.parse(e);
+            return;
+        }
         const currentSha = await AsyncStorage.getItem("mobileChatColorsSha");
         const upstreamSha = await UpstreamAsset.getShaSum(UpstreamChatStylePath);
 

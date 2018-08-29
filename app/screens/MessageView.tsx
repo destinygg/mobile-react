@@ -409,7 +409,7 @@ class MessageView extends Component<NavigationScreenProps, {
             title: 'Messages',
             headerLeft: <HeaderBackButton tintColor={Palette.title} title='Back' onPress={() => params.backHandler(null)} />,
             headerRight: <ComposeButton onPress={params.composeHandler ? params.composeHandler : () => null} />,
-            headerTintColor: Palette.messageText
+            headerTintColor: Palette.title
         });
     }
     constructor(props: NavigationScreenProps) {
@@ -479,9 +479,9 @@ class MessageView extends Component<NavigationScreenProps, {
             this.refreshInbox();
         }
         return (
-            <SafeAreaView style={{flex: 1}}>
+            <SafeAreaView style={{flex: 1, backgroundColor: Palette.background}}>
                 <FlatList
-                    data={this.state.inbox}
+                    data={this.state.inbox.length > 0 ? this.state.inbox : null}
                     extraData={this.state.extraData}
                     keyExtractor={(item) => item.userid}
                     renderItem={({ item, index, separators }) => <MessageListItem item={item} onPress={(item) => this.openItem(item)} />}

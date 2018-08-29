@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
-import { Animated, Keyboard, KeyboardAvoidingView, TouchableWithoutFeedback, View, ViewStyle } from 'react-native';
-import Interactable from 'react-native-interactable';
-import { Palette } from 'assets/constants';
+import { Animated, ViewStyle } from 'react-native';
+import Interactable, { IDragEvent } from 'react-native-interactable';
 
 interface BottomDrawerProps {
     posSpy: Animated.Value;
     onOpen: {(): any};
+    onDrag: {(e: IDragEvent): any};
     onClose: {(): any};
     style: ViewStyle;
 }
 
 export class BottomDrawer extends Component<BottomDrawerProps, {
-    onTop: boolean,
     open: boolean,
     fixed: boolean,
 }> {
@@ -21,14 +20,14 @@ export class BottomDrawer extends Component<BottomDrawerProps, {
 
     constructor(props: BottomDrawerProps) {
         super(props);
-        this.state = {onTop: false, open: false, fixed: false};
+        this.state = {open: false, fixed: false};
         this.open = false;
         this.scrollY = this.props.posSpy;
     }
 
     openDrawer() {
         if (this.interactable !== null) {
-            this.setState({ open: true });
+            this.open = true;
             (this.interactable as any).snapTo({index: 1});
         }
         this.props.onOpen();
@@ -37,7 +36,7 @@ export class BottomDrawer extends Component<BottomDrawerProps, {
     closeDrawer() {
         if (this.interactable !== null) {
             (this.interactable as any).snapTo({ index: 0 });
-            setTimeout(() => this.setState({ open: false }), 200);
+            this.open = false;
         }
         this.props.onClose();
     }
@@ -62,13 +61,15 @@ export class BottomDrawer extends Component<BottomDrawerProps, {
                 ref={r => this.interactable = r}
                 onSnap={(e) => {
                     if (e.nativeEvent.index === 1) {
-                        this.setState({ open: true });
+                        this.open = true;
                         this.props.onOpen();
                     } else if (e.nativeEvent.index === 0) {
-                        this.setState({ open: false });
+                        this.open = false;
                         this.props.onClose();
                     }
                 }}
+                onDrag={this.props.onDrag}
+                pointerEvents={"box-none"}
             >      
                 {this.props.children}
             </Interactable.View>

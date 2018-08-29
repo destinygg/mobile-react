@@ -19,12 +19,12 @@ import { EmoteDirectory, MobileChatInput } from 'chat/components/window';
 import { BottomDrawer } from 'components/BottomDrawer';
 import CardDrawerNavList from 'components/CardDrawerNavList';
 
-import Ionicons from "react-native-vector-icons/Ionicons";
 import { Palette } from 'assets/constants';
 
 function DEVICE_HEIGHT() {
     const dims = Dimensions.get('window');
-    return (dims.height > dims.width) ? dims.height : dims.width  
+    console.log(dims);
+    return dims.height;
 }
 
 class TwitchView extends Component<{landscape?: boolean, height?: number}> {
@@ -72,6 +72,7 @@ interface MainViewState {
     resizing: boolean;
     streamShown: boolean;
     drawerOpen: boolean;
+    drawerOnTop: boolean;
     emoteDirShown: boolean;
     emoteFilter: string;
     emoteDirOffset?: Animated.Value;
@@ -102,6 +103,7 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
         this.state = {
             height: undefined,
             twitchHeight: undefined, 
+            drawerOnTop: false,
             resizing: false, 
             streamShown: true,
             drawerOpen: false,
@@ -189,16 +191,16 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
         console.log(this.state);
         return (
             <SafeAreaView style={{flex: 1, backgroundColor: Palette.background}}>
+                <View style={{flex: 1}}
+                    onLayout={(e: any) => {
+                        this._onLayout(e.nativeEvent);
+                    }}
+                >
                 <View
                     style={{
                         width: '100%', 
-                        height: DEVICE_HEIGHT() - (this.chat.mobileSettings.menuDrawerButton === false
-                            ? 100
-                            : 90
-                        ),
-                    }}
-                    onLayout={(e: any) => {
-                        this._onLayout(e.nativeEvent);
+                        flex: 1,
+                        marginBottom: 75
                     }}
                 >
                         {(this.state.streamShown) &&
@@ -226,46 +228,36 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                             />
                         }
                         {this.chat.mainwindow.uiElem}
-                        {this.chat.mobileSettings.menuDrawerButton &&
-                            <Ionicons
-                                name={"menu"}
-                                style={{
-                                    position: "absolute",
-                                    right: 5
-                                }}
-                                onPress={() => {
-                                    if (this.cardDrawer !== null) {
-                                        this.cardDrawer.open
-                                        ? this.cardDrawer.closeDrawer()
-                                        : this.cardDrawer.openDrawer()
-                                    }
-                                }}
-                            />
-                        }
                 </View>
                 {this.state.height != null &&
                         <BottomDrawer 
                             ref={(ref) => this.cardDrawer = ref} 
                             onOpen={() => this._drawerOpened()}                 
-                            onClose={() => this._drawerClosed()}  
+                            onClose={() => this._drawerClosed()} 
+                            onDrag={e => {
+                                if (e.nativeEvent.state === "start") {
+                                    this.setState({drawerOnTop: true});
+                                }
+                            }} 
                             posSpy={this.state.drawerPosSpy!}
                             style={this.state.isLandscape
                                 ? {
                                     alignSelf: "flex-end",
                                     width: "100%",
-                                    maxWidth: 400,
-                                    top: -45,
-                                    zIndex: 10
+                                    maxWidth: 500,
+                                    top: this.state.height - 115,
+                                    position: "absolute",
+                                    zIndex: this.state.drawerOnTop || this.state.emoteDirShown ? 10 : -1
                                 }
                                 : {
                                     alignSelf: "center",
                                     width: "100%",
-                                    position: "relative",
-                                    top: -45,
-                                    zIndex: 10
+                                    top: this.state.height - 115,
+                                    position: "absolute",
+                                    zIndex: this.state.drawerOnTop || this.state.emoteDirShown ? 10 : -1
                                 }
                             }
-                        >                  
+                        >               
                             <MobileChatInput
                                 ref={(ref: any) => this.inputElem = ref}
                                 chat={this.chat}
@@ -311,6 +303,7 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                     }}
                     pointerEvents={"none"}
                 />
+                </View>
             </SafeAreaView>                         
         );
     }
@@ -368,7 +361,7 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
     }
 
     _drawerClosed() {
-        this.setState({drawerOpen: false});
+        this.setState({drawerOpen: false, drawerOnTop: false});
     }
 
     _inputFocused() {
@@ -384,8 +377,9 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
     _onLayout(e: any) {
         // @ts-ignore
         global.bugsnag.leaveBreadcrumb('MainView before onLayout.');  
-        const viewHeight = (e.layout.height > e.layout.width) ? e.layout.height : e.layout.width;
-        const isLandscape = (e.layout.width > e.layout.height);
+        const viewHeight = e.layout.height;
+        const dim = Dimensions.get("window");
+        const isLandscape = dim.width > dim.height;
         if (this.state.height === undefined) {
             const interpolate = {
                 min: -265,
@@ -425,7 +419,9 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                     extrapolate: "clamp"
                 })
             });
-        }         
+        } else {
+            this.setState({height: viewHeight, isLandscape: isLandscape});
+        }      
         // @ts-ignore
         global.bugsnag.leaveBreadcrumb('MainView after onLayout.');                        
     }

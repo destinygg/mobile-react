@@ -105,7 +105,7 @@ function buildFeatures(user) {
 function buildTime(message) {
     const datetime = message.timestamp.format(DATE_FORMATS.FULL);
     const label = message.timestamp.format(DATE_FORMATS.TIME);
-    return <Time>{label}</Time>;
+    return <Time>{label + " "}</Time>;
 }
 
 export class MobileMessageBuilder {

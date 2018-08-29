@@ -1,7 +1,6 @@
 import React, { Component, PureComponent } from 'react';
 import { Image, Text, TextStyle } from 'react-native';
 import MobileEmotes from '../MobileEmotes';
-import RNFS from "react-native-fs";
 import MobileIcons from '../MobileIcons';
 import { Palette } from 'assets/constants';
 import { styles, MobileChatFlairColors } from '../styles';
@@ -28,20 +27,13 @@ export const MessageTypes = {
 export class UserFlair extends Component<{name: string}> {
     render() {
         const icon = MobileIcons.icons[this.props.name];
-
         if (icon === undefined) {
             return null;
         }
 
         return (
             <Image 
-                style={{
-                    width: icon.width,
-                    height: icon.height,
-                    top: -icon.x,
-                    left: -icon.y
-                }} 
-                source={{ uri: "file://" + RNFS.CachesDirectoryPath + "/icons.png" }}
+                source={icon} 
             />
         );
     }
@@ -54,7 +46,7 @@ export class Time extends Component {
                 fontSize: 10,
                 color: Palette.text,
                 fontWeight: '200',
-                backgroundColor: 'transparent'
+                backgroundColor: 'transparent',
             }}>
                 {this.props.children}
             </Text>
@@ -93,7 +85,7 @@ export class UserBadge extends Component<{user: any, onPress: {(user: string): a
     }
 }
 
-export class Emote extends Component<{name: string, emoteMenu?: boolean}> {
+export class Emote extends Component<{name: string}> {
     image: Image | null = null;
     render() {
         const emote = MobileEmotes.emoticons[this.props.name];
@@ -102,12 +94,11 @@ export class Emote extends Component<{name: string, emoteMenu?: boolean}> {
         return (
             <Image 
                 style={{
-                    width: emote.width,
                     height: emote.height,
-                    top: -emote.x,
-                    left: -emote.y
-                }} 
-                source={{uri: "file://" + RNFS.CachesDirectoryPath + "/emoticons.png"}} 
+                    width: emote.width,
+                    overflow: "visible"
+                }}
+                source={emote} 
             />
         );
     }
@@ -200,12 +191,12 @@ export class MobileChatMessage extends PureComponent<MobileChatMessageProps> {
     }
     render() {
         return (
-            <Text style={this.props.msg.classes} onLayout={(e) => {
-                    this.props.msg.height = e.nativeEvent.layout.height;
+            <Text style={{
+                minHeight: 25,
             }}>
                 {this.props.time}
                 {this.props.user}
-                <Text>{this.props.ctrl}</Text>
+                <Text style={{color: Palette.text}}>{this.props.ctrl}</Text>
                 {this.formatted}
             </Text>
         );
@@ -237,9 +228,7 @@ export class MobileChatEmoteMessage extends PureComponent<MobileChatEmoteMessage
             combo.push(<Text key='ComboCombo' style={styles.ComboCombo}> C-C-C-COMBO</Text>);
         }
         return (
-            <Text onLayout={(e) => {
-                this.props.msg.height = e.nativeEvent.layout.height
-            }}>
+            <Text>
                 {this.props.time}{this.props.emote}{combo}
             </Text>
         )

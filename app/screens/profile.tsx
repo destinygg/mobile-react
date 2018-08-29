@@ -637,7 +637,7 @@ class SettingsView extends FormView {
                 type: "switch",
             },
             {
-                tag: "Control menu drawer with button",
+                tag: "Hide drawer handle",
                 name: "menuDrawerButton",
                 type: "switch"
             }

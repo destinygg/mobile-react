@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { View, Alert } from 'react-native';
 import { NavigationActions, NavigationScreenProps, StackActions } from 'react-navigation';
+import MobileEmotes from 'chat/MobileEmotes';
+import MobileIcons from 'chat/MobileIcons';
+import { MobileChatFlairColors } from 'chat/styles';
 
 const { MobileChat } = require("../chat/chat"); 
 
@@ -19,7 +22,13 @@ export default class InitView extends Component<NavigationScreenProps> {
         });
         const histReq = new Request("https://www.destiny.gg/api/chat/history");
 
-        Promise.all([fetch(meReq), fetch(histReq)]).then(async r => {
+        Promise.all([
+            fetch(meReq), 
+            fetch(histReq), 
+            MobileEmotes.init(), 
+            MobileIcons.init(),
+            MobileChatFlairColors.init()
+        ]).then(async r => {
             const meRes = r[0];
             const histRes = r[1];
             if (meRes.ok) {
@@ -51,6 +60,7 @@ export default class InitView extends Component<NavigationScreenProps> {
                 }));
             }
         }, error => {
+            console.log(error);
             Alert.alert(
                 'Network rejection',
                 'Check your network connection and retry.',
