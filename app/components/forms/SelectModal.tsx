@@ -70,6 +70,10 @@ export default class SelectModal extends Component<SelectModalProps, SelectModal
                             onValueChange={(itemValue, itemIndex) => {
                                 this.setState({ value: itemValue });
                             }}
+                            style={{
+                                // @ts-ignore
+                                color: Palette.title
+                            }}
                         >
                             {selectOptions}
                         </Picker>

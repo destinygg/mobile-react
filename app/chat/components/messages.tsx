@@ -24,7 +24,7 @@ export const MessageTypes = {
    This means that elements may have spaces hard-coded, as Text does not allow
    for much layout control. */
 
-export class UserFlair extends Component<{name: string}> {
+export class UserFlair extends PureComponent<{name: string}> {
     render() {
         const icon = MobileIcons.icons[this.props.name];
         if (icon === undefined) {
@@ -39,7 +39,7 @@ export class UserFlair extends Component<{name: string}> {
     }
 }
 
-export class Time extends Component {
+export class Time extends PureComponent {
     render() {
         return (
             <Text style={{
@@ -54,7 +54,7 @@ export class Time extends Component {
     }
 }
 
-export class UserBadge extends Component<{user: any, onPress: {(user: string): any}}> {
+export class UserBadge extends PureComponent<{user: any, onPress: {(user: string): any}}> {
     style: TextStyle[];
     constructor(props: {user: any, onPress: {(user: string): any}}) {
         super(props);
@@ -85,7 +85,7 @@ export class UserBadge extends Component<{user: any, onPress: {(user: string): a
     }
 }
 
-export class Emote extends Component<{name: string}> {
+export class Emote extends PureComponent<{name: string}> {
     image: Image | null = null;
     render() {
         const emote = MobileEmotes.emoticons[this.props.name];
@@ -111,7 +111,7 @@ interface MsgTextProps {
     emit?: any;
 }
 
-export class MsgText extends Component<MsgTextProps> {
+export class MsgText extends PureComponent<MsgTextProps> {
     constructor(props: MsgTextProps) {
         super(props);
     }
@@ -192,7 +192,7 @@ export class MobileChatMessage extends PureComponent<MobileChatMessageProps> {
     render() {
         return (
             <Text style={{
-                minHeight: 25,
+                paddingBottom: 8
             }}>
                 {this.props.time}
                 {this.props.user}

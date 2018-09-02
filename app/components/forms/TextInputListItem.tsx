@@ -28,7 +28,7 @@ export default class TextInputListItem extends Component<TextInputListItemProps>
             borderBottomWidth: this.props.last ? StyleSheet.hairlineWidth : undefined
         });
         const innerStyle: TextStyle = {
-            color: this.props.readOnly ? Palette.text : undefined,
+            color: this.props.readOnly ? Palette.text : Palette.title,
             minHeight: this.props.multiline ? 100 : undefined,
             paddingTop: 10,
             paddingRight: 15, 

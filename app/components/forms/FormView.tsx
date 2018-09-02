@@ -5,6 +5,8 @@ import { NavigationScreenProp } from 'react-navigation';
 import { FormItem, IFormItem } from './FormItem';
 import { Palette } from 'assets/constants';
 
+const { MobileChat } = require("../../chat/chat"); 
+
 interface ProfileFormProps {
     formItems: IFormItem[];
     // injected form state
@@ -14,11 +16,12 @@ interface ProfileFormProps {
 
 export class ProfileForm extends Component<ProfileFormProps> {
     render() {
+        console.log(this.props);
         const children = this.props.formItems.map((item, index, array) =>
             <FormItem
                 item={item}
                 value={(this.props.formState !== undefined)
-                    ? this.props.formState[item.name]
+                    ? this.props.formState.items[item.name]
                     : undefined
                 }
                 key={item.name}
@@ -57,13 +60,13 @@ export interface FormViewState {
 }
 
 export interface FormViewProps {
-    endpoint: string;
     formItems: IFormItem[];
     screenProps: any;
     navigation: NavigationScreenProp<{}>;
 }
 
 export default class FormView extends Component<FormViewProps, FormViewState> {
+    endpoint?: string;
     static navigationOptions = ({ navigation }: {
         navigation: NavigationScreenProp<{ params: any, routeName: any }>
     }) => {
@@ -96,7 +99,7 @@ export default class FormView extends Component<FormViewProps, FormViewState> {
         }
         this.props.navigation.setParams({ isSaving: true });
 
-        const req = new Request(`https://www.destiny.gg/${this.props.endpoint}`, {
+        const req = new Request(`https://www.destiny.gg/${this.endpoint}`, {
             method: 'POST',
             body: formData,
             credentials: 'include'
@@ -104,8 +107,18 @@ export default class FormView extends Component<FormViewProps, FormViewState> {
 
         fetch(req).then((response) => {
             if (response.ok) {
+                if (this.state.items.username !== undefined) {
+                    MobileChat.current.me.username = this.state.items.username;
+                }
+                if (this.state.items.email !== undefined) {
+                    MobileChat.current.me.email = this.state.items.email;
+                }
+                if (this.state.items.country !== undefined) {
+                    MobileChat.current.me.country = this.state.items.country;
+                }
                 this.props.navigation.goBack();
             } else {
+                console.log(response);
                 this.showFailAlert();
             }
             this.props.navigation.setParams({ isSaving: false });

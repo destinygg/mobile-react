@@ -19,6 +19,8 @@ import { EmoteDirectory, MobileChatInput } from 'chat/components/window';
 import { BottomDrawer } from 'components/BottomDrawer';
 import CardDrawerNavList from 'components/CardDrawerNavList';
 
+import Ionicons from "react-native-vector-icons/Ionicons";
+
 import { Palette } from 'assets/constants';
 
 function DEVICE_HEIGHT() {
@@ -188,7 +190,6 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                 opacity: .5
             }); 
         }
-        console.log(this.state);
         return (
             <SafeAreaView style={{flex: 1, backgroundColor: Palette.background}}>
                 <View style={{flex: 1}}
@@ -245,14 +246,14 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                                     alignSelf: "flex-end",
                                     width: "100%",
                                     maxWidth: 500,
-                                    top: this.state.height - 115,
+                                    top: this.state.height - ((this.chat.mobileSettings.menuDrawerButton === false) ? 120 : 115),
                                     position: "absolute",
                                     zIndex: this.state.drawerOnTop || this.state.emoteDirShown ? 10 : -1
                                 }
                                 : {
                                     alignSelf: "center",
                                     width: "100%",
-                                    top: this.state.height - 115,
+                                    top: this.state.height - ((this.chat.mobileSettings.menuDrawerButton === false) ? 120 : 115),
                                     position: "absolute",
                                     zIndex: this.state.drawerOnTop || this.state.emoteDirShown ? 10 : -1
                                 }
@@ -270,6 +271,12 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                                 onChange={(val: string) => this._onInputUpdate(val)}
                                 onEmoteBtnPress={() => {
                                     this.toggleEmoteDir();
+                                }}
+                                onMenuBtnPress={() => {
+                                    if (this.cardDrawer !== null) {
+                                        this.setState({drawerOnTop: true});
+                                        this.cardDrawer.openDrawer();
+                                    }
                                 }}
                                 onFocus={() => this._inputFocused()}
                                 onBlur={() => this._inputBlurred()}

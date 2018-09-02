@@ -35,6 +35,7 @@ function getRandomInt(min, max) {
 /* Subclass reimplementing all methods using jQuery. */
 export class MobileChat extends Chat {
     static current;
+    static connectedOnce = false;
     constructor() {
         super();
         this.mainwindow = new MobileWindow('main').into(this);
@@ -121,6 +122,13 @@ export class MobileChat extends Chat {
                 if (!this.connected) this.connect(this.uri)
             }, rand);
             //MessageBuilder.status(`Disconnected... reconnecting in ${Math.round(rand / 1000)} seconds`).into(this);
+        }
+    }
+
+    onNAMES(data){
+        if (MobileChat.connectedOnce === false) {
+            MessageBuilder.status(`Connected. Server connections: ${data['connectioncount']}`).into(this);
+            MobileChat.connectedOnce = true;
         }
     }
 

@@ -130,6 +130,7 @@ interface MobileChatInputProps {
     style?: ViewStyle;
     shown?: boolean;
     onEmoteBtnPress: { (): any };
+    onMenuBtnPress: { (): any };
     onFocus: { (): any };
     onBlur: {(): any};
 }
@@ -264,7 +265,7 @@ export class MobileChatInput extends Component<MobileChatInputProps, {value: str
                                     flex: 1,
                                     fontSize: 12,
                                     color: Palette.messageText,
-                                    height: 34
+                                    height: 34,
                                 }}
                                 placeholder={'Write something...'}
                                 placeholderTextColor={Palette.text}
@@ -279,6 +280,17 @@ export class MobileChatInput extends Component<MobileChatInputProps, {value: str
                                 autoCorrect={true}
                             />
                         </View>
+                        {!this.props.showHandle &&
+                            <Ionicons name={"md-menu"}
+                                style={{
+                                    fontSize: 30, 
+                                    color: Palette.text,
+                                    marginRight: 12,
+                                    marginTop: 15
+                                }}
+                                onPress={this.props.onMenuBtnPress}
+                            />
+                        }
                     </Animated.View>
                 </View>
             </View>
@@ -331,13 +343,13 @@ export class MobileChatView extends Component<MobileChatViewProps, {
             <View style={{
                 flex: 1,
                 paddingTop: 0,
-                paddingRight: 10,
-                paddingLeft: 10,
                 backgroundColor: Palette.background
             }}>
                 <FlatList
                     data={this.state.messages}
-                    style={{flex: 1}}
+                    style={{flex: 1, 
+                        paddingRight: 10,
+                        paddingLeft: 10,}}
                     extraData={this.state.extraData}
                     renderItem={item => {
                         return item.item;
@@ -350,6 +362,7 @@ export class MobileChatView extends Component<MobileChatViewProps, {
                     onScroll={(e) => this._onScroll(e)}
                     inverted={true}
                     scrollsToTop={false}
+                    windowSize={3}
                 />
                 <Modal
                     animationType='slide'

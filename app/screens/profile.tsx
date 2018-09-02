@@ -28,14 +28,12 @@ const { MobileChat } = require("../chat/chat");
 
 class AccountView extends FormView {
     endpoint: string;
-    formState: FormViewState;
     formItems: IFormItem[];
     constructor(props: FormViewProps) {
         super(props);
         this.endpoint = 'profile/update';
         const me = MobileChat.current.me;
-        console.log(this.props)
-        this.formState = {items: {
+        this.state = {items: {
             username: me.username,
             email: me.email,
             country: me.country
@@ -80,7 +78,7 @@ class AccountView extends FormView {
                 flex: 1,
                 backgroundColor: Palette.background
             }}>
-                    <ProfileForm formItems={this.formItems} formState={this.formState} onChange={this._onChange.bind(this)} />
+                    <ProfileForm formItems={this.formItems} formState={this.state} onChange={this._onChange.bind(this)} />
                 </ScrollView>
             </SafeAreaView>
         )
@@ -618,7 +616,7 @@ class SettingsView extends FormView {
 
     constructor(props: FormViewProps) {
         super(props);
-        this.state = Object.assign({}, MobileChat.current.mobileSettings);
+        this.state = {items: Object.assign({}, MobileChat.current.mobileSettings)};
         console.log(this.state);
         this.formItems = [
             {
@@ -637,16 +635,16 @@ class SettingsView extends FormView {
                 type: "switch",
             },
             {
-                tag: "Hide drawer handle",
+                tag: "Show menu drawer button",
                 name: "menuDrawerButton",
                 type: "switch"
             }
         ];
     }
     _onChange(name: string, value: any) {
-        let updatedState: any = {};
-        updatedState[name] = value;
-        this.setState(updatedState);
+        const newItems = Object.assign({}, this.state.items);
+        newItems[name] = value;
+        this.setState({items: newItems});
 
         MobileChat.current.setMobileSetting(name, value);
     }
@@ -733,6 +731,7 @@ class ProfileView extends Component<NavigationScreenProps> {
                         name='About'
                         last={true} 
                         onPress={() => this.props.navigation.navigate('About')} 
+                        style={{marginTop: 25}}
                     />
                 </ScrollView>
             </SafeAreaView>
