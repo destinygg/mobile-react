@@ -20,7 +20,7 @@ import {
 const EventEmitter = require('../../../lib/assets/chat/js/emitter').default;
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-import { Emote } from './messages';
+import { Emote, MobileChatMessage, MobileChatEmoteMessage } from './messages';
 import MobileEmotes from "../MobileEmotes";
 import { Palette } from 'assets/constants';
 
@@ -447,13 +447,12 @@ export default class MobileWindow extends EventEmitter {
     chat: any;
     locks: number;
     visible: boolean;
-    lines: any[];
+    lines: (MobileChatMessage | MobileChatEmoteMessage)[];
     messageKey: number;
     ui: any;
     background: boolean;
     mobileInput?: MobileChatInput;
     uiElem?: JSX.Element;
-    settings!: Map<string, any>;
     waspinned!: boolean;
     constructor(name: string, type = '', label = '') {
         super()
@@ -492,8 +491,8 @@ export default class MobileWindow extends EventEmitter {
         const c = this.getlines(nick.toLowerCase());
         
         for (let i = 0; i < c.length; i++) {
-            if (this.settings.get('showremoved')) {                
-                c[i].addClass('msg-censored');
+            if (this.chat.settings.get('showremoved')) {                
+                c[i].censor();
             } else {
                 this.lines.splice(this.lines.indexOf(c[i]), 1);
             }
@@ -580,7 +579,7 @@ export default class MobileWindow extends EventEmitter {
         }
     }
 
-    getlines(sel: string): any {
+    getlines(sel: string): (MobileChatMessage | MobileChatEmoteMessage)[] {
         return this.lines.filter((line) => {
             if (line.props.msg.user !== null) {
                 return line.props.msg.user.nick === sel;
@@ -617,6 +616,7 @@ export default class MobileWindow extends EventEmitter {
     updateAndPin(pin = true) {
         if (this.ui) {            
             if (pin) {this.ui.pin();}
+            this.ui.sync();
         }
     }
 

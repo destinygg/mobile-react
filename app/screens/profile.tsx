@@ -143,7 +143,9 @@ class SubscriptionItem extends Component<SubscriptionItemProps, {press: boolean}
                             shadowColor: '#000',
                             shadowOpacity: 0.7,
                             shadowRadius: 5,
-                            color: this.state.press ? '#000' : undefined
+                            color: this.state.press ? '#000' : Palette.title,
+                            fontSize: h1
+
                         }}>
                             {this.props.displayName}
                         </Text>
@@ -151,7 +153,7 @@ class SubscriptionItem extends Component<SubscriptionItemProps, {press: boolean}
                             fontSize: h3,
                             marginTop: 5,
                             fontWeight: '300',
-                            color: this.state.press ? '#000' : '#fff',
+                            color: this.state.press ? '#000' : Palette.title,
                             borderColor: this.state.press ? '#000' : undefined
                         },
                         (this.props.duration === '3mo' || this.props.alreadySubscribed) 
@@ -513,7 +515,9 @@ class SubscriptionMessageView extends Component<SubscriptionMessageViewProps, Su
                             fontSize: h1,
                             fontWeight: '700',
                             color: Palette.title
-                        }}>{this.subDisplayName}</Text>
+                        }}>
+                            {this.subDisplayName}
+                        </Text>
                         <Text style={{
                             fontSize: h3,
                             marginTop: 5,
@@ -523,7 +527,7 @@ class SubscriptionMessageView extends Component<SubscriptionMessageViewProps, Su
                             {this.subDuration}
                         </Text>
                     </View>
-                    <ProfileForm formItems={this.formItems} formState={this.state} onChange={(name, value) => this._onChange(name, value)} />
+                    <ProfileForm formItems={this.formItems} formState={{items: this.state}} onChange={(name, value) => this._onChange(name, value)} />
                     <Text style={{
                         color: Palette.handleLine,
                         fontSize: 12,
@@ -535,7 +539,7 @@ class SubscriptionMessageView extends Component<SubscriptionMessageViewProps, Su
                             onPress={() => this._showUserAgreement()} 
                             style={{color: Palette.link}}
                         >
-                            user agreement.
+                            {` user agreement.`}
                         </Text> 
                     </Text>
                 </ScrollView>

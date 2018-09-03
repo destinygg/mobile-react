@@ -19,8 +19,6 @@ import { EmoteDirectory, MobileChatInput } from 'chat/components/window';
 import { BottomDrawer } from 'components/BottomDrawer';
 import CardDrawerNavList from 'components/CardDrawerNavList';
 
-import Ionicons from "react-native-vector-icons/Ionicons";
-
 import { Palette } from 'assets/constants';
 
 function DEVICE_HEIGHT() {
@@ -177,6 +175,9 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
 
     _onEmoteChosen(emote: string) {
         this.inputElem && this.inputElem.replace && this.inputElem.replace(emote);
+        if (this.chat.mobileSettings.emoteDirLoseFocus === true) {
+            this.toggleEmoteDir();
+        }
     }
 
     render() {
@@ -293,9 +294,6 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                                     onShowStream={() => this.showStream()}
                                     onHideStream={() => this.hideStream()}
                                 />
-                            }
-                            {this.state.inputFocused &&
-                                <View style={{height: 100, backgroundColor: Palette.drawerBg}} />
                             }
                         </BottomDrawer>
                 }

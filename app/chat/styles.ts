@@ -48,6 +48,7 @@ export class MobileChatFlairColors {
         if (__DEV__) {
             const e = await AsyncStorage.getItem("mobileChatColors");
             MobileChatFlairColors.colors = e === null ? [] : JSON.parse(e);
+            console.log(this.colors);
             return;
         }
         const currentSha = await AsyncStorage.getItem("mobileChatColorsSha");

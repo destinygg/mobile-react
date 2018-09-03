@@ -40,8 +40,8 @@ export default class InitView extends Component<NavigationScreenProps> {
                 MobileChat.current
                     .withMe(me)
                     .withUserAndSettings(me)
+                    .withHistory(hist)
                     .connect("wss://www.destiny.gg/ws");
-
 
                 // @ts-ignore
                 global.bugsnag.setUser(me.userId, me.username, me.username + '@destiny.gg');

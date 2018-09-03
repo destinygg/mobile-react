@@ -63,14 +63,14 @@ export class UserBadge extends PureComponent<{user: any, onPress: {(user: string
             color: Palette.messageText,
             backgroundColor: 'transparent',
             fontSize: 12,
-            marginLeft: 10
          }];
         let admin = false;
         for (let i = 0; i < this.props.user.features.length; i++) {
             if (this.props.user.features[i] == UserFeatures.ADMIN) {
                 admin = true;
             } else {
-                this.style.push({ color: MobileChatFlairColors.colors[this.props.user.features[i]] });                
+                if (MobileChatFlairColors.colors[this.props.user.features[i]] !== undefined)
+                    this.style.push({ color: MobileChatFlairColors.colors[this.props.user.features[i]] });                
             }
         }
         if (admin) this.style.push({ color: MobileChatFlairColors.colors["admin"] });
@@ -79,7 +79,7 @@ export class UserBadge extends PureComponent<{user: any, onPress: {(user: string
         return (
             <Text onPress={() => this.props.onPress(this.props.user.username)}>
                 {this.props.children}
-                <Text key='userBadgeText' style={this.style}>{this.props.user.username}</Text>
+                <Text key='userBadgeText' style={this.style}>{` ` + this.props.user.username}</Text>
             </Text>
         )
     }
@@ -107,8 +107,10 @@ export class Emote extends PureComponent<{name: string}> {
 interface MsgTextProps {
     greenText?: boolean;
     link?: string;
+    broadcast?: boolean;
     // parent chat window
     emit?: any;
+    slashme?: boolean;
 }
 
 export class MsgText extends PureComponent<MsgTextProps> {
@@ -129,6 +131,14 @@ export class MsgText extends PureComponent<MsgTextProps> {
 
         if (this.props.link) {
             msgStyles.push(styles.Link);
+        }
+
+        if (this.props.broadcast) {
+            msgStyles.push(styles["msg-broadcast"]);
+        }
+
+        if (this.props.slashme) {
+            msgStyles.push({fontStyle: "italic"});
         }
 
         if(this.props.link) {
@@ -160,7 +170,7 @@ interface MobileChatMessageProps {
     ctrl: string;
 }
 
-export class MobileChatMessage extends PureComponent<MobileChatMessageProps> {
+export class MobileChatMessage extends PureComponent<MobileChatMessageProps, {censored?: boolean}> {
     formatted: JSX.Element[];
     constructor(props: MobileChatMessageProps) {
         super(props);
@@ -170,6 +180,8 @@ export class MobileChatMessage extends PureComponent<MobileChatMessageProps> {
                 this.formatted.push(<MsgText 
                                         key={i} 
                                         greenText={this.props.text[i].greenText}
+                                        broadcast={this.props.msg.type === MessageTypes.BROADCAST}
+                                        slashme={this.props.msg.slashme === true}
                                     >
                                         {this.props.text[i].string}
                                     </MsgText>
@@ -188,11 +200,24 @@ export class MobileChatMessage extends PureComponent<MobileChatMessageProps> {
                 );
             }
         }
+
+        this.state = {};
     }
     render() {
+        let highlight = undefined;
+        
+        if (this.props.msg.isown ||
+        this.props.msg.target ||
+        this.props.msg.type === MessageTypes.BROADCAST)
+            highlight = "#151515";
+        if (this.props.msg.highlighted)
+            highlight = "#06263E";
+
         return (
             <Text style={{
-                paddingBottom: 8
+                paddingBottom: 8,
+                opacity: this.state.censored === true ? 0.5 : undefined,
+                backgroundColor: highlight
             }}>
                 {this.props.time}
                 {this.props.user}
@@ -200,6 +225,10 @@ export class MobileChatMessage extends PureComponent<MobileChatMessageProps> {
                 {this.formatted}
             </Text>
         );
+    }
+
+    censor() {
+        this.setState({censored: true});
     }
 }
 
@@ -212,6 +241,7 @@ interface MobileChatEmoteMessageProps {
 
 interface MobileChatEmoteMessageState {
     combo: number;
+    censored?: boolean;
     comboClass?: TextStyle;
 }
 
@@ -221,6 +251,15 @@ export class MobileChatEmoteMessage extends PureComponent<MobileChatEmoteMessage
         this.state = {combo: this.props.count};
     }
     render() {
+        let highlight = undefined;
+        
+        if (this.props.msg.isown ||
+        this.props.msg.target ||
+        this.props.msg.type === MessageTypes.BROADCAST)
+            highlight = "#151515";
+        if (this.props.msg.highlighted)
+            highlight = "#06263E";
+
         let combo = [];
         if (this.state.combo > 1) {
             combo.push(<Text key='ComboCount' style={[this.state.comboClass, styles.ComboCount]}>{this.state.combo}</Text>);
@@ -228,9 +267,18 @@ export class MobileChatEmoteMessage extends PureComponent<MobileChatEmoteMessage
             combo.push(<Text key='ComboCombo' style={styles.ComboCombo}> C-C-C-COMBO</Text>);
         }
         return (
-            <Text>
+            <Text
+                style={{
+                    opacity: this.state.censored === true ? 0.5 : undefined,
+                    backgroundColor: highlight
+                }}
+            >
                 {this.props.time}{this.props.emote}{combo}
             </Text>
         )
+    }
+
+    censor() {
+        this.setState({censored: true});
     }
 }
