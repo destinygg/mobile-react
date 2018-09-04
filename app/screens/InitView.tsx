@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { View, Alert } from 'react-native';
+import { View, Alert, ActivityIndicator, Image } from 'react-native';
 import { NavigationActions, NavigationScreenProps, StackActions } from 'react-navigation';
 import MobileEmotes from 'chat/MobileEmotes';
 import MobileIcons from 'chat/MobileIcons';
 import { MobileChatFlairColors } from 'chat/styles';
+import { Palette } from 'assets/constants';
 
 const { MobileChat } = require("../chat/chat"); 
 
@@ -83,7 +84,26 @@ export default class InitView extends Component<NavigationScreenProps> {
 
     render() {
         return(
-            <View style={{flex: 1}} />
+            <View 
+                style={{
+                    flex: 1,
+                    backgroundColor: Palette.background,
+                    justifyContent: "center"
+                }} 
+            >
+                <Image
+                    source={require("assets/logo.jpg")}
+                    resizeMode={"contain"}
+                    style={{
+                        maxWidth: 200,
+                        maxHeight: 200,
+                        marginBottom: 25
+                    }}
+                />
+                <ActivityIndicator
+                    size={"large"}
+                />
+            </View>
         )
     }
 }

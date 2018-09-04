@@ -6,7 +6,6 @@ import {
     Linking,
     Modal,
     ScrollView,
-    Text,
     TextInput,
     TouchableOpacity,
     TouchableWithoutFeedback,
@@ -491,10 +490,12 @@ export default class MobileWindow extends EventEmitter {
         const c = this.getlines(nick.toLowerCase());
         
         for (let i = 0; i < c.length; i++) {
-            if (this.chat.settings.get('showremoved')) {                
-                c[i].censor();
-            } else {
-                this.lines.splice(this.lines.indexOf(c[i]), 1);
+            if (c[i] !== undefined) {
+                if (this.chat.settings.get('showremoved')) {                
+                    c[i] && c[i].censor && c[i].censor();
+                } else {
+                    this.lines.splice(this.lines.indexOf(c[i]), 1);
+                }
             }
         }
         if (this.ui) {
