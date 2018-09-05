@@ -11,7 +11,7 @@ import {
     WebView,
     PanResponderInstance,
     PanResponderGestureState,
-    ViewStyle
+    ViewStyle,
 } from 'react-native';
 import { SafeAreaView, NavigationScreenProps } from 'react-navigation';
 
@@ -19,20 +19,21 @@ import { EmoteDirectory, MobileChatInput } from 'chat/components/window';
 import { BottomDrawer } from 'components/BottomDrawer';
 import CardDrawerNavList from 'components/CardDrawerNavList';
 
-import { Palette } from 'assets/constants';
+import Haptic from "react-native-haptic-feedback";
 
-function DEVICE_HEIGHT() {
-    const dims = Dimensions.get('window');
-    console.log(dims);
-    return dims.height;
-}
+const BackgroundTimer = require('react-native-background-timer').default;
+
+import { Palette } from 'assets/constants';
 
 class TwitchView extends Component<{landscape?: boolean, height?: number}> {
     render() {
         let twitchViewStyle: ViewStyle[] = [{
             flex: 0,
             height: 250,
-            backgroundColor: '#000'
+            backgroundColor: '#000',
+            shadowOffset: {width: 0, height: 5},
+            shadowRadius: 10,
+            shadowOpacity: 0.7,
         }];
 
         if (this.props.landscape) { 
@@ -91,6 +92,9 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
     handleOpacityBinding?: Animated.AnimatedInterpolation;
 
     backdropOpacity?: Animated.AnimatedInterpolation;
+
+    disconnectTimeout?: number;
+    shouldReconnect?: boolean;
 
     private panResponder?: PanResponderInstance;
     static navigationOptions = {
@@ -184,11 +188,14 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
         let dividerStyle: ViewStyle[] = [{
             height: 2,
             backgroundColor: 'transparent',
+            shadowOffset: {width: 0, height: 5},
+            shadowRadius: 10,
+            shadowOpacity: 0.7,
         }];     
         if (this.state.resizing) { 
             dividerStyle.push({
                 backgroundColor: Palette.handleLine,
-                opacity: .5
+                opacity: .5,
             }); 
         }
         return (
@@ -214,20 +221,32 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                         {(this.state.streamShown) &&
                             <View style={dividerStyle} />
                         }
-                        {(this.state.streamShown) &&                        
+                        {(this.state.streamShown) &&   
                             <View 
                                 style={{
-                                    height: (Platform.OS === 'ios') ? 12 : 16,
-                                    marginTop: (Platform.OS === 'ios') ? -12 : -16,
-                                    top: (Platform.OS === 'ios') ? 6 : 8,
+                                    height: 15,
+                                    width: 75,
+                                    alignSelf: "center",
                                     zIndex: 1000,
-                                    width: (Platform.OS === 'ios') ? 24 : 30,
-                                    borderRadius: (Platform.OS === 'ios') ? 8 : 10,
-                                    backgroundColor: Palette.drawerBg,
-                                    alignSelf: 'center',
-                                }} 
+                                    position: "absolute",
+                                    top: this.state.twitchHeight !== undefined ? this.state.twitchHeight : 250
+                                }}
                                 {...this.panResponder!.panHandlers} 
-                            />
+                            >
+                                <View 
+                                    style={{
+                                        height: 4,
+                                        width: 35,
+                                        backgroundColor: Palette.text,
+                                        borderRadius: 2,
+                                        zIndex: 1000,
+                                        alignSelf: "center",
+                                        marginTop: 5,
+                                        marginBottom: 5,
+                                        opacity: 0.6,
+                                    }} 
+                                />  
+                            </View>
                         }
                         {this.chat.mainwindow.uiElem}
                 </View>
@@ -249,14 +268,14 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                                     maxWidth: 500,
                                     top: this.state.height - ((this.chat.mobileSettings.menuDrawerButton === false) ? 120 : 115),
                                     position: "absolute",
-                                    zIndex: this.state.drawerOnTop || this.state.emoteDirShown ? 10 : -1
+                                    zIndex: this.state.drawerOnTop || this.state.emoteDirShown ? 10 : -1,
                                 }
                                 : {
                                     alignSelf: "center",
                                     width: "100%",
                                     top: this.state.height - ((this.chat.mobileSettings.menuDrawerButton === false) ? 120 : 115),
                                     position: "absolute",
-                                    zIndex: this.state.drawerOnTop || this.state.emoteDirShown ? 10 : -1
+                                    zIndex: this.state.drawerOnTop || this.state.emoteDirShown ? 10 : -1,
                                 }
                             }
                         >               
@@ -271,6 +290,7 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                                 shown={!this.state.drawerOpen}
                                 onChange={(val: string) => this._onInputUpdate(val)}
                                 onEmoteBtnPress={() => {
+                                    Haptic.trigger("selection", false);
                                     this.toggleEmoteDir();
                                 }}
                                 onMenuBtnPress={() => {
@@ -341,6 +361,7 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
     }
 
     _beginResize(gestureState: PanResponderGestureState) {
+        Haptic.trigger("selection", false);
         this.setState({ resizing: true });
     }
 
@@ -437,16 +458,24 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                 AsyncStorage.setItem('TwitchViewHeight', Math.floor(this.state.twitchHeight).toString());                
             }
             AsyncStorage.setItem('InitRoute', (this.state.streamShown) ? 'Main' : 'Chat');
-            this.chat.source.disconnect();
-            this.chat.mainwindow.lines = [];
+            BackgroundTimer.runBackgroundTimer(() => {
+                BackgroundTimer.stopBackgroundTimer();
+                this.shouldReconnect = true;
+                this.chat.source.disconnect();
+            }, 30000);
         } else if (nextState === 'active') {
-            const histReq = new Request("https://www.destiny.gg/api/chat/history");
-            fetch(histReq).then(async r => {
-                const hist = await r.json();
-                this.chat.withHistory(hist)
-                    .connect("wss://www.destiny.gg/ws");
-            })
+            BackgroundTimer.stopBackgroundTimer();
 
+            if (this.shouldReconnect) {
+                this.shouldReconnect = false;
+                this.chat.mainwindow.ui && this.chat.mainwindow.ui.onConnecting();
+                const histReq = new Request("https://www.destiny.gg/api/chat/history");
+                fetch(histReq).then(async r => {
+                    const hist = await r.json();
+                    this.chat.withHistory(hist)
+                        .connect("wss://www.destiny.gg/ws");
+                })
+            }
         }
     }
 

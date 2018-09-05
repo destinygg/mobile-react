@@ -3,6 +3,8 @@ package gg.destiny.mobile;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactlibrary.RNReactNativeHapticFeedbackPackage;
+import com.ocetnik.timer.BackgroundTimerPackage;
 import com.wix.interactable.Interactable;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -27,6 +29,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNReactNativeHapticFeedbackPackage(),
+            new BackgroundTimerPackage(),
             new Interactable(),
           new RNFSPackage(),
           BugsnagReactNative.getPackage()

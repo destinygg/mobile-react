@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">destiny.gg</string>
+    <color name="splash_background">#0D0D0D</color>
 </resources>

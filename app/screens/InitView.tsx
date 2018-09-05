@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Alert, ActivityIndicator, Image } from 'react-native';
+import { View, Alert, ActivityIndicator, Image, Dimensions } from 'react-native';
 import { NavigationActions, NavigationScreenProps, StackActions } from 'react-navigation';
 import MobileEmotes from 'chat/MobileEmotes';
 import MobileIcons from 'chat/MobileIcons';
@@ -88,20 +88,32 @@ export default class InitView extends Component<NavigationScreenProps> {
                 style={{
                     flex: 1,
                     backgroundColor: Palette.background,
-                    justifyContent: "center"
+                    alignItems: "center"
                 }} 
             >
-                <Image
-                    source={require("assets/logo.jpg")}
-                    resizeMode={"contain"}
+                <View
                     style={{
-                        maxWidth: 200,
-                        maxHeight: 200,
-                        marginBottom: 25
+                        shadowOffset: {width: 0, height: 5},
+                        shadowRadius: 10,
+                        shadowOpacity: 0.7,
                     }}
-                />
+                >
+                    <Image
+                        source={require("assets/logo.jpg")}
+                        resizeMode={"contain"}
+                        style={{
+                            maxWidth: 128,
+                            marginTop: Dimensions.get("window").height * 0.3,
+                            maxHeight: 128,
+                            marginBottom: 35,
+                            borderRadius: 5,
+
+                        }}
+                    />
+                </View>
                 <ActivityIndicator
                     size={"large"}
+                    color={"#5DAEE7"}
                 />
             </View>
         )

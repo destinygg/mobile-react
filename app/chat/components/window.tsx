@@ -22,6 +22,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { Emote, MobileChatMessage, MobileChatEmoteMessage } from './messages';
 import MobileEmotes from "../MobileEmotes";
 import { Palette } from 'assets/constants';
+import ConnectingIndicator from './ConnectingIndicator';
 
 const tagcolors = [
     "green",
@@ -320,7 +321,9 @@ interface MobileChatViewProps {
 export class MobileChatView extends Component<MobileChatViewProps, {
     messages: JSX.Element[],
     extraData: boolean,
-    mediaModalShown: boolean
+    mediaModalShown: boolean,
+    connecting: boolean,
+    connected: boolean
 }> {
     pinned: boolean;
     messageList: FlatList<JSX.Element> | null = null;
@@ -331,7 +334,9 @@ export class MobileChatView extends Component<MobileChatViewProps, {
         this.state = {
             messages: [],
             extraData: true,
-            mediaModalShown: false
+            mediaModalShown: false,
+            connecting: false,
+            connected: false
         }
         this.pinned = true;
         this.height = 0;
@@ -363,6 +368,16 @@ export class MobileChatView extends Component<MobileChatViewProps, {
                     scrollsToTop={false}
                     windowSize={3}
                 />
+                {this.state.connecting &&
+                    <ConnectingIndicator
+                        connected={this.state.connected}
+                        style={{
+                            position: "absolute",
+                            bottom: 10,
+                            alignSelf: "center"
+                        }}
+                    />
+                }
                 <Modal
                     animationType='slide'
                     transparent={true}
@@ -407,6 +422,18 @@ export class MobileChatView extends Component<MobileChatViewProps, {
 
     isPinned() {
         return this.pinned;
+    }
+
+    onConnecting() {
+        this.setState({connecting: true});
+    }
+
+    onConnected() {
+        this.setState({connected: true}, () => {
+            setTimeout(() => {
+                this.setState({connecting: false, connected: false});
+            }, 1400);
+        })
     }
 
     pin() {
