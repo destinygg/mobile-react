@@ -25,7 +25,7 @@ const BackgroundTimer = require('react-native-background-timer').default;
 
 import { Palette } from 'assets/constants';
 
-class TwitchView extends Component<{landscape?: boolean, height?: number}> {
+class TwitchView extends Component<{height?: number}> {
     render() {
         let twitchViewStyle: ViewStyle[] = [{
             flex: 0,
@@ -36,11 +36,7 @@ class TwitchView extends Component<{landscape?: boolean, height?: number}> {
             shadowOpacity: 0.7,
         }];
 
-        if (this.props.landscape) { 
-            twitchViewStyle.push({ flex: 1 });
-        } else {
-            if (this.props.height) { twitchViewStyle.push({ flex: 0, height: this.props.height}); }            
-        }
+        if (this.props.height) { twitchViewStyle.push({ flex: 0, height: this.props.height}); }            
 
         return (
             <View style={twitchViewStyle} collapsable={false}>
@@ -93,7 +89,7 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
 
     backdropOpacity?: Animated.AnimatedInterpolation;
 
-    disconnectTimeout?: number;
+    lastBackgroundedAt?: number;
     shouldReconnect?: boolean;
 
     private panResponder?: PanResponderInstance;
@@ -215,7 +211,6 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                         {(this.state.streamShown) &&
                             <TwitchView 
                                 height={this.state.twitchHeight}
-                                landscape={this.state.isLandscape}
                             />
                         }
                         {(this.state.streamShown) &&
@@ -227,7 +222,7 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                                     height: 15,
                                     width: 75,
                                     alignSelf: "center",
-                                    zIndex: 1000,
+                                    zIndex: 5,
                                     position: "absolute",
                                     top: this.state.twitchHeight !== undefined ? this.state.twitchHeight : 250
                                 }}
@@ -239,7 +234,7 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                                         width: 35,
                                         backgroundColor: Palette.text,
                                         borderRadius: 2,
-                                        zIndex: 1000,
+                                        zIndex: 5,
                                         alignSelf: "center",
                                         marginTop: 5,
                                         marginBottom: 5,
@@ -406,6 +401,13 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
         const viewHeight = e.layout.height;
         const dim = Dimensions.get("window");
         const isLandscape = dim.width > dim.height;
+
+        let twitchHeight = this.state.twitchHeight;
+
+        if (twitchHeight !== undefined && twitchHeight > (viewHeight - 125)) {
+            twitchHeight = viewHeight - 125;
+        }
+
         if (this.state.height === undefined) {
             const interpolate = {
                 min: -265,
@@ -434,10 +436,12 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                 outputRange: [0.7, 0],
                 extrapolate: "clamp"
             })
+
             this.setState({ 
                 height: viewHeight,
                 emoteDirOffset: emoteDirOffset,
                 isLandscape: isLandscape,
+                twitchHeight: twitchHeight,
                 drawerPosSpy: drawerPosSpy,
                 chatInputOpacity: drawerPosSpy.interpolate({
                     inputRange: [interpolate.min/3, interpolate.max],
@@ -446,7 +450,7 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                 })
             });
         } else {
-            this.setState({height: viewHeight, isLandscape: isLandscape});
+            this.setState({height: viewHeight, isLandscape: isLandscape, twitchHeight: twitchHeight});
         }      
         // @ts-ignore
         global.bugsnag.leaveBreadcrumb('MainView after onLayout.');                        
@@ -458,11 +462,15 @@ export default class MainView extends Component<NavigationScreenProps, MainViewS
                 AsyncStorage.setItem('TwitchViewHeight', Math.floor(this.state.twitchHeight).toString());                
             }
             AsyncStorage.setItem('InitRoute', (this.state.streamShown) ? 'Main' : 'Chat');
+            this.lastBackgroundedAt = Date.now();
             BackgroundTimer.runBackgroundTimer(() => {
+                if (this.lastBackgroundedAt && (Date.now() - this.lastBackgroundedAt) < 29000) {
+                    return;
+                }
                 BackgroundTimer.stopBackgroundTimer();
                 this.shouldReconnect = true;
                 this.chat.source.disconnect();
-            }, 30000);
+            }, 10000);
         } else if (nextState === 'active') {
             BackgroundTimer.stopBackgroundTimer();
 

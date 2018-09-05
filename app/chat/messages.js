@@ -268,7 +268,7 @@ class ChatUserMessage extends ChatMessage {
             null :
             <UserBadge user={this.user} onPress={(username) => this.window.appendInputText(username)}>{buildFeatures(this.user)}</UserBadge>;
 
-        const time = (MobileChat.current.mobileSettings.chatTimestamp)
+        const time = (MobileChat.current.mobileSettings && MobileChat.current.mobileSettings.chatTimestamp)
             ? buildTime(this)
             : undefined;
 
@@ -314,7 +314,7 @@ class ChatEmoteMessage extends ChatMessage {
         this.classes.unshift(styles[`msg-${this.type.toLowerCase()}`]);
         this.classes.unshift(styles[`msg-chat`]);
 
-        const time = (MobileChat.current.mobileSettings.chatTimestamp)
+        const time = (MobileChat.current.mobileSettings && MobileChat.current.mobileSettings.chatTimestamp)
             ? buildTime(this)
             : undefined;
             
