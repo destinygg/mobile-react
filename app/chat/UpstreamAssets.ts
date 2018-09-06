@@ -66,7 +66,7 @@ export default class UpstreamAssets {
                 await RNFS.downloadFile({
                     fromUrl: file.download_url,
                     toFile: targetDir + "/" + file.name
-                });
+                }).promise;
             }
             names.push(file.name);
         }
