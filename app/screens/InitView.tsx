@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Alert, ActivityIndicator, Image, Dimensions } from 'react-native';
+import { View, Alert, ActivityIndicator, Image, Dimensions, Text } from 'react-native';
 import { NavigationActions, NavigationScreenProps, StackActions } from 'react-navigation';
 import MobileEmotes from 'chat/MobileEmotes';
 import MobileIcons from 'chat/MobileIcons';
@@ -8,8 +8,12 @@ import { Palette } from 'assets/constants';
 
 const { MobileChat } = require("../chat/chat"); 
 
-export default class InitView extends Component<NavigationScreenProps> {
-    componentDidMount() {
+export default class InitView extends Component<NavigationScreenProps, {status?: string}> {
+    constructor(props: NavigationScreenProps) {
+        super(props);
+        this.state = { status: "Connecting to destiny.gg..." };
+    }
+    async componentDidMount() {
         const { navigation } = this.props;
 
         if (MobileChat.current === undefined) {
@@ -22,16 +26,17 @@ export default class InitView extends Component<NavigationScreenProps> {
             credentials: 'include'
         });
         const histReq = new Request("https://www.destiny.gg/api/chat/history");
+        const meRes = await fetch(meReq);
+        const histRes = await fetch(histReq);
+
+        this.setState({status: "Downloading assets..."});
 
         Promise.all([
-            fetch(meReq), 
-            fetch(histReq), 
             MobileEmotes.init(), 
             MobileIcons.init(),
             MobileChatFlairColors.init()
-        ]).then(async r => {
-            const meRes = r[0];
-            const histRes = r[1];
+        ]).then(async () => {
+            this.setState({status: undefined});
             if (meRes.ok) {
                 const me = await meRes.json();
                 const hist = await histRes.json();
@@ -79,6 +84,7 @@ export default class InitView extends Component<NavigationScreenProps> {
                 ],
                 { cancelable: false }
             );
+            this.setState({status: undefined})
         });
     }
 
@@ -96,6 +102,8 @@ export default class InitView extends Component<NavigationScreenProps> {
                         shadowOffset: {width: 0, height: 5},
                         shadowRadius: 10,
                         shadowOpacity: 0.7,
+                        marginBottom: 35,
+                        marginTop: Dimensions.get("window").height * 0.3,
                     }}
                 >
                     <Image
@@ -103,11 +111,8 @@ export default class InitView extends Component<NavigationScreenProps> {
                         resizeMode={"contain"}
                         style={{
                             maxWidth: 128,
-                            marginTop: Dimensions.get("window").height * 0.3,
                             maxHeight: 128,
-                            marginBottom: 35,
-                            borderRadius: 5,
-
+                            borderRadius: 10,
                         }}
                     />
                 </View>
@@ -115,6 +120,17 @@ export default class InitView extends Component<NavigationScreenProps> {
                     size={"large"}
                     color={"#5DAEE7"}
                 />
+                {this.state.status &&
+                    <Text
+                        style={{
+                            color: Palette.text,
+                            fontSize: 14,
+                            marginTop: 25
+                        }}
+                    >
+                        {this.state.status}
+                    </Text>
+                }
             </View>
         )
     }

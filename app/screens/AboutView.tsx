@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, View, Text, TouchableHighlight, Linking } from 'react-native';
+import { ScrollView, View, Text, Linking, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import { Palette, h2 } from 'assets/constants';
 
@@ -59,7 +59,7 @@ export default class AboutView extends Component<{}, {badgePressed: boolean}> {
                             No warranty express or implied is provided.  This software
                             is provided "as-is".
                         </Text>
-                        <TouchableHighlight style={{
+                        <TouchableOpacity style={{
                             backgroundColor: '#fff',
                             padding: 10,
                             borderRadius: 10,
@@ -98,7 +98,7 @@ export default class AboutView extends Component<{}, {badgePressed: boolean}> {
                                     </Text>.
                             </Text>
                             </View>
-                        </TouchableHighlight>
+                        </TouchableOpacity>
                         <Text style={{
                                 color: Palette.text,
                                 fontSize: h2,

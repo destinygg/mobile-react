@@ -26,11 +26,11 @@ export class BottomDrawer extends Component<BottomDrawerProps, {
     }
 
     openDrawer() {
+        this.props.onOpen();
         if (this.interactable !== null) {
             this.open = true;
             (this.interactable as any).snapTo({index: 1});
         }
-        this.props.onOpen();
     }
 
     closeDrawer() {
@@ -38,7 +38,9 @@ export class BottomDrawer extends Component<BottomDrawerProps, {
             (this.interactable as any).snapTo({ index: 0 });
             this.open = false;
         }
-        this.props.onClose();
+        setTimeout(() => {
+            this.props.onClose();
+        }, 500); 
     }
 
     toTop() {
@@ -58,6 +60,7 @@ export class BottomDrawer extends Component<BottomDrawerProps, {
                 style={this.props.style} 
                 dragEnabled={!this.state.fixed}
                 animatedValueY={this.props.posSpy}
+                animatedNativeDriver={true}
                 ref={r => this.interactable = r}
                 onSnap={(e) => {
                     if (e.nativeEvent.index === 1) {

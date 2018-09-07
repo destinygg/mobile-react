@@ -13,7 +13,7 @@ import {
 } from 'react-navigation';
 
 import { ListButton, ListButtonProps } from 'components/forms/ButtonList';
-import FormView, { FormViewProps, FormViewState, ProfileForm } from 'components/forms/FormView';
+import FormView, { FormViewProps, ProfileForm } from 'components/forms/FormView';
 import { NavList } from 'components/NavList';
 import { UserAgreement } from 'components/UserAgreement';
 import AboutView from './AboutView';

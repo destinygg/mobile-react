@@ -12,7 +12,6 @@ import {
     StyleSheet,
     Text,
     TextInput,
-    TouchableHighlight,
     TouchableOpacity,
     View,
 } from 'react-native';
@@ -25,6 +24,8 @@ import {
 } from 'react-navigation';
 import TextInputListItem from 'components/forms/TextInputListItem';
 import { Palette, h3 } from 'assets/constants';
+
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 const { MobileChat } = require("../chat/chat"); 
 
@@ -252,7 +253,7 @@ interface MessageListItemProps {
 class MessageListItem extends Component<MessageListItemProps> {
     render() {
         return (
-            <TouchableHighlight
+            <TouchableOpacity
                 style={{
                     height: 75,
                     marginLeft: 15,
@@ -287,7 +288,7 @@ class MessageListItem extends Component<MessageListItemProps> {
                         {this.props.item.message}
                     </Text>
                 </View>
-            </TouchableHighlight>
+            </TouchableOpacity>
         )
     }
 }
@@ -376,7 +377,11 @@ class ComposeButton extends Component<{onPress: {(): any}}> {
                 onPress={this.props.onPress}
                 style={{ marginRight: 15 }}
             >
-                <Text style={{ fontFamily: 'ionicons', color: '#037aff', fontSize: 28 }}>&#xf417;</Text>
+                <FontAwesome
+                    name={"pencil-square-o"}
+                    color={"#037aff"}
+                    size={28}
+                />
             </TouchableOpacity>
         )
     }
@@ -511,8 +516,8 @@ const MessageNav = createStackNavigator({
                 borderColor: Palette.navBorder,
                 borderStyle: "solid"
             },
-            headerTitleStyle: {color: Palette.text},
-            headerTintColor: (Platform.OS === 'android') ? Palette.text : undefined
+            headerTitleStyle: {color: Palette.title},
+            headerTintColor: (Platform.OS === 'android') ? Palette.title : undefined
         },
         cardStyle: {flex: 1}
     });

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, TouchableHighlight, View, ViewStyle } from 'react-native';
+import { StyleSheet, Text, View, ViewStyle, TouchableOpacity } from 'react-native';
 import { Palette, h3 } from 'assets/constants';
 
 export interface ListButtonProps {
@@ -30,7 +30,7 @@ export class ListButton extends Component<ListButtonProps> {
             : this.props.name;
 
         return (
-            <TouchableHighlight onPress={this.props.onPress} style={outerStyle}>
+            <TouchableOpacity onPress={this.props.onPress} style={outerStyle}>
                 <View style={innerStyle}>
                     <Text style={{
                         color: Palette.title,
@@ -39,7 +39,7 @@ export class ListButton extends Component<ListButtonProps> {
                         {displayName}
                     </Text>
                 </View>
-            </TouchableHighlight>
+            </TouchableOpacity>
         )
     }
 }
