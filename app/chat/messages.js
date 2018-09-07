@@ -210,7 +210,7 @@ class ChatMessage extends ChatUIMessage {
     }
 
     html(chat = null) {
-        const time = (MobileChat.current.mobileSettings.chatTimestamp)
+        const time = (MobileChat.current.mobileSettings && MobileChat.current.mobileSettings.chatTimestamp)
             ? buildTime(this)
             : undefined;
 
