@@ -92,7 +92,7 @@ export default class AboutView extends Component<{}, {badgePressed: boolean}> {
                                     width: 100,
                                     color: (badgePressed) ? '#fff' : "#000"   
                                 }}>
-                                    Issues may be reported to 
+                                    {`Issues may be reported to `} 
                                     <Text style={{ color: '#d60000' }}>
                                         dc@cako.io
                                     </Text>.

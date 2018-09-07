@@ -29,7 +29,7 @@ export default class InitView extends Component<NavigationScreenProps, {status?:
         const meRes = await fetch(meReq);
         const histRes = await fetch(histReq);
 
-        this.setState({status: "Downloading assets..."});
+        this.setState({status: "Updating assets..."});
 
         Promise.all([
             MobileEmotes.init(), 
