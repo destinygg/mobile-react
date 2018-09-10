@@ -1,4 +1,4 @@
-const css = require("jotform-css.js");
+require("jotform-css.js");
 
 import { StyleSheet, AsyncStorage } from 'react-native';
 import { Palette } from 'assets/constants';

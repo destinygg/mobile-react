@@ -1,5 +1,7 @@
 import RNFS from "react-native-fs";
 
+import { Image } from "react-native";
+
 const UpstreamEmotePath = "assets/emotes/emoticons";
 const UpstreamIconPath = "assets/icons/icons";
 
@@ -72,5 +74,20 @@ export default class UpstreamAssets {
         }
 
         return names
+    }
+
+    static getImageSize(uri: string): Promise<IImageAsset> {
+        return new Promise((resolve, reject) => {
+            Image.getSize(uri,
+                (w, h) => {
+                    resolve({
+                        uri: uri,
+                        width: w,
+                        height: h
+                    });
+                },
+                () => reject()
+            );
+        })
     }
 }
